@@ -93,4 +93,8 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+#Add linuxbrew to path
+export PATH="$PATH:/home/linuxbrew/.linuxbrew/bin"
+alias cd..='cd ..'
+alias gt='cd $(dirname `fzf`)'
 alias listbig='du -BM | sort -n -r | head -n'
