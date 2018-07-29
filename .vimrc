@@ -42,7 +42,7 @@ Plugin 'altercation/vim-colors-solarized'
 Plugin 'junegunn/goyo.vim'
 Plugin 'itchyny/lightline.vim'
 Plugin 'nathanaelkane/vim-indent-guides'
-Plugin 'Valloric/YouCompleteMe'
+"Plugin 'Valloric/YouCompleteMe'
 " NERDTree
 Plugin 'scrooloose/nerdtree'
 " GIT Plugin for NERDTree is not working!
@@ -160,10 +160,21 @@ let g:indent_guides_guide_size = 1
 let g:indent_guides_color_change_percent = 3
 let g:indent_guides_enable_on_vim_startup = 1
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " YouCompleteMe settings
 let g:ycm_autoclose_preview_window_after_completion=1
 map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Syntastic settings
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 " Folding Options
@@ -219,15 +230,15 @@ set gcr=a:blinkon0  " disable cursor blink
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " language dependant indent settings
-au BufNewFile,BufRead *.js, *.html, *.css, *.hs
+au BufNewFile,BufRead *.js,*.html,*.css,*.hs
     \ set tabstop=2
-    \ set softtabstop=2
-    \ set shiftwidth=2
+    \| set softtabstop=2
+    \| set shiftwidth=2
 
-au BufNewFile,BufRead *.py, *.tex, *.txt
+au BufNewFile,BufRead *.py,*.tex,*.txt
     \ set tabstop=4
-    \ set softtabstop=4
-    \ set shiftwidth=4
+    \| set softtabstop=4
+    \| set shiftwidth=4
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " REMAPPINGS
 
