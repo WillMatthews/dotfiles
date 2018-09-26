@@ -98,3 +98,11 @@ export PATH="$PATH:/home/linuxbrew/.linuxbrew/bin"
 alias cd..='cd ..'
 alias gt='cd $(dirname `fzf`)'
 alias listbig='du -BM | sort -n -r | head -n'
+alias rm=trash
+eval $(thefuck --alias)
+
+
+# added by Miniconda3 installer
+export PATH="/home/will/miniconda3/bin:$PATH"
+
+export LC_ALL=C

@@ -70,6 +70,7 @@ Plugin 'Konfekt/FastFold'
 Plugin 'vim-scripts/indentpython.vim'
 
 """""" advanced
+Plugin 'iamcco/mathjax-support-for-mkdp'  
 Plugin 'iamcco/markdown-preview.vim'
 Plugin 'Raimondi/delimitMate'
 
@@ -176,6 +177,8 @@ let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 
+let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 " Folding Options
 let g:SimpylFold_docstring_preview = 1
@@ -227,6 +230,9 @@ set mouse=a
 filetype indent on  " automatic indentation as you type.
 set autoread        " read changes to file that happen on disk
 set gcr=a:blinkon0  " disable cursor blink
+
+" redraw on focus gain
+au FocusGained * :redraw!
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " language dependant indent settings

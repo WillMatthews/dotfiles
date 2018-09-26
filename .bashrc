@@ -132,3 +132,7 @@ fi
 
 
 
+
+# added by Miniconda3 installer
+export PATH="/home/will/miniconda3/bin:$PATH"
+
