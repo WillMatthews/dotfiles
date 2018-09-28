@@ -60,6 +60,11 @@ COMPLETION_WAITING_DOTS="true"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
   git
+  command-not-found
+  python
+  pep8
+  scala
+  web-search
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -93,16 +98,29 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-#Add linuxbrew to path
+# Add linuxbrew to path
 export PATH="$PATH:/home/linuxbrew/.linuxbrew/bin"
+
+# save time on typos
 alias cd..='cd ..'
+
+# fuzzy find change directory, requires `fzf`
 alias gt='cd $(dirname `fzf`)'
+
+# lists the largest n files in my directory
 alias listbig='du -BM | sort -n -r | head -n'
+
+# I'm not the brightest guy around, and this is an awful hack, but I prefer to send things to the trash rather than remove completely
 alias rm=trash
+
+# setup for thefuck
 eval $(thefuck --alias)
 
 
 # added by Miniconda3 installer
 export PATH="/home/will/miniconda3/bin:$PATH"
 
+# locale setting
 export LC_ALL=C
+
+
