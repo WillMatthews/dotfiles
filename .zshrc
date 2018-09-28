@@ -114,7 +114,7 @@ alias listbig='du -BM | sort -n -r | head -n'
 alias rm=trash
 
 # crude hacky pip autoupdate (list outdated modules, use first col, cut off first two lines, pass to pip)
-alias pipupdate=pip list --outdated | cut -d' ' -f1 | sed -e '1,2d' | xargs pip install --upgrade
+alias pipupdate="pip list --outdated | cut -d' ' -f1 | sed -e '1,2d' | xargs pip install --upgrade"
 
 # setup for thefuck
 eval $(thefuck --alias)
