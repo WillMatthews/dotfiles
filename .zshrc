@@ -113,9 +113,11 @@ alias listbig='du -BM | sort -n -r | head -n'
 # I'm not the brightest guy around, and this is an awful hack, but I prefer to send things to the trash rather than remove completely
 alias rm=trash
 
+# crude hacky pip autoupdate (list outdated modules, use first col, cut off first two lines, pass to pip)
+alias pipupdate=pip list --outdated | cut -d' ' -f1 | sed -e '1,2d' | xargs pip install --upgrade
+
 # setup for thefuck
 eval $(thefuck --alias)
-
 
 # added by Miniconda3 installer
 export PATH="/home/will/miniconda3/bin:$PATH"
