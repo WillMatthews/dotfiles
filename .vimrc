@@ -121,12 +121,14 @@ au BufRead,BufNewFile *.py,*.pyw,*.c,*.h match BadWhitespace /\s\+$/
 syntax enable
 
 " colorscheme
-colorscheme badwolf
+"colorscheme badwolf
+set background=dark
+colorscheme solarized
 
 " badwolf settings
-let g:badwolf_darkgutter = 1
-"let g:badwolf_tabline = 3
-let g:badwolf_css_props_highlight = 1
+"let g:badwolf_darkgutter = 1
+""let g:badwolf_tabline = 3
+"let g:badwolf_css_props_highlight = 1
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 " lightline settings
