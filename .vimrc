@@ -190,6 +190,7 @@ let g:SimpylFold_docstring_preview = 1
 
 " default encoding option
 set encoding=utf-8
+set fileencoding=utf-8
 
 " create new splits below and to the right
 set splitbelow

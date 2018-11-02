@@ -69,6 +69,7 @@ plugins=(
   pep8
   scala
   web-search
+  zsh-autosuggestions
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -96,8 +97,8 @@ export SSH_KEY_PATH="~/.ssh/rsa_id"
 # For a full list of active aliases, run `alias`.
 #
 # Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
+alias zshconfig="mate ~/.zshrc"
+alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # Add linuxbrew to path
 export PATH="$PATH:/home/linuxbrew/.linuxbrew/bin"
@@ -123,7 +124,9 @@ eval $(thefuck --alias)
 # added by Miniconda3 installer
 export PATH="/home/will/miniconda3/bin:$PATH"
 
+# alias for starting tmux in utf8
+alias tmux='tmux -u'
+
 # locale setting
-#export LANG=en_GB.UTF-8
-export LC_ALL=C
+export LANG=en_GB.UTF-8
 
