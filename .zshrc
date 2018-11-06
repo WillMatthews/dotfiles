@@ -95,8 +95,8 @@ export SSH_KEY_PATH="~/.ssh/rsa_id"
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
 # For a full list of active aliases, run `alias`.
-#
-# Example aliases
+
+# go to zsh config and oh my zsh easily
 alias zshconfig="mate ~/.zshrc"
 alias ohmyzsh="mate ~/.oh-my-zsh"
 
@@ -105,6 +105,9 @@ export PATH="$PATH:/home/linuxbrew/.linuxbrew/bin"
 
 # save time on typos
 alias cd..='cd ..'
+
+# make matlab start the way I want to in terminal
+alias tmatlab='matlab -nodesktop -nosplash'
 
 # fuzzy find change directory, requires `fzf`
 alias gt='cd $(dirname `fzf`)'

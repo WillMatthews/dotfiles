@@ -1,16 +1,14 @@
 " 
 " William Matthews' .vimrc file
 " 
-" Edited 28 Jul 2018
+" Edited 4 Nov 2018
 " 
 " Created on William-Dell (inspiron)
 " 
 " todos:
 "   add LaTeX plugins
 "   highlighting for other languages (custom greek letters etc)
-"   make git integration with NERDTree work!
 "   fix the broken python highlighter
-"   fix the broken YouCompleteMe
 "
 " useful commands:
 " gt/gT change tab
@@ -21,48 +19,33 @@
 " crtl-N toggle NERDTree
 " 
 """"""""""""""""BEGIN VUNDLE""""""""""""""""
-set nocompatible              " be iMproved, required
-filetype off                  " required
+set nocompatible
+filetype off
 
-" set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
-" alternatively, pass a path where Vundle should install plugins
-" call vundle#begin('~/some/path/here')
 
-" let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 
-"""""""""""""""""""""""""""""""""" BEGIN VUNDLE PACKS
 """""" colorschemes
 Plugin 'sjl/badwolf'
 Plugin 'altercation/vim-colors-solarized'
 
 """""" visual modes & UI enhancement
-Plugin 'junegunn/goyo.vim'
 Plugin 'itchyny/lightline.vim'
-Plugin 'nathanaelkane/vim-indent-guides'
-"Plugin 'Valloric/YouCompleteMe'
+Plugin 'nathanaelkane/vim-indent-guides' "check if needed
 " NERDTree
 Plugin 'scrooloose/nerdtree'
 " GIT Plugin for NERDTree is not working!
 Plugin 'Xuyuanp/nerdtree-git-plugin'
 
-" suntax checking
-Plugin 'vim-syntastic/syntastic'
-
-"""""" file navigation
-Plugin 'ctrlpvim/ctrlp.vim'
-
-"""""" functional command
+"""""" functional commands
 " use gc to comment out a block visually highlighted
 Plugin 'tomtom/tcomment_vim'
 " use :WordCount to get number of words 
 Plugin 'ChesleyTan/wordCount.vim'
 " automatically align things
-Plugin 'godlygeek/tabular'
-" brackets, etc manipulation
-Plugin 'tpope/vim-surround'
+Plugin 'godlygeek/tabular'  "check if needed
 " Improve Folding
 Plugin 'tmhedberg/SimpylFold'
 Plugin 'Konfekt/FastFold'
@@ -72,23 +55,15 @@ Plugin 'vim-scripts/indentpython.vim'
 """""" advanced
 Plugin 'iamcco/mathjax-support-for-mkdp'  
 Plugin 'iamcco/markdown-preview.vim'
-Plugin 'Raimondi/delimitMate'
+"Plugin 'Raimondi/delimitMate'
 
 """""" GIT integration
-Plugin 'tpope/vim-fugitive'
 Plugin 'airblade/vim-gitgutter'
-
-"""""""""""""""""""""""""""""""""" END VUNDLE PACKS
 
 call vundle#end()            " required
 filetype plugin indent on    " required
 
 """"""""""""""""END VUNDLE""""""""""""""""
-""""""""""""""""""""""""""""""""""""""""""
-"
-"  \/      BEGIN MAIN SECTION      \/
-"
-""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Setup for persistant undo
 
 " Put plugins and dictionaries in this dir
@@ -105,7 +80,7 @@ if has('persistent_undo')
     set undofile
 endif
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
 " bad whitespace flagger
 
 "define bad white space highlight group
@@ -121,16 +96,25 @@ au BufRead,BufNewFile *.py,*.pyw,*.c,*.h match BadWhitespace /\s\+$/
 syntax enable
 
 " colorscheme
-"colorscheme badwolf
+colorscheme badwolf
 set background=dark
-colorscheme solarized
+"colorscheme solarized
 
 " badwolf settings
 "let g:badwolf_darkgutter = 1
 ""let g:badwolf_tabline = 3
 "let g:badwolf_css_props_highlight = 1
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" line at column 80
+if exists('+colorcolumn')
+  set colorcolumn=80
+else
+  au BufWinEnter * let w:m2=matchadd('ErrorMsg', '\%>80v.\+', -1)
+endif
+
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
 " lightline settings
 set laststatus=2
 set noshowmode
@@ -143,8 +127,7 @@ let g:lightline = {
       \ },
       \ 'component_function': {
       \   'gitbranch': 'fugitive#head',
-      \   'wordcount':'MyWordCount',
-      \   'time': 'MyTime'
+      \   'wordcount':'MyWordCount'
       \ },
       \ }
 
@@ -167,19 +150,6 @@ let g:indent_guides_enable_on_vim_startup = 1
 " YouCompleteMe settings
 let g:ycm_autoclose_preview_window_after_completion=1
 map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Syntastic settings
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-
-let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 " Folding Options
@@ -279,13 +249,6 @@ function! MyWordCount()
     else
         return wordCount#WordCount()
     endif
-endfunction
-
-" get the current time (for status bar etc)
-function! MyTime()
-    let time = strftime('%a %e %b%m %R %z')
-    return time
-    " fix this! time is broken
 endfunction
 
 " align for tabularise
