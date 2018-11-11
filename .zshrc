@@ -14,28 +14,12 @@ ZSH_THEME="gianu"
 # muse
 # sunrise
 
-# Set list of themes to load
-# Setting this variable when ZSH_THEME=random
-# cause zsh load theme from this variable instead of
-# looking in ~/.oh-my-zsh/themes/
-# An empty array have no effect
-# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
-
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
 
 # Uncomment the following line to use hyphen-insensitive completion. Case
 # sensitive completion must be off. _ and - will be interchangeable.
-# HYPHEN_INSENSITIVE="true"
-
-# Uncomment the following line to disable bi-weekly auto-update checks.
-# DISABLE_AUTO_UPDATE="true"
-
-# Uncomment the following line to change how often to auto-update (in days).
-# export UPDATE_ZSH_DAYS=13
-
-# Uncomment the following line to disable colors in ls.
-# DISABLE_LS_COLORS="true"
+HYPHEN_INSENSITIVE="true"
 
 # Uncomment the following line to disable auto-setting terminal title.
 # DISABLE_AUTO_TITLE="true"
@@ -50,14 +34,6 @@ COMPLETION_WAITING_DOTS="true"
 # under VCS as dirty. This makes repository status check for large repositories
 # much, much faster.
 # DISABLE_UNTRACKED_FILES_DIRTY="true"
-
-# Uncomment the following line if you want to change the command execution time
-# stamp shown in the history command output.
-# The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
-# HIST_STAMPS="mm/dd/yyyy"
-
-# Would you like to use another custom folder than $ZSH/custom?
-# ZSH_CUSTOM=/path/to/new-custom-folder
 
 # PLUGINS
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
@@ -91,11 +67,6 @@ fi
 # ssh
 export SSH_KEY_PATH="~/.ssh/rsa_id"
 
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
-# For a full list of active aliases, run `alias`.
-
 # go to zsh config and oh my zsh easily
 alias zshconfig="mate ~/.zshrc"
 alias ohmyzsh="mate ~/.oh-my-zsh"
@@ -103,9 +74,26 @@ alias ohmyzsh="mate ~/.oh-my-zsh"
 # Add linuxbrew to path
 export PATH="$PATH:/home/linuxbrew/.linuxbrew/bin"
 
+# Miniconda3
+export PATH="/home/will/miniconda3/bin:$PATH"
+
+# setup for thefuck
+eval $(thefuck --alias)
+
 # save time on typos
 alias cd..='cd ..'
+alias vi='vim'
 
+# I'm not the brightest guy around, and this is an awful hack, but I prefer to send things to the trash rather than remove completely
+alias rm=trash
+
+# alias for starting tmux in utf8
+alias tmux='tmux -u'
+
+# fast open
+alias op='xdg-open'
+
+######### scripts
 # make matlab start the way I want to in terminal
 alias tmatlab='matlab -nodesktop -nosplash'
 
@@ -115,21 +103,54 @@ alias gt='cd $(dirname `fzf`)'
 # lists the largest n files in my directory
 alias listbig='du -BM | sort -n -r | head -n'
 
-# I'm not the brightest guy around, and this is an awful hack, but I prefer to send things to the trash rather than remove completely
-alias rm=trash
+# get battery percentage
+alias batt='upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep -E "state|to\ full|percentage"'
 
 # crude hacky pip autoupdate (list outdated modules, use first col, cut off first two lines, pass to pip)
 alias pipupdate="pip list --outdated | cut -d' ' -f1 | sed -e '1,2d' | xargs pip install --upgrade"
 
-# setup for thefuck
-eval $(thefuck --alias)
+# sick clock bro
+alias clock='tty-clock -s -B -c -C 3 -d 0.1'
 
-# added by Miniconda3 installer
-export PATH="/home/will/miniconda3/bin:$PATH"
+# some fun stuff to say I'm in the cafe
+alias cafe='hexdump -C /dev/urandom|grep "ca fe"'
 
-# alias for starting tmux in utf8
-alias tmux='tmux -u'
+######## generic
+
+
 
 # locale setting
 export LANG=en_GB.UTF-8
+
+
+
+######## functions
+
+up (){
+ for i in $(seq ${1: -1});do
+   cd ../
+ done
+}
+
+## the 'I hate tar' function
+extract () {
+  if [ -f $1 ] ; then
+      case $1 in
+          *.tar.bz2)   tar xvjf $1    ;;
+          *.tar.gz)    tar xvzf $1    ;;
+          *.bz2)       bunzip2 $1     ;;
+          *.rar)       rar x $1       ;;
+          *.gz)        gunzip $1      ;;
+          *.tar)       tar xvf $1     ;;
+          *.tbz2)      tar xvjf $1    ;;
+          *.tgz)       tar xvzf $1    ;;
+          *.zip)       unzip $1       ;;
+          *.Z)         uncompress $1  ;;
+          *.7z)        7z x $1        ;;
+          *)           echo "don't know how to extract '$1'..." ;;
+      esac
+  else
+      echo "'$1' is not a valid file!"
+  fi
+}
 
