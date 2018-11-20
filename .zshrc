@@ -85,7 +85,7 @@ alias cd..='cd ..'
 alias vi='vim'
 
 # I'm not the brightest guy around, and this is an awful hack, but I prefer to send things to the trash rather than remove completely
-alias rm=trash
+#alias rm=trash
 
 # alias for starting tmux in utf8
 alias tmux='tmux -u'
@@ -93,7 +93,16 @@ alias tmux='tmux -u'
 # fast open
 alias op='xdg-open'
 
+# alarm clock
+alias alarm='alarm-clock-applet'
+
+alias pyth='python3.6'
+
 ######### scripts
+# blank the screen
+alias blank='sleep 1; xset dpms force off'
+alias unblank='xset -display ${DISPLAY} dpms force on'
+
 # make matlab start the way I want to in terminal
 alias tmatlab='matlab -nodesktop -nosplash'
 
@@ -114,6 +123,10 @@ alias clock='tty-clock -s -B -c -C 3 -d 0.1'
 
 # some fun stuff to say I'm in the cafe
 alias cafe='hexdump -C /dev/urandom|grep "ca fe"'
+
+# local ip obtain
+alias lip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'"
+
 
 ######## generic
 
