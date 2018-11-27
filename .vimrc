@@ -29,7 +29,7 @@ Plugin 'VundleVim/Vundle.vim'
 
 """""" colorschemes
 Plugin 'sjl/badwolf'
-Plugin 'altercation/vim-colors-solarized'
+"Plugin 'altercation/vim-colors-solarized'
 
 """""" visual modes & UI enhancement
 Plugin 'itchyny/lightline.vim'
@@ -52,9 +52,13 @@ Plugin 'Konfekt/FastFold'
 " Improve indenting for Python
 Plugin 'vim-scripts/indentpython.vim'
 
+"""""" csv file prettify
+"Plugin 'chrisbra/csv.vim'
+
 """""" advanced
-Plugin 'iamcco/mathjax-support-for-mkdp'  
-Plugin 'iamcco/markdown-preview.vim'
+"Plugin 'iamcco/mathjax-support-for-mkdp'  
+"Plugin 'iamcco/markdown-preview.vim'
+
 "Plugin 'Raimondi/delimitMate'
 
 """""" GIT integration
@@ -111,7 +115,6 @@ if exists('+colorcolumn')
 else
   au BufWinEnter * let w:m2=matchadd('ErrorMsg', '\%>80v.\+', -1)
 endif
-
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""

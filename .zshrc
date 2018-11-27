@@ -52,6 +52,7 @@ source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
+export PATH="$PATH:/usr/local/MATLAB/R2018b/bin"
 # export MANPATH="/usr/local/man:$MANPATH"
 
 # Preferred editor for local and remote sessions
@@ -71,12 +72,6 @@ export SSH_KEY_PATH="~/.ssh/rsa_id"
 alias zshconfig="mate ~/.zshrc"
 alias ohmyzsh="mate ~/.oh-my-zsh"
 
-# Add linuxbrew to path
-export PATH="$PATH:/home/linuxbrew/.linuxbrew/bin"
-
-# Miniconda3
-export PATH="/home/will/miniconda3/bin:$PATH"
-
 # setup for thefuck
 eval $(thefuck --alias)
 
@@ -95,8 +90,6 @@ alias op='xdg-open'
 
 # alarm clock
 alias alarm='alarm-clock-applet'
-
-alias pyth='python3.6'
 
 ######### scripts
 # blank the screen
@@ -167,3 +160,5 @@ extract () {
   fi
 }
 
+
+#test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"   
