@@ -1,12 +1,8 @@
-# ssh
-export SSH_KEY_PATH="~/.ssh/rsa_id"
+##### ALIASES
 
 # save time on typos
 alias cd..='cd ..'
 alias vi='vim'
-
-# I'm not the brightest guy around, and this is an awful hack, but I prefer to send things to the trash rather than remove completely
-#alias rm=trash
 
 # alias for starting tmux in utf8
 alias tmux='tmux -u'
@@ -17,7 +13,6 @@ alias op='xdg-open'
 # alarm clock
 alias alarm='alarm-clock-applet'
 
-######### scripts
 # blank the screen
 alias blank='sleep 1; xset dpms force off'
 alias unblank='xset -display ${DISPLAY} dpms force on'
@@ -47,8 +42,9 @@ alias cafe='hexdump -C /dev/urandom|grep "ca fe"'
 alias lip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'"
 
 
-######## functions
+##### FUNCTIONS
 
+## the 'I hate typing' function
 up (){
  for i in $(seq ${1: -1});do
    cd ../
@@ -77,6 +73,7 @@ extract () {
   fi
 }
 
+## the 'I'm too lazy to remember compile settings' function
 gencompile () {
   name=${1%.*}
   if [ -f $1 ] ; then
@@ -91,4 +88,3 @@ gencompile () {
       echo "'$1' is not a valid file!"
   fi
 }
-
