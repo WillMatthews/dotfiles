@@ -161,6 +161,9 @@ let g:SimpylFold_docstring_preview = 1
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 " GENERAL VIM SETTINGS
 
+" make shell interactive
+"set shellcmdflag=-ic
+
 " default encoding option
 set encoding=utf-8
 set fileencoding=utf-8
@@ -233,7 +236,7 @@ cmap w!! w !sudo tee > /dev/null %
 " File Interaction Commands
 " map <F1> 
 map <F2> :w!<CR>:!aspell -t check %<CR>:e! %<CR>
-map <F3> :w!<CR>:!pdflatex %<CR>:e! %<CR>
+map <F3> :w!<CR>:!gencompile %<CR>:e! %<CR>
 map <F4> :w!<CR>:!xdg-open $(basename % .tex <Bar> awk '{print $1".pdf"}') <CR>:e! %<CR>
 
 " tabularise bar remap for align - calls align when bar is pressed
