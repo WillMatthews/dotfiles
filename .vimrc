@@ -1,14 +1,8 @@
 " 
 " William Matthews' .vimrc file
 " 
-" Edited 4 Nov 2018
-" 
-" Created on William-Dell (inspiron)
-" 
 " todos:
-"   add LaTeX plugins
 "   highlighting for other languages (custom greek letters etc)
-"   fix the broken python highlighter
 "
 " useful commands:
 " gt/gT change tab

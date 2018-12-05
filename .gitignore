@@ -2,6 +2,6 @@
 !.zshenv
 !.vimrc
 !.zshrc
-!.bashrc
+#!.bashrc
 !.gitignore
 !.tmux.conf
