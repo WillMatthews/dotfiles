@@ -70,8 +70,8 @@ alias zshconfig="mate ~/.zshrc"
 alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # Add bash aliases.
-if [ -f ~/.shell_aliases ]; then
-   source ~/.shell_aliases
+if [ -f ~/.zshenv ]; then
+   source ~/.zshenv
 fi
 
 # setup for thefuck
