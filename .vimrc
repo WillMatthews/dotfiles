@@ -190,6 +190,8 @@ set showcmd
 " Various settings to make tabs better"
 set expandtab
 set softtabstop=4
+autocmd FileType html setlocal ts=2 sts=2 sw=2
+
 
 " Search customisation
 set hlsearch
