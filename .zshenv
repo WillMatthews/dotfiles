@@ -74,7 +74,7 @@ extract () {
 }
 
 ## the 'I'm too lazy to remember compile settings' function
-gencompile () {
+smartcompile () {
   name=${1%.*}
   if [ -f $1 ] ; then
       case $1 in
@@ -83,6 +83,39 @@ gencompile () {
           *.c)         gcc  $1 -o $name    ;;
           *.cpp)       g++  $1 -o $name    ;;
           *)           echo "don't know how to compile '$1'..." ;;
+      esac
+  else
+      echo "'$1' is not a valid file!"
+  fi
+}
+
+
+### the 'make vim open things nicely' function
+smartopen () {
+  name=${1%.*}
+  if [ -f $1 ] ; then
+      case $1 in
+          *.tex)     xdg-open "$name.pdf" ;;
+          *)         xdg-open $1          ;;
+      esac
+  else
+      echo "'$1' is not a valid file!"
+  fi
+}
+
+
+
+# the 'run programs in a way that keeps me sane' function
+smartrun () {
+  name=${1%.*}
+  if [ -f $1 ] ; then
+      case $1 in
+          *.tex)     echo ".tex files can't be run" ;;
+          *.pdf)     echo ".pdf files can't be run" ;;
+          *.txt)     echo ".txt files can't be run" ;;
+          *.txt)     echo ".txt files can't be run" ;;
+          *.py)      chmod +x $1; ./$1 ;;
+          *)         xdg-open $1          ;;
       esac
   else
       echo "'$1' is not a valid file!"

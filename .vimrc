@@ -230,10 +230,17 @@ nnoremap ; :
 cmap w!! w !sudo tee > /dev/null %
 
 " File Interaction Commands
-" map <F1> 
-map <F2> :w!<CR>:!aspell -t check %<CR>:e! %<CR>
-map <F3> :w!<CR>:!gencompile %<CR>:e! %<CR>
-map <F4> :w!<CR>:!xdg-open $(basename % .tex <Bar> awk '{print $1".pdf"}') <CR>:e! %<CR>
+
+" spellcheck
+map <F1> :w!<CR>:!aspell -t check %<CR>:e! %<CR>
+" run file
+map <F2> :w!<CR>:!smartrun %<CR>
+" compile file
+map <F3> :w!<CR>:!smartcompile %<CR>
+" open file
+map <F4> :w!<CR>:!smartopen %<CR>:e! %<CR>
+" debug compile
+map <F5> :w!<CR>:!smartcompile %
 
 " tabularise bar remap for align - calls align when bar is pressed
 inoremap <silent> <Bar>   <Bar><Esc>:call <SID>align()<CR>a
