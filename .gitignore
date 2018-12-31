@@ -5,3 +5,5 @@
 #!.bashrc
 !.gitignore
 !.tmux.conf
+!.scripts/
+!.scripts/*

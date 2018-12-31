@@ -44,12 +44,14 @@ alias lip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([
 
 ##### FUNCTIONS
 
+
 ## the 'I hate typing' function
 up (){
  for i in $(seq ${1: -1});do
    cd ../
  done
 }
+
 
 ## the 'I hate tar' function
 extract () {
@@ -72,6 +74,7 @@ extract () {
       echo "'$1' is not a valid file!"
   fi
 }
+
 
 ## the 'I'm too lazy to remember compile settings' function
 smartcompile () {
@@ -104,7 +107,6 @@ smartopen () {
 }
 
 
-
 # the 'run programs in a way that keeps me sane' function
 smartrun () {
   name=${1%.*}
@@ -114,6 +116,7 @@ smartrun () {
           *.pdf)     echo ".pdf files can't be run" ;;
           *.txt)     echo ".txt files can't be run" ;;
           *.txt)     echo ".txt files can't be run" ;;
+          *.c)       ./$name ;;
           *.py)      chmod +x $1; ./$1 ;;
           *)         xdg-open $1          ;;
       esac
@@ -129,5 +132,4 @@ showcols () {
       printf "\x1b[38;5;${i}mcolour${i}\x1b[0m\n"
   done
 }
-
 

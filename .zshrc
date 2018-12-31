@@ -69,8 +69,9 @@
 # locale setting
     export LANG=en_GB.UTF-8
 
-# update PATH (go and MATLAB)
+# update PATH (scripts, go and MATLAB)
     export PATH="$PATH:$HOME/go/bin"
+    export PATH="$PATH:$HOME/.scripts"
     export PATH="$PATH:/usr/local/go/bin"
     export PATH="$PATH:/usr/local/MATLAB/R2018b/bin"
 
