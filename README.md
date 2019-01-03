@@ -14,4 +14,4 @@ and some scripts I use day to day
 
 ### Other useful apps I use:
 * entr
-
+* [todolist](https://github.com/gammons/todolist)

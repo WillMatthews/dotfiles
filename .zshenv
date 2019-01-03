@@ -3,6 +3,8 @@
 # save time on typos
 alias cd..='cd ..'
 alias vi='vim'
+alias cim='vim'
+alias bim='vim'
 
 # alias for starting tmux in utf8
 alias tmux='tmux -u'
@@ -41,6 +43,11 @@ alias cafe='hexdump -C /dev/urandom|grep "ca fe"'
 # local ip obtain
 alias lip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'"
 
+# get all ip data
+alias lipa="curl https://ipapi.co/json"
+
+# todolist
+alias todo="todolist"
 
 ##### FUNCTIONS
 

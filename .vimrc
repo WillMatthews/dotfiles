@@ -28,6 +28,7 @@ Plugin 'sjl/badwolf'
 """""" visual modes & UI enhancement
 Plugin 'itchyny/lightline.vim'
 Plugin 'nathanaelkane/vim-indent-guides' "check if needed
+
 " NERDTree
 Plugin 'scrooloose/nerdtree'
 " GIT Plugin for NERDTree is not working!
