@@ -49,6 +49,10 @@ alias lipa="curl https://ipapi.co/json"
 # todolist
 alias todo="todolist"
 
+# color cat
+alias ccat="highlight --out-format=ansi" # Color cat - print file with syntax highlighting.
+
+
 ##### FUNCTIONS
 
 
@@ -89,6 +93,7 @@ smartcompile () {
   if [ -f $1 ] ; then
       case $1 in
           *.tex)       pdflatex $1         ;;
+          *.ms)        groff -ms $1 -T pdf > $name.pdf  ;;
           *.hs)        ghc -o $name $1     ;;
           *.c)         gcc  $1 -o $name    ;;
           *.cpp)       g++  $1 -o $name    ;;
@@ -106,6 +111,7 @@ smartopen () {
   if [ -f $1 ] ; then
       case $1 in
           *.tex)     xdg-open "$name.pdf" ;;
+          *.ms)      xdg-open "$name.pdf" ;;
           *)         xdg-open $1          ;;
       esac
   else
@@ -138,5 +144,11 @@ showcols () {
   for i in {0..255}; do
       printf "\x1b[38;5;${i}mcolour${i}\x1b[0m\n"
   done
+}
+
+
+# sci hub download
+shdl() {
+  curl -O $(curl -s http://sci-hub.tw/"$@" | grep location.href | grep -o http.*pdf);
 }
 
