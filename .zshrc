@@ -32,7 +32,6 @@
       command-not-found
       python
       pep8
-      scala
       web-search
       zsh-autosuggestions
     )
@@ -71,10 +70,5 @@
 
 # update PATH (scripts, go and MATLAB)
     export PATH="$PATH:$HOME/go/bin"
-    export PATH="$PATH:$HOME/.scripts"
     export PATH="$PATH:/usr/local/go/bin"
     export PATH="$PATH:/usr/local/MATLAB/R2018b/bin"
-
-    # export MANPATH="/usr/local/man:$MANPATH"
-
-    #test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"   

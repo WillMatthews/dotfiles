@@ -3,7 +3,8 @@
 !.zshenv
 !.vimrc
 !.zshrc
-#!.bashrc
+!.bashrc
+!.xbashrc
 !.profile
 !.gitignore
 !.tmux.conf

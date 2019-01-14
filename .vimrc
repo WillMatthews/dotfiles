@@ -47,14 +47,6 @@ Plugin 'Konfekt/FastFold'
 " Improve indenting for Python
 Plugin 'vim-scripts/indentpython.vim'
 
-"""""" csv file prettify
-"Plugin 'chrisbra/csv.vim'
-
-"""""" advanced
-"Plugin 'iamcco/mathjax-support-for-mkdp'  
-"Plugin 'iamcco/markdown-preview.vim'
-
-"Plugin 'Raimondi/delimitMate'
 
 """""" GIT integration
 Plugin 'airblade/vim-gitgutter'
@@ -101,7 +93,7 @@ set background=dark
 
 " badwolf settings
 "let g:badwolf_darkgutter = 1
-""let g:badwolf_tabline = 3
+"let g:badwolf_tabline = 3
 "let g:badwolf_css_props_highlight = 1
 
 " line at column 80
@@ -129,13 +121,9 @@ let g:lightline = {
       \ },
       \ }
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-" fzf fuzzy finder (rather than ctrlp)
-" set rtp+=/home/linuxbrew/.linuxbrew/opt/fzf
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 "NERDTREE settings
-"autocmd vimenter * NERDTree
 let NERDTreeIgnore=['\.pyc$', '\~$'] "ignore files in NERDTree
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -145,19 +133,11 @@ let g:indent_guides_color_change_percent = 3
 let g:indent_guides_enable_on_vim_startup = 1
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
-" YouCompleteMe settings
-let g:ycm_autoclose_preview_window_after_completion=1
-map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Folding Options
 let g:SimpylFold_docstring_preview = 1
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 " GENERAL VIM SETTINGS
-
-" make shell interactive
-"set shellcmdflag=-ic
 
 " default encoding option
 set encoding=utf-8
@@ -191,8 +171,8 @@ set showcmd
 " Various settings to make tabs better"
 set expandtab
 set softtabstop=4
-autocmd FileType html setlocal ts=2 sts=2 sw=2
-
+autocmd FileType html setlocal ts=2 sts=2 sw=2 expandtab
+autocmd FileType php setlocal ts=2 sts=2 sw=2 expandtab
 
 " Search customisation
 set hlsearch
@@ -202,7 +182,6 @@ set smartcase
 
 " Enable mouse usage"
 set mouse=a
-
 filetype indent on  " automatic indentation as you type.
 set autoread        " read changes to file that happen on disk
 set gcr=a:blinkon0  " disable cursor blink
@@ -210,18 +189,6 @@ set gcr=a:blinkon0  " disable cursor blink
 " redraw on focus gain
 au FocusGained * :redraw!
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" language dependant indent settings
-au BufNewFile,BufRead *.js,*.html,*.css,*.hs
-    \ set tabstop=2
-    \| set softtabstop=2
-    \| set shiftwidth=2
-
-au BufNewFile,BufRead *.py,*.tex,*.txt
-    \ set tabstop=4
-    \| set softtabstop=4
-    \| set shiftwidth=4
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " REMAPPINGS
 
 " Makes the colon map to the semicolon - useful when entering commands"
