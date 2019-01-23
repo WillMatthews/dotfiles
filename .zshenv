@@ -1,3 +1,16 @@
+
+#                  __                   
+#      ____  _____/ /_  ___  ____ _   __
+#     /_  / / ___/ __ \/ _ \/ __ \ | / /
+#    _ / /_(__  ) / / /  __/ / / / |/ / 
+#   (_)___/____/_/ /_/\___/_/ /_/|___/  
+#
+
+
+
+
+
+
 ##### ALIASES
 
 # save time on typos
@@ -54,6 +67,7 @@ alias ccat="highlight --out-format=ansi" # Color cat - print file with syntax hi
 
 
 ##### FUNCTIONS
+#this should probably be in 'scripts'?
 
 
 ## the 'I hate typing' function
@@ -87,9 +101,11 @@ extract () {
 }
 
 
-## the 'I'm too lazy to remember compile settings' function
+### the 'I'm too lazy to remember compile settings' function
 smartcompile () {
   name=${1%.*}
+  top=$(head -n 1 $1)
+
   if [ -f $1 ] ; then
       case $1 in
           *.tex)       pdflatex $1         ;;
@@ -120,7 +136,7 @@ smartopen () {
 }
 
 
-# the 'run programs in a way that keeps me sane' function
+### the 'run programs in a way that keeps me sane' function
 smartrun () {
   name=${1%.*}
   if [ -f $1 ] ; then
@@ -139,7 +155,7 @@ smartrun () {
 }
 
 
-# show all colours
+### show all colours
 showcols () {
   for i in {0..255}; do
       printf "\x1b[38;5;${i}mcolour${i}\x1b[0m\n"
@@ -147,7 +163,7 @@ showcols () {
 }
 
 
-# sci hub download
+### sci hub download
 shdl() {
   curl -O $(curl -s http://sci-hub.tw/"$@" | grep location.href | grep -o http.*pdf);
 }
