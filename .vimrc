@@ -57,7 +57,7 @@ Plugin 'godlygeek/tabular'  "check if needed
 Plugin 'tmhedberg/SimpylFold'
 Plugin 'Konfekt/FastFold'
 " Improve indenting for Python
-Plugin 'vim-scripts/indentpython.vim'
+"Plugin 'vim-scripts/indentpython.vim'
 
 
 """""" GIT integration
@@ -97,6 +97,12 @@ au BufRead,BufNewFile *.py,*.pyw,*.c,*.h match BadWhitespace /\s\+$/
 
 " highlight syntax
 syntax enable
+
+" gitgutter highlighting
+
+highlight GitGutterAdd    guifg=#009900 guibg=#000000 ctermfg=2 " ctermb=0
+highlight GitGutterChange guifg=#bbbb00 guibg=#000000 ctermfg=3 " ctermb=0
+highlight GitGutterDelete guifg=#ff2222 guibg=#000000 ctermfg=1 " ctermb=0
 
 " colorscheme
 colorscheme badwolf
@@ -181,10 +187,11 @@ set wildmenu
 set showcmd
 
 " Various settings to make tabs better"
+set smartindent
+set shiftwidth=4
 set expandtab
 set tabstop=4
 set softtabstop=4
-set shiftwidth=4
 autocmd FileType html setlocal ts=2 sts=2 sw=2 expandtab
 autocmd FileType php setlocal ts=2 sts=2 sw=2 expandtab
 
