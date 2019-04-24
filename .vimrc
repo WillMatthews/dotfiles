@@ -230,6 +230,8 @@ map <F3> :w!<CR>:!smartcompile %<CR>
 map <F4> :w!<CR>:!smartopen %<CR>:e! %<CR>
 " debug compile
 map <F5> :w!<CR>:!smartcompile %
+" TEMPORARY for thesis work
+map <F6> :w!<CR>:!smartcompile ./thesis.tex<CR>
 
 " tabularise bar remap for align - calls align when bar is pressed
 inoremap <silent> <Bar>   <Bar><Esc>:call <SID>align()<CR>a

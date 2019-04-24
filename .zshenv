@@ -19,6 +19,8 @@ alias vi='vim'
 alias cim='vim'
 alias bim='vim'
 
+alias pia="/opt/pia/run.sh"
+
 # alias for starting tmux in utf8
 alias tmux='tmux -u'
 
@@ -108,7 +110,7 @@ smartcompile () {
 
   if [ -f $1 ] ; then
       case $1 in
-          *.tex)       pdflatex $1         ;;
+          *.tex)       pdflatex --shell-escape $1         ;;
           *.ms)        groff -ms $1 -T pdf > $name.pdf  ;;
           *.hs)        ghc -o $name $1     ;;
           *.c)         gcc  $1 -o $name    ;;
