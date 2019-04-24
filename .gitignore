@@ -11,3 +11,4 @@
 !.scripts/
 !.scripts/*
 !.oh-my-zsh/*
+!.vim/*
