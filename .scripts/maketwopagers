@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+filetype=".pdf"
+
+if [ ! -d "./original/" ]; then
+    echo "Directory "original" not found! Creating..."
+    mkdir -p ./original/
+fi
+
+if [ ! -d "./original/" ]; then
+    echo "Directory "condensed" not found! Creating..."
+    mkdir -p ./condensed/
+fi
+
+files=`find ./original/`
+
+for file in $files
+do
+    if [[ $file = *${filetype} ]]; then
+        echo "Condensing $file" 
+        # put two pages per page from the PDF
+        pdfnup -o ./condensed/$(basename $file) $file
+    fi  
+done
+
+zip condensed_papers.zip ./condensed/*
+zip original_papers.zip ./original/*

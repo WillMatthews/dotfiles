@@ -124,9 +124,11 @@ endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " lightline settings
+"set statusline=%<%f\ %h%m%r%{kite#statusline()}%=%-14.(%l,%c%V%)\ %P
 set laststatus=2
 set noshowmode
 
+"my default colorscheme is powerline
 let g:lightline = {
       \ 'colorscheme': 'powerline',
       \ 'active': {
@@ -155,6 +157,11 @@ let g:indent_guides_enable_on_vim_startup = 1
 let g:SimpylFold_docstring_preview = 1
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
+" KITE 
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 " GENERAL VIM SETTINGS
 
 " default encoding option
@@ -194,6 +201,7 @@ set tabstop=4
 set softtabstop=4
 autocmd FileType html setlocal ts=2 sts=2 sw=2 expandtab
 autocmd FileType php setlocal ts=2 sts=2 sw=2 expandtab
+autocmd FileType js setlocal ts=2 sts=2 sw=2 expandtab
 
 " Search customisation
 set hlsearch
@@ -243,7 +251,7 @@ map <C-n> :NERDTreeToggle<CR>
 " FUNCTIONS
 " get the file's word count (only for appropriate files)
 function! MyWordCount()
-    let _ = ['pandoc', 'text', 'md', 'markdown', 'tex']
+    let _ = ['pandoc', 'text', 'md', 'markdown', 'tex', 'lhs']
     if index(_, &filetype) == -1
         return ""
     else
