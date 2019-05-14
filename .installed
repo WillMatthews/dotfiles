@@ -1,0 +1,37 @@
+firefox
+zsh (oh my zsh)
+docker
+ghci (cabal)
+filezilla
+ttf-ancient-fonts
+ttf-unifont
+g++
+gcc
+make
+gnome-tweak-tool (if using GNOME)
+groff (of course)
+pandoc
+neofetch
+htop
+hugo
+texlive-full
+tmux
+vim
+git
+ansiweather
+manpages
+mumble
+mysql client 
+nethogs
+openssh-client
+openssh-server
+rsync?
+suckless-tools (dmenu)
+thefuck
+thunderbird
+gnupg
+tty-clock
+vlc
+whois
+youtube-dl
+zerotier
