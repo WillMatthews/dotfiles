@@ -84,7 +84,7 @@ done
 
 ### BEGIN TITLE
 # file ext
-nspaces=$((  $linesgap  -  $(echo -n ${filetypes[$i]} | wc -c)   ))
+nspaces=$((  $linesgap  -  3  ))
 outstr="Ext"
 
 # line count
