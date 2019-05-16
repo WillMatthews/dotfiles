@@ -1,4 +1,5 @@
 #!/bin/sh
+# ORIGINALLY FROM LUKE SMITH
 # Gives a dmenu prompt to search DuckDuckGo.
 # Without input, will open DuckDuckGo.com.
 # URLs will be directly handed to the browser.
