@@ -10,13 +10,17 @@ verbshort=0
 showsearch=0
 
 # Spacing UI Vars
-spacegap=7
-pctgap=20
+linesgap=7
+filegap=17
+pctgap=26
 verbgap=7
+sepchar="|"
 
 declare -a filetypes=( .py .m .vim .sh .c .cpp .ino .hs .lhs .tex .md .html .css .php .js )
-declare -a counts=()
+declare -a linecounts=()
+declare -a filecounts=()
 
+cumsumfiles=0
 for filetype in "${filetypes[@]}"
 do
     if [ $showsearch -eq 1 ]; then
@@ -26,10 +30,13 @@ do
     # clean file list
     files=$(find . 2>&1 | grep "\\$filetype$" | grep -v "denied" | grep -v "No such" | grep -v "undodir")
     
-    sum=0
+    linesum=0
+    filesum=0
     if [ ${#files} -ge 1 ];
     then
         while read -r line; do
+            cumsumfiles=$(($cumsumfiles+1))
+            filesum=$(($filesum+1))
     
             if [ -f "$line" ]; then # FILES ONLY - we dont' want directories like .vim
 
@@ -37,7 +44,7 @@ do
                 out=`wc -l "$line"`
                 out=`echo $out | cut -f1 -d ' ' `
                 if  [[ $out > 0 ]]; then
-                    sum=$(($sum+$out))
+                    linesum=$(($linesum+$out))
                 fi
 
                 ### BEGIN VERBOSE MODE CODE
@@ -47,9 +54,9 @@ do
                     outstr="$out"
                     outstr+=$(for ((i=1; i<=$nspaces; i++)); do echo -n ' '; done)
                     if [ $verbshort -eq 1 ]; then
-                        outstr+=": $(basename "$line")"
+                        outstr+="$sepchar $(basename "$line")"
                     else
-                        outstr+=": $line"
+                        outstr+="$sepchar $line"
                     fi 
                     echo "$outstr"
                 fi
@@ -58,7 +65,8 @@ do
 
         done <<< "$files"
     fi
-    counts+=( $sum )
+    linecounts+=( $linesum )
+    filecounts+=( $filesum )
 done
 
 # add a nice little gap when in verbose mode
@@ -68,41 +76,78 @@ fi
 
 # get some important variables
 xwidth=$(tput cols)
-maxcount=${counts[0]}
-cumsum=${counts[0]}
-for n in "${counts[@]}" ; do
+maxcount=${linecounts[0]}
+cumsumlines=${linecounts[0]}
+for n in "${linecounts[@]}" ; do
     ((n > maxcount)) && maxcount=$n
-    cumsum=$(($n + $cumsum))
+    cumsumlines=$(($n + $cumsumlines))
 done
+
+
+### BEGIN TITLE
+# file ext
+nspaces=$((  $linesgap  -  $(echo -n ${filetypes[$i]} | wc -c)   ))
+outstr="Ext"
+
+# line count
+if [ $nspaces -le 0 ]; then nspaces=1; fi 
+outstr+=$(for ((i=1; i<=$nspaces; i++)); do echo -n ' '; done)
+outstr+="$sepchar Lines"
+
+# file count 
+nspaces=$((  $filegap  -  ${#outstr}  ))
+if [ $nspaces -le 0 ]; then nspaces=1; fi 
+outstr+=$(for ((i=1; i<=$nspaces; i++)); do echo -n ' '; done)
+outstr+="$sepchar Files"
+
+# percentage
+pct=$( bc <<< "scale=2; 100 * ${linecounts[$i]} / $cumsumlines ")
+nspaces=$((  $pctgap  -  ${#outstr}  ))
+if [ $nspaces -le 0 ]; then nspaces=1; fi 
+outstr+=$(for ((i=1; i<=$nspaces; i++)); do echo -n ' '; done)
+outstr+="$sepchar Line Percentage"
+echo "$outstr"
+### END TITLE
 
 
 for i in ${!filetypes[*]};
 do
-    if [[ ${counts[$i]} -ne 0 ]]; then
-        nspaces=$((  $spacegap  -  $(echo -n ${filetypes[$i]} | wc -c)   ))
-        if [ $nspaces -le 0 ]; then nspaces=1; fi 
+    if [[ ${linecounts[$i]} -ne 0 ]]; then
+        # file ext
+        nspaces=$((  $linesgap  -  $(echo -n ${filetypes[$i]} | wc -c)   ))
         outstr="${filetypes[$i]}"
+
+        # line count
+        if [ $nspaces -le 0 ]; then nspaces=1; fi 
         outstr+=$(for ((i=1; i<=$nspaces; i++)); do echo -n ' '; done)
-        outstr+=": ${counts[$i]}"
-        pct=$( bc <<< "scale=2; 100 * ${counts[$i]} / $cumsum ")
+        outstr+="$sepchar ${linecounts[$i]}"
+
+        # file count 
+        nspaces=$((  $filegap  -  ${#outstr}  ))
+        if [ $nspaces -le 0 ]; then nspaces=1; fi 
+        outstr+=$(for ((i=1; i<=$nspaces; i++)); do echo -n ' '; done)
+        outstr+="$sepchar ${filecounts[$i]}"
+
+        # percentage
+        pct=$( bc <<< "scale=2; 100 * ${linecounts[$i]} / $cumsumlines ")
         nspaces=$((  $pctgap  -  ${#outstr}  ))
         if [ $nspaces -le 0 ]; then nspaces=1; fi 
         outstr+=$(for ((i=1; i<=$nspaces; i++)); do echo -n ' '; done)
-        outstr+="($pct%)"
+        outstr+="$sepchar ($pct%)"
+
         echo "$outstr"
 
         ### BEGIN BAR UI CODE
         if [ $usebars -eq 1 ];
         then
-            numbar=$(echo $(($xwidth * ${counts[$i]} / $maxcount)) | awk '{print int($1+0.5)}')
+            numbar=$(echo $(($xwidth * ${linecounts[$i]} / $maxcount)) | awk '{print int($1+0.5)}')
             bar=$(for ((i=1; i<=$numbar; i++)); do echo -n '█'; done)
             echo "$bar"
         fi
         ### END BAR UI CODE
     fi
 done
-echo -e ""
-echo "$cumsum Total Lines"
+echo -e "\n$cumsumlines Total Lines in $cumsumfiles Files"
 
 
 # Copyright (C) William Matthews 2019
