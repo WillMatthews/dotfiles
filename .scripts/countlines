@@ -106,7 +106,12 @@ nspaces=$((  $pctgap  -  ${#outstr}  ))
 if [ $nspaces -le 0 ]; then nspaces=1; fi 
 outstr+=$(for ((i=1; i<=$nspaces; i++)); do echo -n ' '; done)
 outstr+="$sepchar Line Percentage"
-echo "$outstr"
+
+nspaces=$((  $xwidth  -  ${#outstr}  ))
+if [ $nspaces -le 0 ]; then nspaces=1; fi 
+outstr+=$(for ((i=1; i<=$nspaces; i++)); do echo -n ' '; done)
+
+echo -e "\e[4m$outstr\e[0m"
 ### END TITLE
 
 
@@ -147,7 +152,7 @@ do
         ### END BAR UI CODE
     fi
 done
-echo -e "\n$cumsumlines Total Lines in $cumsumfiles Files"
+echo -e "\n\e[1m$cumsumlines Total Lines in $cumsumfiles Files"
 
 
 # Copyright (C) William Matthews 2019
