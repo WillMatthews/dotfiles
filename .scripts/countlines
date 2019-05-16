@@ -14,15 +14,14 @@ linesgap=7
 filegap=17
 pctgap=26
 verbgap=7
-sepchar="|"
+sepchar=""
 
 declare -a filetypes=( .py .m .vim .sh .c .cpp .ino .hs .lhs .tex .md .html .css .php .js )
 declare -a linecounts=()
 declare -a filecounts=()
 
 cumsumfiles=0
-for filetype in "${filetypes[@]}"
-do
+for filetype in "${filetypes[@]}"; do
     if [ $showsearch -eq 1 ]; then
         echo -e "Locating $filetype"
     fi
@@ -32,8 +31,7 @@ do
     
     linesum=0
     filesum=0
-    if [ ${#files} -ge 1 ];
-    then
+    if [ ${#files} -ge 1 ]; then
         while read -r line; do
             cumsumfiles=$(($cumsumfiles+1))
             filesum=$(($filesum+1))
@@ -78,7 +76,7 @@ fi
 xwidth=$(tput cols)
 maxcount=${linecounts[0]}
 cumsumlines=${linecounts[0]}
-for n in "${linecounts[@]}" ; do
+for n in "${linecounts[@]}"; do
     ((n > maxcount)) && maxcount=$n
     cumsumlines=$(($n + $cumsumlines))
 done
@@ -114,8 +112,7 @@ echo -e "\e[4m$outstr\e[0m"
 ### END TITLE
 
 
-for i in ${!filetypes[*]};
-do
+for i in ${!filetypes[*]}; do
     if [[ ${linecounts[$i]} -ne 0 ]]; then
         # file ext
         nspaces=$((  $linesgap  -  $(echo -n ${filetypes[$i]} | wc -c)   ))
@@ -142,10 +139,11 @@ do
         echo "$outstr"
 
         ### BEGIN BAR UI CODE
-        if [ $usebars -eq 1 ];
-        then
+        if [ $usebars -eq 1 ]; then
             numbar=$(echo $(($xwidth * ${linecounts[$i]} / $maxcount)) | awk '{print int($1+0.5)}')
+            # TODO add fractional bars - this is currently a bad hack
             bar=$(for ((i=1; i<=$numbar; i++)); do echo -n '█'; done)
+            if [ $numbar -le 0 ]; then bar="▍"; fi
             echo "$bar"
         fi
         ### END BAR UI CODE
