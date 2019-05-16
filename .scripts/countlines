@@ -101,7 +101,6 @@ outstr+=$(for ((i=1; i<=$nspaces; i++)); do echo -n ' '; done)
 outstr+="$sepchar Files"
 
 # percentage
-pct=$( bc <<< "scale=2; 100 * ${linecounts[$i]} / $cumsumlines ")
 nspaces=$((  $pctgap  -  ${#outstr}  ))
 if [ $nspaces -le 0 ]; then nspaces=1; fi 
 outstr+=$(for ((i=1; i<=$nspaces; i++)); do echo -n ' '; done)
