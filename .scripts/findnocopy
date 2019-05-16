@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# finds files (of the listed file types) that do not have a copyright symbol (C)
+
+files=`find .`
+declare -a filetypes=( .py .m .sh .c .cpp .ino .hs .tex .html .css .php .js )
+
+for filetype in "${filetypes[@]}"
+do
+    for file in $files
+    do
+        if [[ $file = *${filetype} ]]; then
+            grep -L "(C)" $file
+        fi
+    done
+done
+
+# Copyright (C) William Matthews 2018
