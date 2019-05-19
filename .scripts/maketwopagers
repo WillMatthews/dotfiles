@@ -7,7 +7,7 @@ if [ ! -d "./original/" ]; then
     mkdir -p ./original/
 fi
 
-if [ ! -d "./original/" ]; then
+if [ ! -d "./condensed/" ]; then
     echo "Directory "condensed" not found! Creating..."
     mkdir -p ./condensed/
 fi
