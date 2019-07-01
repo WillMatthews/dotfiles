@@ -1,13 +1,73 @@
 #!/usr/bin/env bash
 # provides a line count with some pretty bars if the -b option is supplied
 # verbose mode with -v
+# -p give path
 # 'show search' mode with -s
 # optargs planned - todo
+
+
+searchpath="."
 
 usebars=1
 verbose=0
 verbshort=0
 showsearch=0
+
+
+# function usage()
+# {
+#     echo "if this was a real script you would see something useful here"
+#     echo ""
+#     echo "./simple_args_parsing.sh"
+#     echo "\t-h --help"
+#     echo "\t--environment=$ENVIRONMENT"
+#     echo "\t--db-path=$DB_PATH"
+#     echo ""
+# }
+#
+#
+#
+# searchpath="."
+#
+# usebars=0
+# verbose=0
+# verbshort=0
+# showsearch=0
+#
+# while [ "$1" != "" ]; do
+#     PARAM=`echo $1 | awk -F= '{print $1}'`
+#     VALUE=`echo $1 | sed 's/^[^=]*=//g'`
+# #    VALUE=`echo $1 | awk -F= '{print $2}'`
+#     case $PARAM in
+#         -h | --help)
+#             usage
+#             exit
+#             ;;
+#         -v | --verbose )
+#             verbose=1
+#             ;;
+#         -c | --short-verbose)
+#             verbose=1
+#             verbshort=1
+#             ;;
+#         -s | --showsearch)
+#             showsearch=1
+#             ;;
+#         -b | --bars)
+#             usebars=1
+#             ;;
+#         -p | --path)
+#             searchpath=$VALUE
+#             ;; 
+#         *)
+#             echo "ERROR: unknown parameter \"$PARAM\""
+#             usage
+#             exit 1
+#             ;;
+#     esac
+#     shift
+# done
+
 
 # Spacing UI Vars
 linesgap=7
@@ -27,7 +87,7 @@ for filetype in "${filetypes[@]}"; do
     fi
 
     # clean file list
-    files=$(find . 2>&1 | grep "\\$filetype$" | grep -v "denied" | grep -v "No such" | grep -v "undodir")
+    files=$(find $searchpath 2>&1 | grep "\\$filetype$" | grep -v "denied" | grep -v "No such" | grep -v "undodir")
     
     linesum=0
     filesum=0

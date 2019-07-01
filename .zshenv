@@ -27,6 +27,9 @@ alias tmux='tmux -u'
 # fast open
 alias op='xdg-open'
 
+# set 1984
+alias nineteeneightyfour='touch -d "1984/01/01 01:01"'
+
 # alarm clock
 alias alarm='alarm-clock-applet'
 

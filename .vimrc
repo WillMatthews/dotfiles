@@ -124,7 +124,6 @@ endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " lightline settings
-"set statusline=%<%f\ %h%m%r%{kite#statusline()}%=%-14.(%l,%c%V%)\ %P
 set laststatus=2
 set noshowmode
 
@@ -155,9 +154,6 @@ let g:indent_guides_enable_on_vim_startup = 1
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
 " Folding Options
 let g:SimpylFold_docstring_preview = 1
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" KITE 
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""
