@@ -152,6 +152,7 @@ smartrun () {
           *.txt)     echo ".txt files can't be run" ;;
           *.c)       ./$name ;;
           *.py)      chmod +x $1; ./$1 ;;
+          *.js)      ./$1 ;;
           *)         xdg-open $1          ;;
       esac
   else
