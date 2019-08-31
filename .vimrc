@@ -197,7 +197,7 @@ set tabstop=4
 set softtabstop=4
 autocmd FileType html setlocal ts=2 sts=2 sw=2 expandtab
 autocmd FileType php setlocal ts=2 sts=2 sw=2 expandtab
-autocmd FileType js setlocal ts=2 sts=2 sw=2 expandtab
+autocmd FileType javascript setlocal ts=2 sts=2 sw=2 expandtab
 
 " Search customisation
 set hlsearch

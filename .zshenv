@@ -70,7 +70,7 @@ alias todo="todolist"
 # color cat
 alias ccat="highlight --out-format=ansi" # Color cat - print file with syntax highlighting.
 
-
+alias resetsound="pulseaudio -k && sudo alsa force-reload"
 ##### FUNCTIONS
 #this should probably be in 'scripts'?
 
