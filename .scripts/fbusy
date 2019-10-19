@@ -1,5 +1,10 @@
 #!/usr/bin/python3
-from pyluxafor import LuxaforFlag
+try:
+    from pyluxafor import LuxaforFlag
+    #Create the file: /etc/udev/rules.d/10-luxafor.rules with the following contents:
+    #ACTION=="add", SUBSYSTEM=="usb", ATTRS{idProduct}=="f372", ATTRS{idVendor}=="04d8", MODE:="666"
+except Exception:
+    print("Pyluxafor not installed... run pip3 install pyluxafor")
 import time
 
 
