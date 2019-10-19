@@ -5,6 +5,7 @@ try:
     #ACTION=="add", SUBSYSTEM=="usb", ATTRS{idProduct}=="f372", ATTRS{idVendor}=="04d8", MODE:="666"
 except Exception:
     print("Pyluxafor not installed... run pip3 install pyluxafor")
+    exit()
 import time
 
 
