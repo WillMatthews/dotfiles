@@ -12,3 +12,4 @@
 !.installed
 !.scripts/
 !.scripts/*
+.scripts/vnc-home

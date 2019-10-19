@@ -95,6 +95,7 @@ au BufRead,BufNewFile *.js,*.py,*.pyw,*.c,*.h match BadWhitespace /\s\+$/
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " colorscheme settings
 
+
 " highlight syntax
 syntax enable
 
@@ -107,6 +108,9 @@ highlight GitGutterDelete guifg=#ff2222 guibg=#000000 ctermfg=1 " ctermb=0
 " colorscheme
 colorscheme badwolf
 set background=dark
+
+
+
 "colorscheme solarized
 
 " badwolf settings
@@ -172,6 +176,7 @@ set splitright
 set ruler
 set cursorline
 set number
+
 
 " make wrapping words behave nicely
 set wrap
