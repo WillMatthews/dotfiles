@@ -65,7 +65,7 @@ alias lip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([
 alias lipa="curl https://ipapi.co/json"
 
 # todolist
-alias todo="todolist"
+alias todo="ultralist"
 
 # color cat
 alias ccat="highlight --out-format=ansi" # Color cat - print file with syntax highlighting.
