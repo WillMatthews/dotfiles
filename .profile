@@ -37,3 +37,9 @@ export FILE="ranger"
 
 # stop screen tearing
 nvidia-settings --assign CurrentMetaMode="nvidia-auto-select +0+0 { ForceFullCompositionPipeline = On }"
+
+
+. /home/will/torch/install/bin/torch-activate
+
+
+. /home/will/torch/install/bin/torch-activate

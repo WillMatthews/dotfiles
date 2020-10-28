@@ -71,6 +71,9 @@ alias todo="ultralist"
 alias ccat="highlight --out-format=ansi" # Color cat - print file with syntax highlighting.
 
 alias resetsound="pulseaudio -k && sudo alsa force-reload"
+
+alias connect_home_server="ssh -L 5901:127.0.0.1:5901 -C -N -l matthews matthews-srv1.local"
+
 ##### FUNCTIONS
 #this should probably be in 'scripts'?
 
@@ -133,6 +136,7 @@ smartopen () {
       case $1 in
           *.tex)     xdg-open "$name.pdf" ;;
           *.ms)      xdg-open "$name.pdf" ;;
+          *.cpp)     "./$name" ;;
           *)         xdg-open $1          ;;
       esac
   else

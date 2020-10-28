@@ -1,0 +1,34 @@
+#!/bin/zsh
+
+echo "dBm, dBW, dBHz use Power"
+echo "dBV, dBA use Magnitude"
+echo "========================"
+echo "Decibels Input  : $1"
+dbin=$(($1/20.0))
+out=$((10.0**$dbin))
+echo "Magnitude       : $out"
+echo "Power           : $(($out**2))"
+echo ""
+
+
+if [[ $1 > 0 ]]; then
+
+logd=$(echo "l($1)/l(10)" | bc -l)
+out=$((10.0 * $logd))
+
+amp=$(($1**0.5))
+
+echo "Power Input     : $1"
+echo "Decibels        : $out"
+echo "Magnitude       : $amp"
+echo ""
+
+logd=$(echo "l($1)/l(10)" | bc -l)
+out=$((20.0 * $logd))
+pwr=$(($1**2))
+
+echo "Magnitude Input : $1"
+echo "Decibels        : $out"
+echo "Power           : $pwr"
+
+fi

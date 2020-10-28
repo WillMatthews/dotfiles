@@ -85,4 +85,7 @@
 # update PATH (scripts, go and MATLAB)
     export GOPATH=$HOME/go
     export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
-    export PATH="$PATH:/usr/local/MATLAB/R2018b/bin"
+    export PATH="$PATH:/usr/local/MATLAB/R2019b/bin"
+
+
+#. /home/will/torch/install/bin/torch-activate
