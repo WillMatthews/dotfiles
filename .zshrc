@@ -87,5 +87,7 @@
     export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
     export PATH="$PATH:/usr/local/MATLAB/R2019b/bin"
 
+    export LD_LIBRARY_PATH=/usr/lib/nvidia-cuda-toolkit/libdevice:$LD_LIBRARY_PATH
+    export PATH=/usr/lib/nvidia-cuda-toolkit/bin:$PATH
 
 #. /home/will/torch/install/bin/torch-activate

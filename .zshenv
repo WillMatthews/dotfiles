@@ -72,10 +72,20 @@ alias ccat="highlight --out-format=ansi" # Color cat - print file with syntax hi
 
 alias resetsound="pulseaudio -k && sudo alsa force-reload"
 
-alias connect_home_server="ssh -L 5901:127.0.0.1:5901 -C -N -l matthews matthews-srv1.local"
+alias rdp-home="ssh -L 5901:127.0.0.1:5901 -C -N -l matthews matthews-srv1.local"
+
+alias rdp-lab="ssh -L 5902:localhost:5902 lab"
+
+alias minestat="watch -c -n 60 'curl -s https://api.ethermine.org/miner/:0x7557c19e40bc82189D63805A97d6De15B48F97C5/currentStats | jq -C  .'"
 
 ##### FUNCTIONS
 #this should probably be in 'scripts'?
+
+
+## the 'dota sometimes breaks on linux and it makes me sad' function
+killall (){
+  ps -axu | grep "$1" | awk '{print $2}' | xargs kill -9
+}
 
 
 ## the 'I hate typing' function
@@ -120,7 +130,7 @@ smartcompile () {
           *.ms)        groff -ms $1 -T pdf > $name.pdf  ;;
           *.hs)        ghc -o $name $1     ;;
           *.c)         gcc  $1 -o $name    ;;
-          *.cpp)       g++  $1 -o $name    ;;
+          *.cpp)       g++  --std=c++14 $1 -o $name    ;;
           *)           echo "don't know how to compile '$1'..." ;;
       esac
   else
@@ -136,7 +146,8 @@ smartopen () {
       case $1 in
           *.tex)     xdg-open "$name.pdf" ;;
           *.ms)      xdg-open "$name.pdf" ;;
-          *.cpp)     "./$name" ;;
+          *.py)      "python3 $name"      ;;
+          *.cpp)     "./$name"            ;;
           *)         xdg-open $1          ;;
       esac
   else
@@ -162,6 +173,29 @@ smartrun () {
   else
       echo "'$1' is not a valid file!"
   fi
+}
+
+
+newcpp () {
+    touch $1.cpp
+
+    echo "#include <bits/stdc++.h>
+
+using namespace std;
+
+using ll = long long;
+#define ar array
+
+
+int main(){
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+
+
+    return EXIT_SUCCESS;
+}" >> $1.cpp
+    
+
 }
 
 
