@@ -187,7 +187,7 @@ using ll = long long;
 #define ar array
 
 
-int main(){
+int main(int argc, char *argv[]){
     ios::sync_with_stdio(0);
     cin.tie(0);
 
