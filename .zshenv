@@ -130,7 +130,7 @@ smartcompile () {
           *.ms)        groff -ms $1 -T pdf > $name.pdf  ;;
           *.hs)        ghc -o $name $1     ;;
           *.c)         gcc  $1 -o $name    ;;
-          *.cpp)       g++  --std=c++14 $1 -o $name    ;;
+          *.cpp)       g++  --std=c++17 $1 -o $name    ;;
           *)           echo "don't know how to compile '$1'..." ;;
       esac
   else
