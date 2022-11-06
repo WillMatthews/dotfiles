@@ -90,4 +90,8 @@
     export LD_LIBRARY_PATH=/usr/lib/nvidia-cuda-toolkit/libdevice:$LD_LIBRARY_PATH
     export PATH=/usr/lib/nvidia-cuda-toolkit/bin:$PATH
 
+# GPG pin entry from terminal
+    GPG_TTY=$(tty)
+    export GPG_TTY
+
 #. /home/will/torch/install/bin/torch-activate
