@@ -1,41 +1,70 @@
-sysstat
-jq
-GIMP
-Inkscape
-firefox
-zsh (oh my zsh)
+PROGRAMMING:
+===========
 docker
 ghci (cabal)
-filezilla
-ttf-ancient-fonts
-ttf-unifont
 g++
 gcc
 make
-gnome-tweak-tool (if using GNOME)
-groff (of course)
-pandoc
-neofetch
-htop
+
+FONTS:
+============
+ttf-ancient-fonts
+ttf-unifont
+
+OTHER:
+=============
+firefox
+thunderbird
+filezilla
 hugo
-texlive-full
-tmux
-vim
-git
-ansiweather
-manpages
 mumble
-mysql client 
+gnome-tweak-tool (if using GNOME)
+
+TEXT EDITORS:
+=============
+groff (of course)
+vim (vundle)
+texlive-full
+VSCode (not on apt!)
+
+UTILITIES:
+=============
+ffmpeg
+vlc
+btop
+htop
+sysstat
 nethogs
+youtube-dl
+whois
+neofetch
+pandoc
+jq
+tty-clock
+gnupg
+suckless-tools
+rsync
+autossh
 openssh-client
 openssh-server
-rsync?
-suckless-tools (dmenu)
-thefuck
-thunderbird
-gnupg
-tty-clock
-vlc
-whois
-youtube-dl
+ansiweather
+mysql client
 zerotier
+manpages
+
+PRODUCTIVITY:
+=============
+git
+tmux (tpm)
+zsh (with oh my zsh)
+thefuck
+
+IMAGE EDITORS:
+=============
+gimp
+inkscape
+
+CAD PACKAGES:
+=============
+kicad
+freecad
