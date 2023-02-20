@@ -82,6 +82,11 @@ alias minestat="watch -c -n 60 'curl -s https://api.ethermine.org/miner/:0x7557c
 #this should probably be in 'scripts'?
 
 
+## Weather forecast for whatever location you like
+weather () {
+    curl "wttr.in/$1"
+}
+
 ## the 'dota sometimes breaks on linux and it makes me sad' function
 killall (){
   ps -axu | grep "$1" | awk '{print $2}' | xargs kill -9
