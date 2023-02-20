@@ -72,7 +72,7 @@ alias ccat="highlight --out-format=ansi" # Color cat - print file with syntax hi
 
 alias resetsound="pulseaudio -k && sudo alsa force-reload"
 
-alias rdp-home="ssh -L 5901:127.0.0.1:5901 -C -N -l matthews matthews-srv1.local"
+alias rdp-home="ssh -L 5091:localhost:5091 -C -N -l matthews matthews-srv1.local"
 
 alias rdp-lab="ssh -L 5902:localhost:5902 lab"
 
@@ -176,6 +176,19 @@ smartrun () {
 }
 
 
+eulerpy () {
+    FILE=$1.py
+    echo $FILE
+    header=$(curl https://projecteuler.net/minimal=$1)
+    header2=$(echo $header | sed -E 's/<(|\/)p>//g' | sed -E 's/<br(| )\/>//g' | sed -E 's/^/# /g')
+    if [[ -f "$FILE" ]]; then
+        echo "$FILE exists. Doing nothing."
+    else
+        echo $header2 >> $FILE
+    fi
+}
+
+
 newcpp () {
     touch $1.cpp
 
@@ -188,7 +201,7 @@ using ll = long long;
 
 
 int main(int argc, char *argv[]){
-    ios::sync_with_stdio(0);
+    ios::sync_with_stdio(1);
     cin.tie(0);
 
 
