@@ -13,3 +13,7 @@
 !.scripts/
 !.scripts/*
 .scripts/vnc-home
+.scripts/tellData
+.scripts/stats.log
+!.kde/
+!.kde/*

@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+
+client="Ada" # your client name
+host="curie" # server hosting iptell
+iptellPath="/home/will/.scripts" # path for your .iptell
+description="Dell Latitude 7280" # some text printed below the machine heading
+
+
+## Do not touch vars
+outfile="$iptellPath/tellData"
+
+### generate local data
+localinfo="$(/sbin/ifconfig | grep -Ev "RX|TX|loop")" 
+localdata="$( echo "$localinfo" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g; s/"/\&quot;/g; s/'"'"'/\&#39;/g')"
+
+### generate global data
+apidata="$(curl "https://ipapi.co/json" | jq -r 'keys_unsorted[] as $k | "\($k), \(.[$k])"')"
+
+table=$(echo "$apidata" | awk 'BEGIN { print "<table id=\"iptell\"><tr><th>Parameter</th><th>Value</th></tr>" }
+             { print "<tr><td>" $1 "</td><td>" $2 " " $3 " " $4 " " $5 "</td></tr>" }
+             END   { print "</table>" }' )
+
+table="$table"
+table=$(echo $table | tr ',' ' ')
+globaldata=$table
+
+### generate usage data
+uptime="$(uptime)"
+avgcpu="$(iostat -c)"
+
+usagedata="$avgcpu
+load avg: now 5min 15min
+$uptime
+$(free -m | awk 'NR==2{printf "Memory Usage: %s/%sMB (%.2f%%)\n", $3,$2,$3*100/$2 }')
+$(df -h | awk '$NF=="/"{printf "Disk Usage: %d/%dGB (%s)\n", $3,$2,$5}')
+$(top -bn1 | grep load | awk '{printf "CPU Load: %.2f\n", $(NF-2)}' )"
+
+localtitle="<h3>Local</h3>"
+globaltitle="<h3>Global</h3>"
+usagetitle="<h3>Usage</h3>"
+
+echo "$description" > "$outfile"
+echo "$localtitle <pre>$localdata</pre> $globaltitle $globaldata <!-- ISHTML -->" >> "$outfile"
+echo "$usagetitle <pre>$usagedata</pre>" >> "$outfile"
+
+### generate the machine statistics plot
+memdata=$( echo $(cat $iptellPath/stats.log | awk -v var="$client" 'BEGIN {print "memdata" var "= ["} { print "{ x: new Date(" $1 "000)," "y:" $2 "}," } END { print "]" }'))
+cpudata=$( echo $(cat $iptellPath/stats.log | awk -v var="$client" 'BEGIN {print "cpudata" var "= ["} { print "{ x: new Date(" $1 "000)," "y:" $3 "}," } END { print "]" }'))
+diskdata=$( echo $(cat $iptellPath/stats.log | awk -v var="$client" 'BEGIN {print "diskdata" var "= ["} { print "{ x: new Date(" $1 "000)," "y:" $4 "}," } END { print "]" }'))
+
+echo "
+<canvas id='line-chart$client' width='800' height='450'></canvas>
+<script>
+var $memdata;
+var $cpudata;
+var $diskdata;
+new Chart(document.getElementById('line-chart$client'), {
+  type: 'line',
+  data: {
+    datasets: [{ 
+        data: cpudata$client,
+        label: 'CPU',
+        borderColor: '#3e95cd',
+        fill: false,
+        yAxisID: 'right-y-axis'
+      }, { 
+        data: memdata$client,
+        label: 'Memory',
+        borderColor: '#8e5ea2',
+        fill: false,
+        yAxisID: 'left-y-axis'
+      }, { 
+        data: diskdata$client,
+        label: 'Disk',
+        borderColor: '#3cba9f',
+        fill: false,
+        yAxisID: 'left-y-axis'
+      } 
+    ]
+  },
+  options: {
+    title: {
+      display: true,
+      text: '$client Stats'
+    },
+    tooltips: {
+        mode: 'nearest',
+        intersect: false,
+    },
+    scales: {
+      xAxes: [{
+        type: 'time',
+        distribution: 'linear',
+        time: { unit: 'minute',
+        unitStepSize: 15}
+      }],
+      yAxes: [{
+          id: 'left-y-axis',
+          type: 'linear',
+          position: 'left',
+          ticks: { beginAtZero: true },
+          scaleLabel: {
+            display: true,
+            labelString: 'All Other Percentages'
+          }
+      }, {
+          id: 'right-y-axis',
+          type: 'linear',
+          position: 'right',
+          ticks: { beginAtZero: true },
+          scaleLabel: {
+            display: true,
+            labelString: 'CPU Load'
+          }
+      }]
+    }
+  }
+});
+</script>" >> "$outfile"
+
+if [ "${client,,}" = "${host,,}" ]; then
+    mv "$outfile" "$iptellPath/data/$client"
+else
+    scp "$outfile"  "$host:~/.iptell/data/$client"
+fi
