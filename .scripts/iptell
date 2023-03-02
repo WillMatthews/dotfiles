@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 client="Ada" # your client name
-host="curie" # server hosting iptell
+host="ellie" # server hosting iptell
 iptellPath="/home/will/.scripts" # path for your .iptell
 description="Dell Latitude 7280" # some text printed below the machine heading
 
@@ -121,5 +121,5 @@ new Chart(document.getElementById('line-chart$client'), {
 if [ "${client,,}" = "${host,,}" ]; then
     mv "$outfile" "$iptellPath/data/$client"
 else
-    scp "$outfile"  "$host:~/.iptell/data/$client"
+    scp "$outfile"  "$host:~/utils/.iptell/data/$client"
 fi
