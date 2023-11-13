@@ -48,6 +48,7 @@
       web-search
       zsh-autosuggestions
       zsh-syntax-highlighting
+      task
     )
 
     source $ZSH/oh-my-zsh.sh
@@ -85,8 +86,8 @@
 # update PATH (scripts, go and MATLAB)
     export GOPATH=$HOME/go
     export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
-    #export PATH="$PATH:/usr/local/MATLAB/R2019b/bin"
-    export PATH="$PATH:/usr/local/MATLAB/R2022b/bin"
+    export PATH="$PATH:/usr/local/MATLAB/R2019b/bin"
+    #export PATH="$PATH:/usr/local/MATLAB/R2022b/bin"
 
     export LD_LIBRARY_PATH=/usr/lib/nvidia-cuda-toolkit/libdevice:$LD_LIBRARY_PATH
     export PATH=/usr/lib/nvidia-cuda-toolkit/bin:$PATH
@@ -95,5 +96,8 @@
 # GPG pin entry from terminal
     GPG_TTY=$(tty)
     export GPG_TTY
+
+# brew :)
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
 #. /home/will/torch/install/bin/torch-activate

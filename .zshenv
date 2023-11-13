@@ -15,9 +15,10 @@
 
 # save time on typos
 alias cd..='cd ..'
-alias vi='vim'
-alias cim='vim'
-alias bim='vim'
+alias vi='nvim'
+alias cim='nvim'
+alias bim='nvim'
+alias v='nvim'
 
 alias pia="/opt/pia/run.sh"
 

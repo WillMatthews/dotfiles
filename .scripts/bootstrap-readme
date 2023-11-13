@@ -1,0 +1,54 @@
+*Bootstrap Script Documentation*
+Overview
+
+This script is designed for bootstrapping a fresh Ubuntu install. It automates the installation of various packages and tools, making the setup process faster and more efficient. It is suitable for both server and non-server environments and allows customization through command-line arguments.
+Usage
+
+    Basic Usage: ./bootstrap.sh
+    With Argument: ./bootstrap.sh [isServer]
+        isServer: Boolean value (true or false). Set to true for a server environment setup.
+
+Features
+
+    Dotfiles Setup:
+        Clones a specified repository containing dotfiles and copies its contents, including hidden files and directories, to the user's home directory.
+
+    System Update and Clean Up:
+        Performs an initial update and upgrade of the system packages.
+        Runs autoremove to clean up any unnecessary packages.
+
+    Package Installation:
+        Installs a set of predefined packages based on the environment (server or non-server).
+
+    Additional Tools and Configurations:
+        Sets up oh-my-zsh, Vundle for Vim, TPM (Tmux Plugin Manager), and Zsh plugins like zsh-autosuggestions and zsh-syntax-highlighting.
+        Installs Golang.
+
+Packages Installed
+Common Packages for All Environments:
+
+    git, net-tools, neofetch, htop, btop, lm-sensors, plocate, samba, docker.io, neovim, zsh, thefuck, ffmpeg, whois, pandoc, autossh, rsync, sysstat, nethogs, jq, gnupg, openssh-client, openssh-server, tmux, gzip, nmap, screen, speedometer, speedtest-cli, zip, unzip, unrar, wget, curl, highlight.
+
+Non-Server Specific Packages:
+
+    manpages, groff, tty-clock, ghci, cabal-install, make, firefox, thunderbird, filezilla, vlc, ansiweather, flameshot, mumble, freecad, kicad, gnuplot, handbrake, texlive-full, ngspice, nginx, obs-studio, openttd, qrencode, gimp, inkscape, steam, suckless-tools, valgrind, units, transmission, wireshark, glances, ripgrep, iotop, iftop, ufw, fail2ban, mc, ncdu, ranger, python3-pip, build-essential, git-lfs.
+
+Snap Packages for Non-Server Setup:
+
+    0ad
+
+Additional Information
+
+    The script checks if it's being run for a server or non-server environment and adjusts the package installation accordingly.
+    It includes error handling to stop execution if any critical operation fails.
+    Customizations like dotfiles cloning and Zsh setup are included for enhanced user experience.
+
+Future Improvements (TODOs)
+
+    Bind flameshot gui to the print screen.
+    Consider moving to Antigen for Zsh plugin management.
+    Add dynamic handling of server/non-server environments based on command-line arguments.
+    SSH Configuration: Configure SSH for secure remote access.
+    Automatic Backup with Rsync: Set up a system for regular backups using rsync.
+    IPTables Bootstrapping: Implement initial setup for IPTables or UFW for firewall management.
+    Kubernetes (k8s) Bootstrapping: Set up basic Kubernetes cluster configuration.
