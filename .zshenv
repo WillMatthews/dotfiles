@@ -56,6 +56,9 @@ alias pipupdate="pip list --outdated | cut -d' ' -f1 | sed -e '1,2d' | xargs pip
 # sick clock bro
 alias clock='tty-clock -s -B -c -C 3 -d 0.1'
 
+# lock over ssh
+#alias lock ='gnome-screensaver-command -l'
+
 # some fun stuff to say I'm in the cafe
 alias cafe='hexdump -C /dev/urandom|grep "ca fe"'
 
@@ -80,8 +83,7 @@ alias rdp-lab="ssh -L 5902:localhost:5902 lab"
 alias minestat="watch -c -n 60 'curl -s https://api.ethermine.org/miner/:0x7557c19e40bc82189D63805A97d6De15B48F97C5/currentStats | jq -C  .'"
 
 ##### FUNCTIONS
-#this should probably be in 'scripts'?
-
+# this should probably be in 'scripts'? I don't know.
 
 ## Weather forecast for whatever location you like
 weather () {

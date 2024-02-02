@@ -102,3 +102,10 @@
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
 #. /home/will/torch/install/bin/torch-activate
+
+# bun completions
+[ -s "/home/will/.bun/_bun" ] && source "/home/will/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
