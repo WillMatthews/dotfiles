@@ -1,0 +1,18 @@
+#!/bin/bash
+cd songs
+if [[ ! -p q ]]; then
+    mkfifo q
+fi
+
+(while true; do echo "playing" | nc -l 10000 | head -n 1 | cut -f 2 -d " " | cut -b 2- | grep -E "^[a-zA-Z0-9/:.?=-]{1,}$" > q; done) &
+
+while true; do
+    if read a <q; then
+    echo $a;
+    fn=$(yt-dlp -f m4a --id --get-filename $a);
+    yt-dlp -f m4a --id $a
+    echo $fn
+    mplayer $fn
+    fi
+done
+

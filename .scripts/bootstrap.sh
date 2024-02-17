@@ -39,6 +39,7 @@ cp -r ${HOME}/dotfiles/. ${HOME}/
 regolithPackages="regolith-desktop regolith-session-flashback regolith-look-lascaille"
 nonServePackages="manpages groff tty-clock ghci cabal-install make firefox thunderbird filezilla vlc ansiweather flameshot mumble freecad kicad gnuplot handbrake texlive-full ngspice nginx obs-studio openttd qrencode gimp inkscape steam suckless-tools valgrind units transmission wireshark glances ripgrep iotop iftop ufw fail2ban mc ncdu ranger python3-pip build-essential git-lfs"
 servePackages="git net-tools neofetch htop btop lm-sensors plocate samba docker.io neovim zsh thefuck ffmpeg whois pandoc autossh rsync sysstat nethogs jq gnupg openssh-client openssh-server tmux gzip nmap screen speedometer speedtest-cli zip unzip unrar wget curl highlight"
+pipPackages="yt-dlp" # TODO make pip work
 
 # Snap packages for non-server setup
 snapNonServe="0ad"
