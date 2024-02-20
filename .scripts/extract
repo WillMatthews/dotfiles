@@ -1,0 +1,40 @@
+#!/bin/bash
+
+if [ ! -f "$1" ]; then
+    echo "'$1' is not a valid file!"
+    return 1
+fi
+
+# Define an associative array with file extensions and their extraction commands
+declare -A extract_cmds=(
+    [tar.bz2]="tar xvjf"
+    [tbz2]="tar xvjf"
+    [tar.gz]="tar xvzf"
+    [tgz]="tar xvzf"
+    [bz2]="bunzip2"
+    [rar]="rar x"
+    [gz]="gunzip"
+    [tar]="tar xvf"
+    [zip]="unzip"
+    [z]="uncompress"
+    [7z]="7z x"
+    [xz]="unxz"
+    [lz]="lzip -d"
+    [lzma]="unlzma"
+    [jar]="jar xf"
+    [cpio]="cpio -idm"
+    [rpm]="rpm2cpio | cpio -idm"
+    # Add more file types and their commands here
+)
+
+# Extract the lowercase file extension
+extension="${1##*.}"
+extension=$(echo "$extension" | tr '[:upper:]' '[:lower:]')
+
+# Check if the extension is in the array and execute the command
+if [[ -n "${extract_cmds[$extension]}" ]]; then
+    ${extract_cmds[$extension]} "$1"
+else
+    echo "Don't know how to extract '$1'..."
+    return 1
+fi

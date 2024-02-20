@@ -1,0 +1,30 @@
+#!/bin/bash
+
+if [[ -z "$1" ]]; then
+    echo "Please provide a problem number."
+    return 1
+fi
+
+FILE="$1.py"
+echo "Target file: $FILE"
+PYTHON_SHEBANG="#!/usr/bin/env python3"
+
+# Fetch the header using curl and check for success
+header=$(curl -sS https://projecteuler.net/minimal="$1")
+if [[ $? -ne 0 || -z "$header" ]]; then
+    echo "Failed to fetch the header from Project Euler. Please check the problem number and your internet connection."
+    return 1
+fi
+
+# Format the header for inclusion in a Python script
+formatted_header=$(echo "$header" | sed -E 's/<(|\/)p>//g; s/<br ?\/>//g; s/^/# /g')
+
+# Check if the Python file already exists
+if [[ -f "$FILE" ]]; then
+    echo "$FILE already exists. Doing nothing."
+else
+    # Write the formatted header to the file
+    echo "$PYTHON_SHEBANG" > "$FILE"
+    echo "$formatted_header" > "$FILE"
+    echo "Created $FILE with the formatted header."
+fi

@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# Default to 1 level up if no argument is provided or if the argument is not a positive integer
+levels=${1:-1}
+if ! [[ $levels =~ ^[0-9]+$ ]]; then
+    echo "Error: Argument must be a positive integer."
+    return 1
+fi
+
+# Calculate the target directory path
+target_dir=""
+for ((i=0; i<levels; i++)); do
+    target_dir+="../"
+done
+
+# Attempt to change to the target directory
+if cd "$target_dir" > /dev/null 2>&1; then
+    echo "Moved up $levels levels."
+else
+    echo "Error: Cannot move up $levels levels."
+    return 2
+fi
+

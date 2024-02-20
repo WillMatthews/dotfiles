@@ -1,0 +1,21 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+    echo "Usage: shdl <DOI or URL to article>"
+    return 1
+fi
+
+SCI_HUB_DOMAIN="http://sci-hub.se" # Update this as needed
+PAGE_URL="${SCI_HUB_DOMAIN}/$@"
+
+echo "Retrieving article from Sci-Hub..."
+PDF_URL=$(curl -s "$PAGE_URL" | grep -o 'http[^"]*.pdf' | head -n 1)
+
+if [ -z "$PDF_URL" ]; then
+    echo "Failed to find the PDF download link."
+    return 1
+fi
+
+echo "Downloading PDF from: $PDF_URL"
+curl -O "$PDF_URL" && echo "Download complete." || echo "Download failed."
+

@@ -1,3 +1,13 @@
+
+#                          _____ __
+#        ____  _________  / __(_) /__
+#       / __ \/ ___/ __ \/ /_/ / / _ \
+#    _ / /_/ / /  / /_/ / __/ / /  __/
+#   (_) .___/_/   \____/_/ /_/_/\___/
+#    /_/
+#
+#   Executed on login shells
+
 # ~/.profile: executed by the command interpreter for login shells.
 # This file is not read by bash(1), if ~/.bash_profile or ~/.bash_login
 # exists.
@@ -30,14 +40,13 @@ if [ -d "$HOME/.local/bin" ] ; then
 fi
 
 export PATH="$PATH:$(du "$HOME/.scripts/" | cut -f2 | tr '\n' ':')"
-export EDITOR="vim"
+export EDITOR="nvim"
 export BROWSER="firefox"
 export FILE="ranger"
 
 
 # stop screen tearing
 #nvidia-settings --assign CurrentMetaMode="nvidia-auto-select +0+0 { ForceFullCompositionPipeline = On }"
-
 
 #. /home/will/torch/install/bin/torch-activate
 #. /home/will/torch/install/bin/torch-activate

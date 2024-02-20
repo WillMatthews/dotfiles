@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Open things nicely through vim with a hotkey
+
+if [ ! -f "$1" ]; then
+    echo "'$1' is not a valid file!"
+    return 1
+fi
+
+name=${1%.*}
+declare -A open_cmds=(
+    [tex]="xdg-open $name.pdf"
+    [ms]="xdg-open $name.pdf"
+    [py]="python3 $1"
+    [cpp]="./$name"
+    # Default action for files without a specific open command
+    [default]="xdg-open $1"
+)
+
+extension="${1##*.}"
+  
+# Check if the extension has a specific command, else use the default
+if [[ -n "${open_cmds[$extension]}" ]]; then
+    eval "${open_cmds[$extension]}"
+else
+    eval "${open_cmds[default]}"
+fi
+

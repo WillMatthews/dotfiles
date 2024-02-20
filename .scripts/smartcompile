@@ -1,0 +1,36 @@
+#!/bin/bash
+
+if [ ! -f "$1" ]; then
+    echo "'$1' is not a valid file!"
+    return 1
+fi
+
+name=${1%.*}
+declare -A compile_cmds=(
+    [tex]="pdflatex --shell-escape $1 && echo 'PDF generated: $name.pdf'"
+    [ms]="groff -ms $1 -T pdf > $name.pdf && echo 'PDF generated: $name.pdf'"
+    [hs]="ghc -o $name $1 && echo 'Executable created: $name'"
+    [c]="gcc $1 -o $name && echo 'Executable created: $name'"
+    [cpp]="g++ --std=c++17 $1 -o $name && echo 'Executable created: $name'"
+    [java]="javac $1 && echo 'Class files generated.'"
+    [py]="echo 'Note: Python files do not compile to binary. Use python $1 to run.'"
+    [sh]="chmod +x $1 && echo 'Script $1 made executable.'"
+    [md]="pandoc $1 -s -o $name.pdf && echo 'PDF generated from Markdown: $name.pdf'"
+    [r]="Rscript $1 && echo 'R script $1 executed.'"
+    [go]="go build -o $name $1 && echo 'Executable created: $name'"
+    # Add more file types and their commands here
+)
+
+extension="${1##*.}"
+
+# Handle commands with special requirements or output redirection separately
+if [[ -n "${compile_cmds[$extension]}" ]]; then
+    if [[ $extension == "ms" ]]; then
+        eval ${compile_cmds[$extension]}
+    else
+        eval ${compile_cmds[$extension]}
+    fi
+else
+    echo "Don't know how to compile '$1'..."
+    return 1
+fi

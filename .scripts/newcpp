@@ -1,0 +1,30 @@
+#!/bin/bash
+
+if [[ -z "$1" ]]; then
+    echo "Please provide a file name."
+    return 1
+fi
+
+FILE="$1.cpp"
+
+# Check if the file already exists to prevent accidental overwriting
+if [[ -f "$FILE" ]]; then
+    echo "$FILE already exists. Doing nothing to avoid overwriting."
+    return 1
+fi
+
+# Create the new C++ file and write the template
+echo "#include <bits/stdc++.h>
+using namespace std;
+
+using ll = long long;
+#define ar array
+
+int main(int argc, char *argv[]) {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+
+    return EXIT_SUCCESS;
+}" > "$FILE"
+
+echo "$FILE created successfully."

@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Run things nicely through vim with a hotkey
+# TODO combine with smartopen and make one function.
+
+if [ ! -f "$1" ]; then
+    echo "'$1' is not a valid file!"
+    return 1
+fi
+
+name=${1%.*}
+declare -A run_cmds=(
+    [tex]="echo '.tex files can't be run'"
+    [pdf]="echo '.pdf files can't be run'"
+    [txt]="echo '.txt files can't be run'"
+    [c]="chmod +x $name; ./$name"
+    [py]="chmod +x $1; ./$1"
+    [js]="node $1"
+    # Default action for files that should be opened instead of executed
+    [default]="xdg-open $1"
+)
+
+extension="${1##*.}"
+
+  # Check if the extension has a specific command, else use the default
+if [[ -n "${run_cmds[$extension]}" ]]; then
+    eval "${run_cmds[$extension]}"
+else
+    eval "${run_cmds[default]}"
+fi
