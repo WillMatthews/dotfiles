@@ -17,4 +17,7 @@
 .scripts/stats.log
 !.kde/
 !.kde/*
+!.config/
+.config/*
 !.config/nvim/init.vim
+!.config/redshift.conf
