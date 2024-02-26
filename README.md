@@ -4,16 +4,16 @@
 Here you can find my configs:
 | File          | Description                                                                                   | Project Page                              |
 |---------------|-----------------------------------------------------------------------------------------------|-------------------------------------------|
-| [**.bashrc**](https://github.com/WillMatthews/dotfiles/.bashrc) | Bash shell configuration. | [Bash shell](https://www.gnu.org/software/bash/) |
-| [**.ghci**](https://github.com/WillMatthews/dotfiles/.ghci) | GHC interactive environment configuration. | [GHC](https://www.haskell.org/ghc/) |
-| [**.profile**](https://github.com/WillMatthews/dotfiles/.profile) | Initialisation script for shell sessions. | [Bash Startup Files](https://www.gnu.org/software/bash/manual/html_node/Bash-Startup-Files.html) |
-| [**.tmux.conf**](https://github.com/WillMatthews/dotfiles/.tmux.conf) | TMUX terminal multiplexer configuration. | [TMUX](https://github.com/tmux/tmux) |
-| [**.vimrc**](https://github.com/WillMatthews/dotfiles/.vimrc) | Vim text editor configuration. | [Vim](https://www.vim.org/), moving to [Neovim](https://neovim.io/) |
-| [**.xbashrc**](https://github.com/WillMatthews/dotfiles/.xbashrc) | Bash configuration for specific scenarios. | [Bash shell](https://www.gnu.org/software/bash/) |
-| [**.zshenv**](https://github.com/WillMatthews/dotfiles/.zshenv) | Environment variables for Zsh. | [Zsh](https://www.zsh.org/) |
-| [**.zshrc**](https://github.com/WillMatthews/dotfiles/.zshrc) | Zsh configuration file. | [Zsh](https://www.zsh.org/) |
-| [**.scripts/**](https://github.com/WillMatthews/dotfiles/.scripts/) | Utility scripts for a variety of tasks. | [Utility scripts](https://github.com/WillMatthews/dotfiles/.scripts/) |
-| [**.installed**](https://github.com/WillMatthews/dotfiles/.installed) | Keeps track of installed applications (not fully up to date). | - |
+| [**.bashrc**](https://github.com/WillMatthews/dotfiles/blob/master/.bashrc) | Bash shell configuration. | [Bash shell](https://www.gnu.org/software/bash/) |
+| [**.ghci**](https://github.com/WillMatthews/dotfiles/blob/master/.ghci) | GHC interactive environment configuration. | [GHC](https://www.haskell.org/ghc/) |
+| [**.profile**](https://github.com/WillMatthews/dotfiles/blob/master/.profile) | Initialisation script for shell sessions. | [Bash Startup Files](https://www.gnu.org/software/bash/manual/html_node/Bash-Startup-Files.html) |
+| [**.tmux.conf**](https://github.com/WillMatthews/dotfiles/blob/master/.tmux.conf) | TMUX terminal multiplexer configuration. | [TMUX](https://github.com/tmux/tmux) |
+| [**.vimrc**](https://github.com/WillMatthews/dotfiles/blob/master/.vimrc) | Vim text editor configuration. | [Vim](https://www.vim.org/), moving to [Neovim](https://neovim.io/) |
+| [**.xbashrc**](https://github.com/WillMatthews/dotfiles/blob/master/.xbashrc) | Bash configuration for specific scenarios. | [Bash shell](https://www.gnu.org/software/bash/) |
+| [**.zshenv**](https://github.com/WillMatthews/dotfiles/blob/master/.zshenv) | Environment variables for Zsh. | [Zsh](https://www.zsh.org/) |
+| [**.zshrc**](https://github.com/WillMatthews/dotfiles/blob/master/.zshrc) | Zsh configuration file. | [Zsh](https://www.zsh.org/) |
+| [**.scripts/**](https://github.com/WillMatthews/dotfiles/blob/master/.scripts/) | Utility scripts for a variety of tasks. | [Utility scripts](https://github.com/WillMatthews/dotfiles/blob/master/.scripts/) |
+| [**.installed**](https://github.com/WillMatthews/dotfiles/blob/master/.installed) | Keeps track of installed applications (not fully up to date). | - |
 
 
 
