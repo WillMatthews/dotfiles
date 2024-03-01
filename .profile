@@ -33,11 +33,4 @@ export PATH="$PATH:$(du "$HOME/.scripts/" | cut -f2 | tr '\n' ':')"
 export EDITOR="vim"
 export BROWSER="firefox"
 export FILE="ranger"
-
-
-# stop screen tearing
-#nvidia-settings --assign CurrentMetaMode="nvidia-auto-select +0+0 { ForceFullCompositionPipeline = On }"
-
-
-#. /home/will/torch/install/bin/torch-activate
-#. /home/will/torch/install/bin/torch-activate
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"

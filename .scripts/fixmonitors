@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Detect monitors
+INTERNAL_MONITOR=$(xrandr | grep " connected" | grep -m 1 "eDP" | cut -d " " -f1)
+EXTERNAL_MONITOR=$(xrandr | grep " connected" | grep -v "eDP" | cut -d " " -f1)
+
+# Function to move workspaces
+move_workspace_to_output() {
+    local workspace_id=$1
+    local target_output=$2
+    i3-msg "workspace $workspace_id; move workspace to output $target_output"
+}
+
+# Move workspaces based on their ID
+move_workspaces_based_on_id() {
+    local lower_workspaces=$(i3-msg -t get_workspaces | jq -c '.[] | select(.num <= 10) | .num')
+    local higher_workspaces=$(i3-msg -t get_workspaces | jq -c '.[] | select(.num > 10) | .num')
+
+    for workspace_id in $lower_workspaces; do
+        workspace_id=$(echo $workspace_id | tr -d '"')
+        move_workspace_to_output $workspace_id $1
+    done
+
+    for workspace_id in $higher_workspaces; do
+        workspace_id=$(echo $workspace_id | tr -d '"')
+        move_workspace_to_output $workspace_id $INTERNAL_MONITOR
+    done
+}
+
+# Check if the external monitor is connected and move workspaces
+if [ -n "$EXTERNAL_MONITOR" ]; then
+    move_workspaces_based_on_id $EXTERNAL_MONITOR
+else
+    move_workspaces_based_on_id $INTERNAL_MONITOR
+fi

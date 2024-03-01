@@ -86,7 +86,8 @@
     export GOPATH=$HOME/go
     export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
     #export PATH="$PATH:/usr/local/MATLAB/R2019b/bin"
-    export PATH="$PATH:/usr/local/MATLAB/R2022b/bin"
+    #export PATH="$PATH:/usr/local/MATLAB/R2022b/bin"
+    export PATH="$PATH:/home/will/.local/bin/"
 
     export LD_LIBRARY_PATH=/usr/lib/nvidia-cuda-toolkit/libdevice:$LD_LIBRARY_PATH
     export PATH=/usr/lib/nvidia-cuda-toolkit/bin:$PATH
@@ -97,3 +98,10 @@
     export GPG_TTY
 
 #. /home/will/torch/install/bin/torch-activate
+
+# bun completions
+[ -s "/home/will/.bun/_bun" ] && source "/home/will/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
