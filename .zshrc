@@ -119,3 +119,5 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 [ -s "/home/will/.bun/_bun" ] && source "/home/will/.bun/_bun"
 
 [ -f "/home/will/.ghcup/env" ] && source "/home/will/.ghcup/env" # ghcup-env
+
+source ~/.tokens
