@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# killall2 - kill all processes with a given name
+# usage: killall2 name
+
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 processname" >&2
+    exit 1
+fi
+
+# get a list of all the PIDs for the named process, except for the
+# current one, and kill them
+pid=$(ps -ax | grep "$1" | awk '{print $1}' | grep -v "^$$\$")
+
+if [ -z "$pid" ]; then
+    echo "$0: no processes found: $1" >&2
+    exit 1
+else
+    for id in $pid; do
+        kill -9 $id
+        echo "killed $id"
+    done
+fi
+
