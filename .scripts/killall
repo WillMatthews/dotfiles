@@ -1,11 +1,3 @@
 #!/bin/sh
 
-if command -v pgrep > /dev/null && command -v pkill > /dev/null; then
-    # Using pgrep and pkill if available
-    echo "Using pgrep and pkill to kill processes matching $1"
-    pkill -9 "$1"
-else
-    # Fallback to using ps, grep, awk, and xargs
-    echo "Using ps, grep, awk, and xargs to kill processes matching $1"
-    ps -axu | grep "[$1]" | awk '{print $2}' | xargs kill -9
-fi
+ps -axu | grep "[$1]" | awk '{print $2}' | xargs kill -9
