@@ -183,3 +183,23 @@ sudo apt autoremove
 # sudo ufw allow 64738/udp
 #
 # sudo systemctl start murmur.service
+
+
+
+## Taskfile
+
+# is_installed() {
+#   if [ -x "$(command -v $1)" ]; then
+#     return 0
+#   else
+#     return 1
+#   fi
+# }
+#
+# if ! is_installed "task"; then
+#   if ! -d ~/.local/bin; then
+#     mkdir -p ~/.local/bin
+#   fi
+#   sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b ~/.local/bin
+# fi
+#
