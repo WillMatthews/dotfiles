@@ -1,0 +1,63 @@
+#!/bin/bash
+
+# Display branches which are present locally, but not on remote.
+# Allows you to delete dead branches
+
+
+# Function to display help message
+show_help() {
+    echo "Usage: gonebranches [options]"
+    echo "Options:"
+    echo "  -p, --preview      Preview branches that will be deleted (default action)"
+    echo "  -d, --delete       Delete the branches that are gone"
+    echo "  -s, --skip-fetch   Skip 'git fetch -p' before checking for gone branches"
+    echo "  -h, --help         Display this help and exit"
+    # Future options can be added here
+}
+
+# Default values for the options
+DO_PREVIEW=true
+DO_DELETE=false
+DO_FETCH=true
+
+# Parse command-line options
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        -p|--preview) DO_PREVIEW=true; DO_DELETE=false ;;
+        -d|--delete) DO_DELETE=true; DO_PREVIEW=false ;;
+        -s|--skip-fetch) DO_FETCH=false ;;
+        -h|--help) show_help; exit 0 ;;
+        *) echo "Unknown option: $1"; show_help; exit 1 ;;
+    esac
+    shift
+done
+
+# Function to find and optionally delete 'gone' branches
+gonebranches() {
+    if $DO_FETCH; then
+        echo "Fetching remote branches..."
+        git fetch -p
+    fi
+
+    deadbranches=$(git branch -vv | awk '/: gone]/{print $1}')
+
+    if $DO_PREVIEW; then
+        echo "Preview of branches that will be deleted:"
+        echo "$deadbranches"
+    fi
+
+    if $DO_DELETE; then
+        if [ -z "$deadbranches" ]; then
+            echo "No branches to delete."
+        else
+            echo "Deleting branches:"
+            for branch in $deadbranches; do
+                echo "Deleting branch $branch"
+                git branch -D "$branch"
+            done
+        fi
+    fi
+}
+
+# Call the function
+gonebranches
