@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# Creates a fake webcam pointing at a party parrot gif.
+# Requires you to have a a party parrot somewhere - just make sure you set the path correctly
+
+PARROT="~/party-parrot.gif"
+
+# Reload v4l2loopback
+sudo modprobe -r v4l2loopback
+
+# Load v4l2loopback module
+sudo modprobe v4l2loopback exclusive_caps=1 video_nr=5 card_label="Party Camera"
+
+# Define the resolution. Uncomment the desired resolution.
+# RESOLUTION="native"   # Use original size
+# RESOLUTION="1920:1080"  # 1080p
+# RESOLUTION="1280:720"   # 720p
+# RESOLUTION="1024:1024"  # Large square
+
+# Uncomment one of the above lines or set your own resolution
+# For native resolution, just leave RESOLUTION empty
+RESOLUTION="1024:1024"
+
+# Stream the GIF to the v4l2loopback device with the specified resolution
+if [ -z "$RESOLUTION" ] || [ "$RESOLUTION" == "native" ]; then
+  ffmpeg -re -stream_loop -1 -i $PARROT -vf format=yuv420p -f v4l2 /dev/video5
+else
+  ffmpeg -re -stream_loop -1 -i $PARROT -vf "scale=$RESOLUTION,format=yuv420p" -f v4l2 /dev/video5
+fi
