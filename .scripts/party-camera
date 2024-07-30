@@ -3,7 +3,7 @@
 # Creates a fake webcam pointing at a party parrot gif.
 # Requires you to have a a party parrot somewhere - just make sure you set the path correctly
 
-PARROT="~/party-parrot.gif"
+PARROT=~/party-parrot.gif
 
 # Reload v4l2loopback
 sudo modprobe -r v4l2loopback
