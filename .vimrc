@@ -90,7 +90,7 @@ endif
 highlight BadWhitespace ctermbg=red guibg=red
 
 " highlight bad whitespace
-au BufRead,BufNewFile *.js,*.py,*.pyw,*.c,*.h match BadWhitespace /\s\+$/
+au BufRead,BufNewFile *.v,*.hs,*.ts,*.go,*.md,*.js,*.py,*.pyw,*.c,*.h match BadWhitespace /\s\+$/
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " colorscheme settings
