@@ -120,6 +120,6 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 
 [ -f "/home/will/.ghcup/env" ] && source "/home/will/.ghcup/env" # ghcup-env
 
-export TRANSFORMERS_CACHE="/home/will/coding/ml/.hf_cache"
+export HF_HOME="/home/will/coding/ml/.huggingface"
 
 source ~/.tokens
