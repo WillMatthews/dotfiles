@@ -80,6 +80,8 @@ alias minestat="watch -c -n 60 'curl -s https://api.ethermine.org/miner/:0x7557c
 
 alias tsk="/home/will/coding/beyond/task"
 
+alias updatego="go get -d -u -t ./... && go mod tidy"
+
 ##### FUNCTIONS
 #this should probably be in 'scripts'?
 
