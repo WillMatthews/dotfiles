@@ -115,3 +115,6 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
+. "$HOME/.cargo/env"
+export PATH=$PATH:/home/will/nats-binaries
+

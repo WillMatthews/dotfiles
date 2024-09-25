@@ -78,7 +78,7 @@ alias rdp-lab="ssh -L 5902:localhost:5902 lab"
 
 alias minestat="watch -c -n 60 'curl -s https://api.ethermine.org/miner/:0x7557c19e40bc82189D63805A97d6De15B48F97C5/currentStats | jq -C  .'"
 
-alias tsk="/home/will/coding/beyond/task"
+alias tsk="task -t /home/will/coding/beyond"
 
 alias updatego="go get -d -u -t ./... && go mod tidy"
 
@@ -234,3 +234,4 @@ shdl() {
   curl -O $(curl -s http://sci-hub.tw/"$@" | grep location.href | grep -o http.*pdf);
 }
 
+. "$HOME/.cargo/env"

@@ -9,6 +9,7 @@
 !.profile
 !.gitignore
 !.tmux.conf
+!.psqlrc
 !.installed
 !.scripts/
 !.scripts/*

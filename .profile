@@ -34,3 +34,6 @@ export EDITOR="vim"
 export BROWSER="firefox"
 export FILE="ranger"
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+source $HOME/.gpu-zed
+
+. "$HOME/.cargo/env"
