@@ -1,9 +1,9 @@
 
-#                  __                   
+#                  __
 #      ____  _____/ /_  ___  ____ _   __
 #     /_  / / ___/ __ \/ _ \/ __ \ | / /
-#    _ / /_(__  ) / / /  __/ / / / |/ / 
-#   (_)___/____/_/ /_/\___/_/ /_/|___/  
+#    _ / /_(__  ) / / /  __/ / / / |/ /
+#   (_)___/____/_/ /_/\___/_/ /_/|___/
 #
 
 
@@ -15,9 +15,10 @@ eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
 # save time on typos
 alias cd..='cd ..'
-alias vi='vim'
-alias cim='vim'
-alias bim='vim'
+alias vi='nvim'
+alias cim='nvim'
+alias bim='nvim'
+alias vim='nvim'
 
 alias pia="/opt/pia/run.sh"
 
@@ -62,7 +63,7 @@ alias cafe='hexdump -C /dev/urandom|grep "ca fe"'
 alias lip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'"
 
 # get all ip data
-alias lipa="curl https://ipapi.co/json"
+alias lipa="curl https://ipapi.co/json" | jq
 
 # todolist
 alias todo="ultralist"
@@ -72,28 +73,16 @@ alias ccat="highlight --out-format=ansi" # Color cat - print file with syntax hi
 
 alias resetsound="pulseaudio -k && sudo alsa force-reload"
 
-alias rdp-home="ssh -L 5091:localhost:5091 -C -N -l matthews matthews-srv1.local"
-
-alias rdp-lab="ssh -L 5902:localhost:5902 lab"
-
-alias minestat="watch -c -n 60 'curl -s https://api.ethermine.org/miner/:0x7557c19e40bc82189D63805A97d6De15B48F97C5/currentStats | jq -C  .'"
-
-alias tsk="task -t /home/will/coding/beyond"
+alias tsk="task -t /home/will/coding/beyond/Taskfile.yml"
 
 alias updatego="go get -d -u -t ./... && go mod tidy"
 
 ##### FUNCTIONS
-#this should probably be in 'scripts'?
-
+# TODO this should probably be in 'scripts'?
 
 ## Weather forecast for whatever location you like
 weather () {
     curl "wttr.in/$1"
-}
-
-## the 'dota sometimes breaks on linux and it makes me sad' function
-killall (){
-  ps -axu | grep "$1" | awk '{print $2}' | xargs kill -9
 }
 
 
@@ -216,8 +205,6 @@ int main(int argc, char *argv[]){
 
     return EXIT_SUCCESS;
 }" >> $1.cpp
-    
-
 }
 
 
