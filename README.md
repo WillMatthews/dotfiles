@@ -1,5 +1,7 @@
 # My Rice
 
+terminal font: https://www.jetbrains.com/lp/mono/
+
 ## Overview
 Here you can find my configs:
 | File                                                                                                    | Description                                                                                     | Project Page                                                                                     |
