@@ -218,7 +218,7 @@ showcols () {
 
 ### sci hub download
 shdl() {
-  curl -O $(curl -s http://sci-hub.tw/"$@" | grep location.href | grep -o http.*pdf);
+  curl -O $(curl -s http://sci-hub.se/"$@" | grep location.href | grep -o http.*pdf);
 }
 
 . "$HOME/.cargo/env"
