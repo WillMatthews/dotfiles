@@ -1,5 +1,11 @@
 # My Rice
 
+terminal font: https://www.jetbrains.com/lp/mono/
+
+
+> [!Note]
+> I'm changing how I use `vim`. Treat my `.vimrc` as deprecated, as I'm looking to use kickstart instead.
+
 ## Overview
 Here you can find my configs:
 | File                                                                                                    | Description                                                                                     | Project Page                                                                                     |
