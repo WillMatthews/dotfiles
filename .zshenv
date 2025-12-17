@@ -22,9 +22,6 @@ alias cim='nvim'
 alias bim='nvim'
 alias v='nvim'
 
-# private internet access vpn
-alias pia="/opt/pia/run.sh"
-
 # alias for starting tmux in utf8
 alias tmux='tmux -u'
 
@@ -53,14 +50,8 @@ alias listbig='du -BM | sort -n -r | head -n'
 # get battery percentage
 alias batt='upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep -E "state|to\ full|percentage"'
 
-# crude hacky pip autoupdate (list outdated modules, use first col, cut off first two lines, pass to pip)
-alias pipupdate="pip list --outdated | cut -d' ' -f1 | sed -e '1,2d' | xargs pip install --upgrade"
-
 # sick clock bro
 alias clock='tty-clock -s -B -c -C 3 -d 0.1'
-
-# lock over ssh (BROKEN)
-#alias lock ='gnome-screensaver-command -l'
 
 # some fun stuff to say I'm in the cafe
 alias cafe='hexdump -C /dev/urandom|grep "ca fe"'
@@ -73,6 +64,7 @@ alias lipa="curl https://ipapi.co/json"
 
 # todolist
 alias todo="ultralist"
+alias agenda="ultralist agenda"
 
 # color cat
 alias ccat="highlight --out-format=ansi" # Color cat - print file with syntax highlighting.
@@ -80,8 +72,3 @@ alias ccat="highlight --out-format=ansi" # Color cat - print file with syntax hi
 # kill pulseaudio and restart alsa
 alias resetsound="pulseaudio -k && sudo alsa force-reload"
 
-# rdp to my home server
-alias rdp-home="ssh -L 5091:localhost:5091 -C -N -l matthews matthews-srv1.local"
-
-# rdp to lab (DEPRECATED. RIP lab computer)
-# alias rdp-lab="ssh -L 5902:localhost:5902 lab"
