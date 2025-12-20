@@ -76,7 +76,7 @@ pctgap=26
 verbgap=7
 sepchar=""
 
-declare -a filetypes=( .py .m .vim .sh .c .cpp .ino .hs .lhs .tex .md .html .css .php .js )
+declare -a filetypes=( .py .m .vim .sh .c .cpp .ino .hs .lhs .tex .md .html .css .php .js .go .scss .ts .tsx .tpl )
 declare -a linecounts=()
 declare -a filecounts=()
 
