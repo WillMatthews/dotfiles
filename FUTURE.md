@@ -114,6 +114,75 @@ Bigger lifts. Mention here so we don't forget.
   splitting into `.config/zsh/{aliases,plugins,prompt}.zsh` sourced from
   `.zshrc`. Not needed yet.
 
+## Terminal emulator — what to run your shell in
+
+Currently: `gnome-terminal`. Works, CPU-rendered, somewhat sluggish on
+long output, no fancy features. Every option below would be an upgrade.
+
+The defining feature of the modern crop is **GPU rendering** — smooth
+scrolling, no lag when something dumps a million lines, ligature support,
+much better font rendering. Once you've used one, going back to
+gnome-terminal feels like SSH over dial-up.
+
+The serious contenders, ordered by my recommendation strength:
+
+**kitty.** Mature, fast, very featureful. Tabs, splits, layouts all built
+in. Plain-text config (no DSL), scriptable in Python via "kittens"
+(extensions you can write yourself). Has its own graphics protocol so
+tools like `kitty +kitten icat` show images inline. Battle-tested, large
+user base, opinionated but reasonable defaults. **My default pick** for
+someone leaving gnome-terminal: best feature-to-maturity ratio, no
+surprises.
+
+**wezterm.** Batteries-included. Includes a tmux-like multiplexer built
+in (so you can drop tmux if you only used it for splits/tabs), supports
+both iTerm2 and sixel image protocols, cross-platform (Linux/macOS/Win).
+Lua config, which is either delightful or annoying depending on taste.
+Pick this if you want one tool that does terminal + multiplexer.
+
+**alacritty.** Minimalist. Just renders text fast — no tabs, no splits,
+no multiplexer. Designed to compose with tmux or zellij. TOML config.
+Smallest binary, simplest mental model. Pick if you already live in
+tmux/zellij and want the terminal to just be a fast rectangle.
+
+**ghostty.** Newer (Mitchell Hashimoto, 1.0 in early 2025). Native
+platform UI rather than custom-drawn chrome, Zig-built, fast,
+deliberately simple config. The "where things are going" bet. Less
+mature than kitty/wezterm but moving quickly. Worth trying if you like
+being on the frontier.
+
+**Honourable mentions:**
+- **foot** — Wayland-native, very lightweight. Pick if you run pure
+  Wayland and want minimal deps.
+- **rio** — Rust, image support, animations. Less mature.
+- **warp** — opinionated "modern" terminal with AI command blocks.
+  Cloud-tied account model, philosophy-heavy. I'd skip — vendor risk
+  and the UX is divisive.
+
+### Recommendation
+
+Install **kitty** and see if you like it. It's the lowest-regret move:
+mature, well-documented, easy to revert from. If you're already a tmux
+user and want to consolidate, try **wezterm** instead. If you want to
+bet on the future and don't mind some rough edges, try **ghostty**.
+
+When you do install one, you'll set the Nerd Font there (terminal-level
+setting, not shell-level). That's the same Nerd Font prerequisite as
+Starship. Two birds, one config.
+
+### Related: terminal multiplexers
+
+Worth noting in this section since it overlaps:
+
+- **tmux** (current) — POSIX, on every server, scriptable, mature.
+  `bootstrap.sh` installs it. Keep using it.
+- **zellij** — Rust, friendlier defaults (status bar, named tabs,
+  discoverable keybindings). Better OOTB experience for new users.
+  Not on every server. Sessions don't survive ssh disconnect as
+  cleanly as tmux. Worth trying as a side experiment.
+
+---
+
 ## Shell choice — is zsh still the right pick?
 
 Short answer: **yes, keep zsh**, but it's worth knowing the landscape.
