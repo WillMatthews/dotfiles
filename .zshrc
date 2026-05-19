@@ -6,109 +6,117 @@
 #   (_)___/____/_/ /_/_/   \___/
 #
 #
-#   zsh & omz config, path and env
+#   Interactive zsh config: plugins (via antidote), prompt,
+#   aliases. Env/PATH live in ~/.zshenv.
 
 
+# ── History ──
+HISTFILE=$HOME/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+setopt SHARE_HISTORY HIST_IGNORE_DUPS HIST_IGNORE_SPACE
 
+# ── Directory navigation ──
+setopt AUTO_CD              # bare `Documents` cds into it
+setopt AUTO_PUSHD           # cd remembers history; use `cd -1`, `cd -2`, …
+setopt PUSHD_IGNORE_DUPS
+setopt PUSHD_MINUS
 
-#### omz settings
+# ── Completion ──
+# Hyphen-insensitive completion (replaces OMZ's HYPHEN_INSENSITIVE=true).
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z-_}={A-Za-z_-}'
 
-# Path to oh-my-zsh installation.
-export ZSH=$HOME/.oh-my-zsh
+# ── Prompt prerequisites (gianu theme needs these) ──
+autoload -U colors && colors
+setopt PROMPT_SUBST
 
-# Theme
-ZSH_THEME="gianu"   # gianu, kphoen, muse, sunrise
+# ── Plugins via antidote ──
+source $HOME/.antidote/antidote.zsh
+antidote load
 
-# Uncomment the following line to use case-sensitive completion.
-# CASE_SENSITIVE="true"
+# ── Aliases ──
+# colourise ls output (from OMZ's lib/theme-and-appearance.zsh)
+alias ls='ls --color=tty'
 
-# Hyphen-insensitive completion. Case sensitive completion must be off. _ and - will be interchangeable.
-HYPHEN_INSENSITIVE="true"
+# ls shortcuts (from OMZ's lib/directories.zsh)
+alias l='ls -lah'
+alias ll='ls -lh'
+alias la='ls -lAh'
+alias lsa='ls -lah'
 
-# Disable auto-setting terminal title.
-# DISABLE_AUTO_TITLE="true"
+# cd-up globals: `cd ...` → ../..
+alias -g ...='../..'
+alias -g ....='../../..'
+alias -g .....='../../../..'
 
-# Enable command auto-correction.
-# ENABLE_CORRECTION="true"
+# directory stack
+alias -- -='cd -'
+alias pu='pushd'
+alias po='popd'
 
-# Display red dots whilst waiting for completion.
-COMPLETION_WAITING_DOTS="true"
+# typo savers
+alias cd..='cd ..'
+alias vi='nvim'
+alias vim='nvim'
+alias cim='nvim'
+alias bim='nvim'
+alias v='nvim'
 
-# Disable marking untracked files under VCS as dirty.
-# This makes repository status check for large repositories much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
+# tmux in utf8
+alias tmux='tmux -u'
 
+# fast open
+alias op='xdg-open'
 
-#### omz plugins
-# Plugins can be found in ~/.oh-my-zsh/plugins/*
-# Custom plugins can be added to ~/.oh-my-zsh/custom/plugins/
-plugins=(
-  git
-  command-not-found
-  python
-  pep8
-  web-search
-  zsh-autosuggestions
-  zsh-syntax-highlighting
-  task
-)
+# set file mtime to 1984
+alias nineteeneightyfour='touch -d "1984/01/01 01:01"'
 
-source $ZSH/oh-my-zsh.sh
+# alarm clock
+alias alarm='alarm-clock-applet'
 
+# blank the screen
+alias blank='sleep 1; xset dpms force off'
+alias unblank='xset -display ${DISPLAY} dpms force on'
 
-#### env variables
-# Preferred editor for local and remote sessions
-export EDITOR='nvim'
+# fuzzy-find cd (needs fzf)
+alias gt='cd $(dirname `fzf`)'
 
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
+# largest n files in cwd
+alias listbig='du -BM | sort -n -r | head -n'
 
-# go to zsh config and oh my zsh easily
+# battery percentage
+alias batt='upower -i /org/freedesktop/UPower/devices/battery_BAT0 | grep -E "state|to\ full|percentage"'
+
+# tty clock
+alias clock='tty-clock -s -B -c -C 3 -d 0.1'
+
+# matrix-flavoured "im in the cafe"
+alias cafe='hexdump -C /dev/urandom|grep "ca fe"'
+
+# local ip
+alias lip="ip -4 -o addr show scope global | awk '{print \$4}' | cut -d/ -f1"
+alias lipa="curl https://ipapi.co/json"
+
+# todolist
+alias todo="ultralist"
+alias agenda="ultralist agenda"
+
+# colour cat
+alias ccat="highlight --out-format=ansi"
+
+# pulseaudio reset
+alias resetsound="pulseaudio -k && sudo alsa force-reload"
+
+# quick edit shortcuts
 alias zshconfig="$EDITOR ~/.zshrc"
-alias ohmyzsh="$EDITOR ~/.oh-my-zsh"
+alias zshenvedit="$EDITOR ~/.zshenv"
+alias plugins="$EDITOR ~/.zsh_plugins.txt"
 
-# Bash aliases
-if [ -f ~/.zshenv ]; then
-   source ~/.zshenv
-fi
+# ── Tool integrations ──
+# bun completion
+[ -s "$BUN_INSTALL/_bun" ] && source "$BUN_INSTALL/_bun"
 
 # pay-respects: typo corrector (replaces the old `thefuck` integration)
 if command -v pay-respects >/dev/null 2>&1; then
-   eval "$(pay-respects zsh --alias)"
+  eval "$(pay-respects zsh --alias)"
 fi
-
-# ssh keyfile
-export SSH_KEY_PATH="$HOME/.ssh/rsa_id"
-
-# locale setting
-export LANG=en_GB.UTF-8
-
-# update PATH (scripts and cabal)
-export PATH=$HOME/.scripts:$PATH
-export PATH=$HOME/.cabal/bin:$PATH
-export PATH=$HOME/.local/bin:$PATH
-
-# Go
-export GOPATH=$HOME/go
-export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
-
-# GPG pin entry from terminal (!important)
-GPG_TTY=$(tty)
-export GPG_TTY
-
-# brew
-if [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
-   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-fi
-
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-[ -s "$BUN_INSTALL/_bun" ] && source "$BUN_INSTALL/_bun"
-
-# ghcup
-[ -f "$HOME/.ghcup/env" ] && source "$HOME/.ghcup/env"
-
-export HF_HOME="$HOME/coding/ml/.huggingface"
-
-[ -f "$HOME/.tokens" ] && source "$HOME/.tokens"

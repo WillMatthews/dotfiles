@@ -1,0 +1,23 @@
+# Antidote plugin manifest.
+# Load order matters: top → bottom, mirroring the order zsh would source them.
+# Edit with `plugins` alias, then run `antidote update` to refresh.
+
+# OMZ git library — provides git_prompt_info() used by the gianu theme.
+# async_prompt.zsh must come first: lib/git.zsh calls _omz_register_handler.
+ohmyzsh/ohmyzsh path:lib/async_prompt.zsh
+ohmyzsh/ohmyzsh path:lib/git.zsh
+
+# OMZ plugins we kept (skipping command-not-found, python, pep8, task).
+ohmyzsh/ohmyzsh path:plugins/git
+ohmyzsh/ohmyzsh path:plugins/web-search
+
+# Theme — must come AFTER lib/git.zsh.
+ohmyzsh/ohmyzsh path:themes/gianu.zsh-theme
+
+# Inline suggestions from history.
+zsh-users/zsh-autosuggestions
+
+# Syntax highlighting — must be LAST so it can hook every other plugin's
+# command definitions. fast-syntax-highlighting is the maintained, faster
+# successor to zsh-syntax-highlighting.
+zdharma-continuum/fast-syntax-highlighting

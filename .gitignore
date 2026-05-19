@@ -3,6 +3,7 @@
 !.zshenv
 !.vimrc
 !.zshrc
+!.zsh_plugins.txt
 !.ghci
 !.bashrc
 !.profile

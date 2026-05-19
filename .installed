@@ -63,13 +63,14 @@ pay-respects
 ripgrep
 fd-find
 fzf
+vivid
 
 PRODUCTIVITY:
 =============
 git
 stow
 tmux (tpm)
-zsh (with oh my zsh)
+zsh (with antidote)
 
 IMAGE EDITORS:
 =============

@@ -44,7 +44,7 @@ fi
 # Package lists
 regolithPackages="regolith-desktop regolith-session-flashback regolith-look-lascaille"
 nonServePackages="manpages groff tty-clock ghci cabal-install make firefox thunderbird filezilla vlc ansiweather flameshot freecad kicad gnuplot handbrake texlive-full ngspice nginx obs-studio qrencode gimp inkscape suckless-tools valgrind units wireshark glances iotop iftop ufw fail2ban mc ncdu ranger python3-pip build-essential git-lfs xfce4-notifyd gnome-tweaks"
-servePackages="git stow net-tools neofetch htop btop lm-sensors plocate samba docker.io neovim vim zsh ffmpeg whois pandoc autossh rsync sysstat nethogs jq gnupg openssh-client openssh-server tmux gzip nmap screen speedometer speedtest-cli zip unzip unrar wget curl highlight certbot ripgrep fd-find fzf bat eza zoxide"
+servePackages="git stow net-tools neofetch htop btop lm-sensors plocate samba docker.io neovim vim zsh ffmpeg whois pandoc autossh rsync sysstat nethogs jq gnupg openssh-client openssh-server tmux gzip nmap screen speedometer speedtest-cli zip unzip unrar wget curl highlight certbot ripgrep fd-find fzf bat eza zoxide vivid"
 gamesAndOtherPackages="openttd steam mumble transmission"
 cabalPackages="hakyll" # TODO make cabal work
 removePackages="regolith-rofication"
@@ -105,23 +105,18 @@ print_green "Stowing dotfiles into \$HOME..."
 cd "${HOME}"
 stow -t "${HOME}" dotfiles
 
-# Install oh-my-zsh
-print_green "Installing oh-my-zsh..."
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+# Install antidote (zsh plugin manager — replaces oh-my-zsh).
+# Plugins listed in ~/.zsh_plugins.txt are cloned lazily on first shell start.
+print_green "Installing antidote..."
+if [ ! -d "${HOME}/.antidote" ]; then
+    git clone --depth=1 https://github.com/mattmc3/antidote.git "${HOME}/.antidote"
+fi
 
 # Install TPM (Tmux Plugin Manager)
 print_green "Installing TPM (Tmux Plugin Manager)..."
 if [ ! -d "${HOME}/.tmux/plugins/tpm" ]; then
     git clone https://github.com/tmux-plugins/tpm "${HOME}/.tmux/plugins/tpm"
 fi
-
-# Install zsh-autosuggestions and zsh-syntax-highlighting
-print_green "Installing zsh plugins..."
-ZSH_CUSTOM="${ZSH_CUSTOM:-${HOME}/.oh-my-zsh/custom}"
-[ ! -d "${ZSH_CUSTOM}/plugins/zsh-syntax-highlighting" ] && \
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "${ZSH_CUSTOM}/plugins/zsh-syntax-highlighting"
-[ ! -d "${ZSH_CUSTOM}/plugins/zsh-autosuggestions" ] && \
-    git clone https://github.com/zsh-users/zsh-autosuggestions "${ZSH_CUSTOM}/plugins/zsh-autosuggestions"
 
 # Install pay-respects (typo corrector, replaces thefuck). Not in apt.
 print_green "Installing pay-respects..."
