@@ -2,10 +2,6 @@
 
 terminal font: https://www.jetbrains.com/lp/mono/
 
-
-> [!Note]
-> I'm changing how I use `vim`. Treat my `.vimrc` as deprecated, as I'm looking to use kickstart instead.
-
 ## Overview
 Here you can find my configs:
 | File                                                                                                    | Description                                                                                     | Project Page                                                                                     |
@@ -14,16 +10,13 @@ Here you can find my configs:
 | [**.ghci**](https://github.com/WillMatthews/dotfiles/blob/master/.ghci)                                 | GHC interactive environment configuration.                                                      | [GHC](https://www.haskell.org/ghc/)                                                              |
 | [**.profile**](https://github.com/WillMatthews/dotfiles/blob/master/.profile)                           | Initialisation script for shell sessions.                                                       | [Bash Startup Files](https://www.gnu.org/software/bash/manual/html_node/Bash-Startup-Files.html) |
 | [**.tmux.conf**](https://github.com/WillMatthews/dotfiles/blob/master/.tmux.conf)                       | TMUX terminal multiplexer configuration.                                                        | [TMUX](https://github.com/tmux/tmux)                                                             |
-| [**.vimrc**](https://github.com/WillMatthews/dotfiles/blob/master/.vimrc)                               | Vim text editor configuration.                                                                  | [Vim](https://www.vim.org/) or [Neovim](https://neovim.io/)                              |
-| [**.xbashrc**](https://github.com/WillMatthews/dotfiles/blob/master/.xbashrc)                           | Bash configuration for specific scenarios.                                                      | [Bash shell](https://www.gnu.org/software/bash/)                                                 |
+| [**.vimrc**](https://github.com/WillMatthews/dotfiles/blob/master/.vimrc)                               | Standalone Vim config — no plugin dependencies. Use it on servers.                              | [Vim](https://www.vim.org/)                                                                      |
 | [**.zshenv**](https://github.com/WillMatthews/dotfiles/blob/master/.zshenv)                             | Environment variables for Zsh.                                                                  | [Zsh](https://www.zsh.org/)                                                                      |
 | [**.zshrc**](https://github.com/WillMatthews/dotfiles/blob/master/.zshrc)                               | Zsh configuration file.                                                                         | [Zsh](https://www.zsh.org/)                                                                      |
 | [**.scripts/**](https://github.com/WillMatthews/dotfiles/blob/master/.scripts/)                         | Utility scripts for a variety of tasks.                                                         | [Utility scripts](https://github.com/WillMatthews/dotfiles/blob/master/.scripts/)                |
-| [**.config/redshift.conf**](https://github.com/WillMatthews/dotfiles/blob/master/.config/redshift.conf) | Redshift configuration file.                                                                    | [Redshift](https://github.com/jonls/redshift)
-| [**.config/nvim/init.vim**](https://github.com/WillMatthews/dotfiles/blob/master/.config/nvim/init.vim) | Neovim configuration file.                                                                      | [Neovim](https://neovim.io/)                                                                     |
+| [**.config/redshift.conf**](https://github.com/WillMatthews/dotfiles/blob/master/.config/redshift.conf) | Redshift configuration file.                                                                    | [Redshift](https://github.com/jonls/redshift)                                                    |
+| [**.config/nvim/**](https://github.com/WillMatthews/dotfiles/blob/master/.config/nvim)                  | Neovim config — git submodule pointing at my kickstart.nvim fork.                               | [kickstart.nvim](https://github.com/WillMatthews/kickstart.nvim)                                 |
 | [**.installed**](https://github.com/WillMatthews/dotfiles/blob/master/.installed)                       | Keeps track of installed applications (not fully up to date).                                   | -                                                                                                |
-
-
 
 
 ## The Scripts Directory
@@ -34,37 +27,52 @@ The .scripts directory contains my utility scripts, with a special emphasis on t
 
 ## Installation
 
-Clone this repo to your local machine:
+Clone this repo (recursively, to pull in the kickstart.nvim submodule):
 ```bash
-git clone https://github.com/WillMatthews/dotfiles.git
-cd dotfiles
+git clone --recursive https://github.com/WillMatthews/dotfiles.git ~/dotfiles
 ```
 
-Symlink the dotfiles you wish to adopt into your home directory. For instance, to use the .vimrc:
+If you forgot `--recursive`:
 ```bash
-ln -s $(pwd)/.vimrc ~/.vimrc
+cd ~/dotfiles && git submodule update --init --recursive
 ```
 
-In my use, I just `mv` everything into my home directory. The .gitignore only includes the files in this repo, so it's easy to manage them. Other files in your home directory will not interfere.
+Symlink everything into `$HOME` with [GNU stow](https://www.gnu.org/software/stow/):
 ```bash
-cd dotfiles
-mv * ~/
-mv .* ~/
+cd ~
+stow -t ~ dotfiles
 ```
 
+That symlinks every tracked file in `~/dotfiles/` into `$HOME` (skipping the metadata files listed in `.stow-local-ignore`). To undo:
+```bash
+cd ~
+stow -t ~ -D dotfiles
+```
 
 ### Using Scripts
-The scripts within the .scripts directory are designed for direct execution. For detailed usage instructions, consult the comments within each script or execute them with `-h` or `--help` for help information (if it is present!). 
+The scripts within the .scripts directory are designed for direct execution. For detailed usage instructions, consult the comments within each script or execute them with `-h` or `--help` for help information (if it is present!).
 Otherwise, each script will tell you what it does in a comment.
 
 I include `.scripts` in my `$PATH`, which you can find in `.zshrc`.
 If you don't want my `.zshrc` but still want to include `.scripts` in your `$PATH`, do:
 ```bash
-export PATH=$HOME/.scripts:$PATH 
+export PATH=$HOME/.scripts:$PATH
 ```
 
+## Modern CLI tools
+
+`bootstrap.sh` installs these, but I haven't wired them into my aliases — they're sitting next to the classics so I can opt in per-machine. If you want them as defaults, the snippets are below.
+
+| Tool                                        | What it replaces | Init / alias                                  |
+| ------------------------------------------- | ---------------- | --------------------------------------------- |
+| [eza](https://github.com/eza-community/eza) | `ls`             | `alias ls='eza'`                              |
+| [bat](https://github.com/sharkdp/bat)       | `cat` (and my `ccat`) | `alias cat='bat -p'`                     |
+| [zoxide](https://github.com/ajeetdsouza/zoxide) | `cd` (frecency) | `eval "$(zoxide init zsh)"`               |
+| [atuin](https://github.com/atuinsh/atuin)   | `Ctrl-R` history | `eval "$(atuin init zsh)"`                   |
+| [pay-respects](https://github.com/iffse/pay-respects) | `thefuck` | `eval "$(pay-respects zsh --alias)"` (already wired in `.zshrc`) |
+
 ## Customisation
-**You’re encouraged to fork this repository and tweak the dotfiles and scripts to your heart's content, tailoring them to fit your own preferences and workflow.
+**You're encouraged to fork this repository and tweak the dotfiles and scripts to your heart's content, tailoring them to fit your own preferences and workflow.
 Make them your own!**
 
 ## Contributing

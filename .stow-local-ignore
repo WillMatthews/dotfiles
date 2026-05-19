@@ -1,0 +1,11 @@
+# Files in this repo that should NOT be symlinked into $HOME.
+# Format: one Perl regex per line, matched against the path relative to the package dir.
+README\.md
+LICENSE
+\.installed
+\.gitignore
+\.gitmodules
+\.git
+\.stow-local-ignore
+\.scripts/readme\.md
+\.scripts/bootstrap-readme

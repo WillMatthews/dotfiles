@@ -5,9 +5,10 @@
 !.zshrc
 !.ghci
 !.bashrc
-!.xbashrc
 !.profile
 !.gitignore
+!.gitmodules
+!.stow-local-ignore
 !.tmux.conf
 !.installed
 !.scripts/
@@ -15,12 +16,8 @@
 .scripts/vnc-home
 .scripts/tellData
 .scripts/stats.log
-!.kde/
-!.kde/*
 
 !.config/
 .config/*
 !.config/redshift.conf
-
-!.config/nvim/
-!.config/nvim/init.vim
+!.config/nvim

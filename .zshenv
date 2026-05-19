@@ -38,9 +38,6 @@ alias alarm='alarm-clock-applet'
 alias blank='sleep 1; xset dpms force off'
 alias unblank='xset -display ${DISPLAY} dpms force on'
 
-# make matlab start the way I want to in terminal
-alias tmatlab='matlab -nodesktop -nosplash'
-
 # fuzzy find change directory, requires `fzf`
 alias gt='cd $(dirname `fzf`)'
 
@@ -57,7 +54,7 @@ alias clock='tty-clock -s -B -c -C 3 -d 0.1'
 alias cafe='hexdump -C /dev/urandom|grep "ca fe"'
 
 # local ip obtain
-alias lip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'"
+alias lip="ip -4 -o addr show scope global | awk '{print \$4}' | cut -d/ -f1"
 
 # get all ip data
 alias lipa="curl https://ipapi.co/json"

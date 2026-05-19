@@ -18,12 +18,13 @@ thunderbird
 filezilla
 hugo
 mumble
-gnome-tweak-tool (if using GNOME)
+gnome-tweaks (if using GNOME)
 
 TEXT EDITORS:
 =============
 groff (of course)
-vim (vundle)
+vim
+neovim
 texlive-full
 VSCode (not on apt!)
 
@@ -35,7 +36,7 @@ btop
 htop
 sysstat
 nethogs
-youtube-dl
+yt-dlp
 whois
 neofetch
 pandoc
@@ -48,18 +49,27 @@ autossh
 openssh-client
 openssh-server
 ansiweather
-mysql client
 zerotier
 manpages
 lm-sensors
-net-tools
+
+MODERN CLI:
+=============
+eza
+bat
+zoxide
+atuin
+pay-respects
+ripgrep
+fd-find
+fzf
 
 PRODUCTIVITY:
 =============
 git
+stow
 tmux (tpm)
 zsh (with oh my zsh)
-thefuck
 
 IMAGE EDITORS:
 =============

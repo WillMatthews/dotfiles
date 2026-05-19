@@ -11,11 +11,10 @@
 
 
 
-
 #### omz settings
 
 # Path to oh-my-zsh installation.
-export ZSH=~/.oh-my-zsh
+export ZSH=$HOME/.oh-my-zsh
 
 # Theme
 ZSH_THEME="gianu"   # gianu, kphoen, muse, sunrise
@@ -59,67 +58,57 @@ source $ZSH/oh-my-zsh.sh
 
 #### env variables
 # Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='nvim'
-else
-  export EDITOR='nvim'
-fi
+export EDITOR='nvim'
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
 # go to zsh config and oh my zsh easily
-alias zshconfig="mate ~/.zshrc"
-alias ohmyzsh="mate ~/.oh-my-zsh"
+alias zshconfig="$EDITOR ~/.zshrc"
+alias ohmyzsh="$EDITOR ~/.oh-my-zsh"
 
 # Bash aliases
 if [ -f ~/.zshenv ]; then
    source ~/.zshenv
 fi
 
-# alias thefuck
-eval $(thefuck --alias)
+# pay-respects: typo corrector (replaces the old `thefuck` integration)
+if command -v pay-respects >/dev/null 2>&1; then
+   eval "$(pay-respects zsh --alias)"
+fi
 
 # ssh keyfile
-export SSH_KEY_PATH="~/.ssh/rsa_id"
+export SSH_KEY_PATH="$HOME/.ssh/rsa_id"
 
 # locale setting
 export LANG=en_GB.UTF-8
 
-# update PATH (scripts, go and MATLAB)
+# update PATH (scripts and cabal)
 export PATH=$HOME/.scripts:$PATH
 export PATH=$HOME/.cabal/bin:$PATH
+export PATH=$HOME/.local/bin:$PATH
 
 # Go
 export GOPATH=$HOME/go
 export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
-
-# MATLAB
-export PATH="$PATH:/usr/local/MATLAB/R2019b/bin" #R2022b/bin for alt ver.
-export PATH="$PATH:/home/will/.local/bin" # python scripts
-
-# Cuda
-export LD_LIBRARY_PATH=/usr/lib/nvidia-cuda-toolkit/libdevice:$LD_LIBRARY_PATH
-export PATH=/usr/lib/nvidia-cuda-toolkit/bin:$PATH
 
 # GPG pin entry from terminal (!important)
 GPG_TTY=$(tty)
 export GPG_TTY
 
 # brew
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-
-#. /home/will/torch/install/bin/torch-activate
+if [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
+   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
+[ -s "$BUN_INSTALL/_bun" ] && source "$BUN_INSTALL/_bun"
 
-# bun completions
-[ -s "/home/will/.bun/_bun" ] && source "/home/will/.bun/_bun"
+# ghcup
+[ -f "$HOME/.ghcup/env" ] && source "$HOME/.ghcup/env"
 
-[ -f "/home/will/.ghcup/env" ] && source "/home/will/.ghcup/env" # ghcup-env
+export HF_HOME="$HOME/coding/ml/.huggingface"
 
-export HF_HOME="/home/will/coding/ml/.huggingface"
-
-source ~/.tokens
+[ -f "$HOME/.tokens" ] && source "$HOME/.tokens"
