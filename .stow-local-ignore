@@ -1,6 +1,7 @@
 # Files in this repo that should NOT be symlinked into $HOME.
 # Format: one Perl regex per line, matched against the path relative to the package dir.
 README\.md
+FUTURE\.md
 LICENSE
 \.installed
 \.gitignore

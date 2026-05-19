@@ -16,7 +16,6 @@ export EDITOR='nvim'
 export LANG=en_GB.UTF-8
 
 # ── Secrets / keys ──
-export SSH_KEY_PATH="$HOME/.ssh/rsa_id"
 export GPG_TTY=$(tty 2>/dev/null)   # GPG pinentry from terminal
 
 # ── Language toolchains ──
