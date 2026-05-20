@@ -52,8 +52,13 @@ bindsym XF86AudioRaiseVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@   5%+ -l
 bindsym XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@   5%-
 bindsym XF86AudioMute        exec wpctl set-mute   @DEFAULT_AUDIO_SINK@   toggle
 bindsym XF86AudioMicMute     exec wpctl set-mute   @DEFAULT_AUDIO_SOURCE@ toggle
-bindsym XF86MonBrightnessUp   exec brightnessctl set +5%
-bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
+# -d intel_backlight is host-specific (grindstation / Medion Erazer 16 X1):
+# hybrid Intel+Nvidia exposes a stub `nvidia_0` backlight alongside the real
+# `intel_backlight`, and brightnessctl's default can land on the stub.
+# On a non-hybrid laptop, drop the -d flag (or change the device name to match
+# `brightnessctl --list` output for that host).
+bindsym XF86MonBrightnessUp   exec brightnessctl -d intel_backlight set +5%
+bindsym XF86MonBrightnessDown exec brightnessctl -d intel_backlight set 5%-
 
 # Mouse+$mod to drag floating windows
 floating_modifier $mod
