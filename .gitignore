@@ -13,6 +13,9 @@ Thumbs.db
 .tokens
 .config/gh/hosts.yml
 .claude/settings.local.json
+# Work-only shell helpers (Antare). Lives in ~/.config/antare/, sourced from
+# .bashrc and .zshrc. Kept out of the repo to preserve the work/personal split.
+.config/antare/
 
 # Script-local runtime data (not for the repo)
 .scripts/vnc-home

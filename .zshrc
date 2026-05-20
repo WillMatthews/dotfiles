@@ -120,3 +120,6 @@ alias plugins="$EDITOR ~/.zsh_plugins.txt"
 if command -v pay-respects >/dev/null 2>&1; then
   eval "$(pay-respects zsh --alias)"
 fi
+
+# Work-only helpers (Antare) — file is gitignored and only present on work machines.
+[ -f "$HOME/.config/antare/shell.sh" ] && . "$HOME/.config/antare/shell.sh"
