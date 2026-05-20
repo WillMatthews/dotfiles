@@ -13,6 +13,11 @@
 !.stow-local-ignore
 !.tmux.conf
 !.installed
+!.ripgreprc
+
+!.claude/
+.claude/*
+!.claude/settings.json
 !.scripts/
 !.scripts/*
 .scripts/vnc-home
@@ -27,3 +32,13 @@
 !.config/i3/*
 !.config/sway/
 !.config/sway/*
+!.config/kitty/
+!.config/kitty/*
+!.config/rofi/
+!.config/rofi/*
+!.config/dunst/
+!.config/dunst/*
+!.config/btop/
+!.config/btop/btop.conf
+!.config/gh/
+!.config/gh/config.yml

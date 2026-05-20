@@ -15,6 +15,9 @@
 export EDITOR='nvim'
 export LANG=en_GB.UTF-8
 
+# ── ripgrep ──
+[ -f "$HOME/.ripgreprc" ] && export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
+
 # ── Secrets / keys ──
 export GPG_TTY=$(tty 2>/dev/null)   # GPG pinentry from terminal
 

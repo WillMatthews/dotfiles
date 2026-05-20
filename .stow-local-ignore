@@ -10,3 +10,5 @@ LICENSE
 \.stow-local-ignore
 \.scripts/readme\.md
 \.scripts/bootstrap-readme
+# Machine-local Claude permissions — never stowed.
+\.claude/settings\.local\.json

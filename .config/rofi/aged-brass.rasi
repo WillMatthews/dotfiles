@@ -1,0 +1,99 @@
+// Aged Brass palette — see ~/Documents/THEMES.md
+* {
+    bg:          #2A211B;
+    bg-alt:      #3A2E25;
+    fg:          #EFE3CE;
+    fg-dim:      #A89880;
+    accent:      #FFC332;
+    accent-dim:  #D6A12A;
+    border-c:    #4E3F32;
+    urgent:      #D26653;
+
+    background-color:  transparent;
+    text-color:        @fg;
+    font:              "JetBrains Mono 12";
+}
+
+window {
+    transparency:      "real";
+    location:          center;
+    anchor:            center;
+    width:             45%;
+    background-color:  @bg;
+    border:            1px;
+    border-color:      @accent;
+    border-radius:     8px;
+    padding:           14px;
+}
+
+mainbox {
+    children:          [ inputbar, message, listview, mode-switcher ];
+    spacing:           10px;
+}
+
+inputbar {
+    background-color:  @bg-alt;
+    text-color:        @fg;
+    padding:           8px 12px;
+    border-radius:     6px;
+    children:          [ prompt, entry ];
+}
+
+prompt {
+    text-color:        @accent;
+    margin:            0 8px 0 0;
+}
+
+entry {
+    placeholder:       "type to search";
+    placeholder-color: @fg-dim;
+}
+
+message {
+    background-color:  @bg-alt;
+    padding:           6px 10px;
+    border-radius:     6px;
+}
+
+listview {
+    lines:             10;
+    columns:           1;
+    fixed-height:      true;
+    scrollbar:         false;
+    spacing:           2px;
+}
+
+element {
+    padding:           6px 10px;
+    border-radius:     4px;
+}
+
+element selected {
+    background-color:  @accent;
+    text-color:        @bg;
+}
+
+element-text {
+    background-color:  inherit;
+    text-color:        inherit;
+}
+
+element-icon {
+    size:              1.0em;
+}
+
+mode-switcher {
+    spacing:           4px;
+}
+
+button {
+    padding:           6px 10px;
+    background-color:  @bg-alt;
+    text-color:        @fg-dim;
+    border-radius:     4px;
+}
+
+button selected {
+    background-color:  @accent;
+    text-color:        @bg;
+}

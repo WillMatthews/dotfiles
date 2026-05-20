@@ -1,0 +1,18 @@
+# gh — GitHub CLI. Auth tokens live in hosts.yml (NOT tracked).
+version: 1
+git_protocol: https
+editor: nvim
+prompt: enabled
+pager:
+http_unix_socket:
+browser:
+aliases:
+    co: pr checkout
+    prv: pr view --web
+    prl: pr list --limit 30
+    prc: pr create --web
+    prs: pr status
+    il: issue list --limit 30
+    iv: issue view --web
+    ic: issue create --web
+    rv: repo view --web

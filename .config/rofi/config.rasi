@@ -1,0 +1,19 @@
+// rofi launcher — behaviour. Colours live in aged-brass.rasi.
+configuration {
+    modes:                       "drun,run,window,ssh";
+    show-icons:                  false;
+    display-drun:                "apps";
+    display-run:                 "run";
+    display-window:              "win";
+    display-ssh:                 "ssh";
+    drun-display-format:         "{name}";
+    sidebar-mode:                true;
+    matching:                    "fuzzy";
+    sort:                        true;
+    sorting-method:              "fzf";
+    case-sensitive:              false;
+    cycle:                       true;
+    terminal:                    "kitty";
+}
+
+@theme "~/.config/rofi/aged-brass.rasi"

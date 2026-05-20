@@ -1,0 +1,36 @@
+# ripgrep — set RIPGREP_CONFIG_PATH=$HOME/.ripgreprc in .zshenv (already set
+# via stowed config). Override per-invocation by passing flags explicitly.
+
+# Searching
+--smart-case
+--follow
+--hidden
+--max-columns=200
+--max-columns-preview
+
+# Exclusions — common build / cache / VCS noise. Negate per-call with --glob=.
+--glob=!.git/
+--glob=!node_modules/
+--glob=!.venv/
+--glob=!__pycache__/
+--glob=!target/
+--glob=!dist/
+--glob=!build/
+--glob=!.next/
+--glob=!.cache/
+--glob=!*.min.js
+--glob=!*.min.css
+--glob=!*.lock
+--glob=!*.svg
+
+# Output / colours — Aged Brass tinted.
+--colors=line:fg:228
+--colors=path:fg:215
+--colors=path:style:bold
+--colors=match:fg:222
+--colors=match:style:bold
+
+# Extra file-type associations (rg --type-list to see defaults).
+--type-add=web:*.{html,css,scss,sass,js,jsx,ts,tsx,vue,svelte}
+--type-add=config:*.{toml,yaml,yml,json,ini,conf,cfg}
+--type-add=docs:*.{md,mdx,rst,txt,org}
