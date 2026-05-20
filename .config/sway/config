@@ -1,0 +1,163 @@
+# Sway config — ported from ~/.config/i3/config
+# Reference: man 5 sway
+
+set $mod Mod4
+set $term kitty
+set $menu rofi -show drun
+
+font pango:monospace 8
+
+default_border pixel 3
+default_floating_border pixel 3
+
+# Focused window gets a bright white border; everything else fades out.
+# Order: border  background  text  indicator  child_border
+client.focused          #ffffff #285577 #ffffff #2e9ef4 #ffffff
+client.unfocused        #333333 #222222 #888888 #292d2e #222222
+client.focused_inactive #5f676a #222222 #888888 #292d2e #5f676a
+client.urgent           #900000 #900000 #ffffff #900000 #900000
+
+# Make sure portals and GUI apps see the Wayland environment
+exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
+
+# XDG autostart
+exec dex --autostart --environment sway
+
+# Idle / lock — replaces xss-lock + i3lock from the i3 config
+exec swayidle -w \
+    timeout 600  'swaylock -f -c 000000' \
+    timeout 900  'swaymsg "output * power off"' \
+        resume   'swaymsg "output * power on"' \
+    before-sleep 'swaylock -f -c 000000'
+
+# Network applet (shows up in the bar's tray)
+exec nm-applet --indicator
+
+# Volume / brightness keys
+bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +10%
+bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -10%
+bindsym XF86AudioMute        exec pactl set-sink-mute   @DEFAULT_SINK@ toggle
+bindsym XF86AudioMicMute     exec pactl set-source-mute @DEFAULT_SOURCE@ toggle
+bindsym XF86MonBrightnessUp   exec brightnessctl set +5%
+bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
+
+# Mouse+$mod to drag floating windows
+floating_modifier $mod
+
+# Terminal
+bindsym $mod+Return exec $term
+
+# Kill focused window
+bindsym $mod+Shift+q kill
+
+# Launchers (rofi runs under XWayland — works fine)
+bindsym $mod+d exec $menu
+bindsym $mod+Tab exec rofi -show window
+bindsym $mod+Shift+d exec rofi -show run
+bindsym $mod+space exec rofi -show drun -show-icons
+
+# Screenshots — region to clipboard, region to file, full screen to file
+bindsym Print            exec grim -g "$(slurp)" - | wl-copy
+bindsym Shift+Print      exec grim -g "$(slurp)" ~/Pictures/screenshot-$(date +%Y%m%d-%H%M%S).png
+bindsym Ctrl+Print       exec grim ~/Pictures/screenshot-$(date +%Y%m%d-%H%M%S).png
+
+# Focus
+bindsym $mod+j focus left
+bindsym $mod+k focus down
+bindsym $mod+l focus up
+bindsym $mod+semicolon focus right
+bindsym $mod+Left  focus left
+bindsym $mod+Down  focus down
+bindsym $mod+Up    focus up
+bindsym $mod+Right focus right
+
+# Move
+bindsym $mod+Shift+j move left
+bindsym $mod+Shift+k move down
+bindsym $mod+Shift+l move up
+bindsym $mod+Shift+semicolon move right
+bindsym $mod+Shift+Left  move left
+bindsym $mod+Shift+Down  move down
+bindsym $mod+Shift+Up    move up
+bindsym $mod+Shift+Right move right
+
+# Split / fullscreen / layout
+bindsym $mod+h split h
+bindsym $mod+v split v
+bindsym $mod+f fullscreen toggle
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+# Floating
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+grave focus mode_toggle
+
+# Focus parent
+bindsym $mod+a focus parent
+
+# Workspaces
+set $ws1 "1"
+set $ws2 "2"
+set $ws3 "3"
+set $ws4 "4"
+set $ws5 "5"
+set $ws6 "6"
+set $ws7 "7"
+set $ws8 "8"
+set $ws9 "9"
+set $ws10 "10"
+
+bindsym $mod+1 workspace number $ws1
+bindsym $mod+2 workspace number $ws2
+bindsym $mod+3 workspace number $ws3
+bindsym $mod+4 workspace number $ws4
+bindsym $mod+5 workspace number $ws5
+bindsym $mod+6 workspace number $ws6
+bindsym $mod+7 workspace number $ws7
+bindsym $mod+8 workspace number $ws8
+bindsym $mod+9 workspace number $ws9
+bindsym $mod+0 workspace number $ws10
+
+bindsym $mod+Shift+1 move container to workspace number $ws1
+bindsym $mod+Shift+2 move container to workspace number $ws2
+bindsym $mod+Shift+3 move container to workspace number $ws3
+bindsym $mod+Shift+4 move container to workspace number $ws4
+bindsym $mod+Shift+5 move container to workspace number $ws5
+bindsym $mod+Shift+6 move container to workspace number $ws6
+bindsym $mod+Shift+7 move container to workspace number $ws7
+bindsym $mod+Shift+8 move container to workspace number $ws8
+bindsym $mod+Shift+9 move container to workspace number $ws9
+bindsym $mod+Shift+0 move container to workspace number $ws10
+
+# Reload / restart / exit
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+r reload
+bindsym $mod+Shift+e exec swaynag -t warning -m 'Exit sway?' -B 'Yes, exit' 'swaymsg exit'
+
+# Resize mode
+mode "resize" {
+    bindsym j         resize shrink width  10 px or 10 ppt
+    bindsym k         resize grow   height 10 px or 10 ppt
+    bindsym l         resize shrink height 10 px or 10 ppt
+    bindsym semicolon resize grow   width  10 px or 10 ppt
+
+    bindsym Left  resize shrink width  10 px or 10 ppt
+    bindsym Down  resize grow   height 10 px or 10 ppt
+    bindsym Up    resize shrink height 10 px or 10 ppt
+    bindsym Right resize grow   width  10 px or 10 ppt
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+    bindsym $mod+r mode "default"
+}
+bindsym $mod+r mode "resize"
+
+# Bar — swaybar speaks i3bar protocol, so i3status works unchanged
+bar {
+    status_command i3status
+    tray_output *
+}
+
+# Include drop-ins (per-host overrides, future tweaks)
+include /etc/sway/config.d/*

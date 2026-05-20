@@ -17,6 +17,8 @@ Here you can find my configs:
 | [**.scripts/**](https://github.com/WillMatthews/dotfiles/blob/master/.scripts/)                         | Utility scripts for a variety of tasks.                                                         | [Utility scripts](https://github.com/WillMatthews/dotfiles/blob/master/.scripts/)                |
 | [**.config/redshift.conf**](https://github.com/WillMatthews/dotfiles/blob/master/.config/redshift.conf) | Redshift configuration file.                                                                    | [Redshift](https://github.com/jonls/redshift)                                                    |
 | [**.config/nvim/**](https://github.com/WillMatthews/dotfiles/blob/master/.config/nvim)                  | Neovim config — git submodule pointing at my kickstart.nvim fork.                               | [kickstart.nvim](https://github.com/WillMatthews/kickstart.nvim)                                 |
+| [**.config/i3/config**](https://github.com/WillMatthews/dotfiles/blob/master/.config/i3/config)         | i3 window manager config. Not yet stowed — see note below.                                      | [i3](https://i3wm.org/)                                                                          |
+| [**.config/sway/config**](https://github.com/WillMatthews/dotfiles/blob/master/.config/sway/config)     | Sway (Wayland) compositor config, ported from the i3 one.                                       | [sway](https://swaywm.org/)                                                                      |
 | [**.installed**](https://github.com/WillMatthews/dotfiles/blob/master/.installed)                       | Keeps track of installed applications (not fully up to date).                                   | -                                                                                                |
 
 
@@ -49,6 +51,12 @@ That symlinks every tracked file in `~/dotfiles/` into `$HOME` (skipping the met
 cd ~
 stow -t ~ -D dotfiles
 ```
+
+### Not-yet-stowed files
+
+Some configs live in the repo as plain copies because the live file at the corresponding `$HOME` location is still a real file, not a symlink. `stow` will refuse to overlay them until the live file is removed or backed up.
+
+- `.config/i3/config` — copied in on 2026-05-19. Before stowing, `rm ~/.config/i3/config` (or move it aside), then re-run `stow -t ~ dotfiles`.
 
 ### Using Scripts
 The scripts within the .scripts directory are designed for direct execution. For detailed usage instructions, consult the comments within each script or execute them with `-h` or `--help` for help information (if it is present!).

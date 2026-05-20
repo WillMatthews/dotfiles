@@ -23,3 +23,5 @@
 .config/*
 !.config/redshift.conf
 !.config/nvim
+!.config/sway/
+!.config/sway/*
