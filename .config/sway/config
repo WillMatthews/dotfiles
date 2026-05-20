@@ -76,7 +76,7 @@ bindsym $mod+Shift+d exec rofi -show run
 bindsym $mod+space exec rofi -show drun -show-icons
 
 # Screenshots — region to clipboard, region to file, full screen to file
-bindsym Print            exec grim -g "$(slurp)" - | wl-copy
+bindsym Print            exec flameshot gui
 bindsym Shift+Print      exec grim -g "$(slurp)" ~/Pictures/screenshot-$(date +%Y%m%d-%H%M%S).png
 bindsym Ctrl+Print       exec grim ~/Pictures/screenshot-$(date +%Y%m%d-%H%M%S).png
 
