@@ -1,0 +1,151 @@
+// Waybar config — bottom bar, Aged Brass palette (see ~/Documents/THEMES.md)
+// Pairs with style.css in this directory.
+//
+// Icon glyphs use \uXXXX escapes (BMP only) so the codepoints survive editing
+// across tools that strip Private-Use-Area characters. All glyphs picked from
+// the Font Awesome 4 range — present in every Nerd Font patch.
+{
+    "layer": "top",
+    "position": "bottom",
+    "height": 30,
+    "spacing": 6,
+    "margin-top": 0,
+    "margin-bottom": 0,
+    "margin-left": 10,
+    "margin-right": 10,
+
+    "modules-left": [
+        "sway/workspaces",
+        "sway/mode"
+    ],
+    "modules-center": [
+        "sway/window"
+    ],
+    "modules-right": [
+        "tray",
+        "idle_inhibitor",
+        "network",
+        "bluetooth",
+        "pulseaudio",
+        "backlight",
+        "battery",
+        "clock"
+    ],
+
+    "sway/workspaces": {
+        "disable-scroll": false,
+        "all-outputs": false,
+        "format": "{name}"
+    },
+
+    "sway/mode": {
+        "format": "  {}",
+        "tooltip": false
+    },
+
+    "sway/window": {
+        "format": "{title}",
+        "max-length": 80,
+        "tooltip": false,
+        "rewrite": {
+            "(.*) — Mozilla Firefox": "  $1",
+            "(.*) - kitty": "  $1"
+        }
+    },
+
+    "tray": {
+        "icon-size": 16,
+        "spacing": 8
+    },
+
+    "idle_inhibitor": {
+        "format": "{icon}",
+        "format-icons": {
+            "activated": "",
+            "deactivated": ""
+        },
+        "tooltip-format-activated": "Caffeine on — idle inhibited",
+        "tooltip-format-deactivated": "Caffeine off"
+    },
+
+    "network": {
+        "format-wifi": "  {essid}",
+        "format-ethernet": "  {ifname}",
+        "format-linked": "  {ifname}",
+        "format-disconnected": "  offline",
+        "tooltip-format-wifi": "{essid} ({signalStrength}%)\n{ipaddr}/{cidr}",
+        "tooltip-format-ethernet": "{ifname}\n{ipaddr}/{cidr}",
+        "on-click": "kitty -e nmtui"
+    },
+
+    "bluetooth": {
+        "format": "",
+        "format-disabled": "",
+        "format-off": "",
+        "format-connected": "  {num_connections}",
+        "tooltip-format": "{controller_alias}\n{status}",
+        "tooltip-format-connected": "{controller_alias}\n{num_connections} connected\n\n{device_enumerate}",
+        "tooltip-format-enumerate-connected": "{device_alias}",
+        "on-click": "blueman-manager"
+    },
+
+    "pulseaudio": {
+        "format": "{icon}  {volume}%",
+        "format-muted": "  muted",
+        "format-bluetooth": "{icon}  {volume}% ",
+        "format-icons": {
+            "headphone": "",
+            "headset": "",
+            "default": ["", "", ""]
+        },
+        "scroll-step": 5,
+        "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+        "on-click-right": "pavucontrol"
+    },
+
+    "backlight": {
+        "device": "intel_backlight",
+        "format": "{icon}  {percent}%",
+        "format-icons": ["", ""],
+        "on-scroll-up": "brightnessctl -d intel_backlight set +5%",
+        "on-scroll-down": "brightnessctl -d intel_backlight set 5%-"
+    },
+
+    "battery": {
+        "bat": "BAT0",
+        "states": {
+            "good": 80,
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{icon}  {capacity}%",
+        "format-charging": "  {capacity}%",
+        "format-plugged": "  {capacity}%",
+        "format-icons": ["", "", "", "", ""],
+        "tooltip-format": "{timeTo}\n{power} W"
+    },
+
+    "clock": {
+        "format": "  {:%a %d %b   %H:%M}",
+        "format-alt": "  {:%Y-%m-%d  %H:%M:%S}",
+        "tooltip-format": "<tt><small>{calendar}</small></tt>",
+        "calendar": {
+            "mode": "month",
+            "mode-mon-col": 3,
+            "weeks-pos": "left",
+            "on-scroll": 1,
+            "format": {
+                "months":   "<span color='#FFC332'><b>{}</b></span>",
+                "days":     "<span color='#EFE3CE'>{}</span>",
+                "weeks":    "<span color='#A89880'>W{}</span>",
+                "weekdays": "<span color='#D6A12A'><b>{}</b></span>",
+                "today":    "<span color='#FFC332'><b><u>{}</u></b></span>"
+            }
+        },
+        "actions": {
+            "on-click-right": "mode",
+            "on-scroll-up":   "shift_up",
+            "on-scroll-down": "shift_down"
+        }
+    }
+}

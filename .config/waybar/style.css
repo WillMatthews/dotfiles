@@ -1,0 +1,198 @@
+/* Waybar — Aged Brass palette (see ~/Documents/THEMES.md).
+ * Floating, rounded pill segments. Pairs with config.jsonc.
+ *
+ * Palette:
+ *   bg          #2A211B   bg_alt      #3A2E25
+ *   fg          #EFE3CE   fg_dim      #A89880
+ *   accent      #FFC332   accent_dim  #D6A12A
+ *   success     #8FA672   warning     #E9994A   error #D26653
+ *   border      #4E3F32
+ */
+
+* {
+    /* Use the `font:` shorthand — most reliable way to get Pango to pick the
+     * Nerd Font for icon glyphs. The "Mono" variant gives uniform glyph width. */
+    font: 12px "JetBrainsMono Nerd Font Mono", "JetBrainsMono Nerd Font", sans-serif;
+    font-weight: 500;
+    min-height: 0;
+}
+
+/* The bar itself — floats with margin (set in config.jsonc), warm dark base
+ * with a subtle brass top border so it reads as a deliberate surface. */
+window#waybar {
+    background: rgba(42, 33, 27, 0.92);  /* bg @ ~92% */
+    color: #EFE3CE;
+    border-top: 1px solid rgba(255, 195, 50, 0.18);
+    border-radius: 10px;
+    transition: background 200ms ease;
+}
+
+window#waybar.hidden { opacity: 0.2; }
+
+/* Padding on every module so the pill backgrounds breathe */
+#workspaces,
+#mode,
+#window,
+#tray,
+#idle_inhibitor,
+#network,
+#bluetooth,
+#pulseaudio,
+#backlight,
+#battery,
+#clock {
+    padding: 2px 10px;
+    margin: 3px 2px;
+    border-radius: 6px;
+    background: #3A2E25;        /* bg_alt */
+    color: #EFE3CE;
+    transition: background 150ms ease, color 150ms ease;
+}
+
+/* Workspaces — pill group; the container has no bg so each button is its own pill */
+#workspaces {
+    background: transparent;
+    padding: 0;
+    margin: 3px 4px 3px 6px;
+}
+
+#workspaces button {
+    padding: 2px 9px;
+    margin: 0 2px;
+    border-radius: 6px;
+    background: #3A2E25;
+    color: #A89880;             /* fg_dim — inactive */
+    border: 1px solid transparent;
+    transition: all 150ms ease;
+}
+
+#workspaces button:hover {
+    background: #4E3F32;        /* border colour as hover surface */
+    color: #EFE3CE;
+    border: 1px solid #D6A12A;  /* accent_dim glow */
+    box-shadow: none;
+    text-shadow: none;
+}
+
+#workspaces button.focused,
+#workspaces button.active {
+    background: #FFC332;        /* accent — brass */
+    color: #2A211B;             /* bg — dark text on brass */
+    border: 1px solid #FFC332;
+}
+
+#workspaces button.visible:not(.focused) {
+    background: #4E3F32;
+    color: #EFE3CE;
+}
+
+#workspaces button.urgent {
+    background: #D26653;        /* error */
+    color: #2A211B;
+    border: 1px solid #D26653;
+}
+
+/* Mode (resize, etc.) — brass urgent-looking */
+#mode {
+    background: #FFC332;
+    color: #2A211B;
+    font-weight: 700;
+}
+
+/* Focused window title — muted, no pill, centre */
+#window {
+    background: transparent;
+    color: #A89880;
+    font-style: italic;
+    padding: 2px 12px;
+}
+
+window#waybar.empty #window {
+    background: transparent;
+}
+
+/* System tray — slightly tighter pill */
+#tray {
+    padding: 2px 6px;
+}
+
+#tray > .passive   { -gtk-icon-effect: dim; }
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+    background: #D26653;
+}
+
+/* Idle inhibitor — coffee on/off */
+#idle_inhibitor.activated {
+    background: #FFC332;
+    color: #2A211B;
+}
+
+/* Network */
+#network.disconnected {
+    color: #D26653;
+}
+#network.linked {
+    color: #E9994A;
+}
+
+/* Bluetooth */
+#bluetooth.off,
+#bluetooth.disabled {
+    color: #A89880;
+}
+#bluetooth.connected {
+    color: #FFC332;
+}
+
+/* Audio */
+#pulseaudio.muted {
+    color: #A89880;
+}
+#pulseaudio.bluetooth {
+    color: #FFC332;
+}
+
+/* Battery — colour ramps by state */
+#battery.charging,
+#battery.plugged {
+    color: #8FA672;             /* success */
+}
+
+#battery.warning:not(.charging) {
+    color: #E9994A;             /* warning */
+}
+
+@keyframes blink {
+    to {
+        background: #D26653;
+        color: #2A211B;
+    }
+}
+
+#battery.critical:not(.charging) {
+    background: #3A2E25;
+    color: #D26653;             /* error */
+    animation: blink 1s linear infinite alternate;
+}
+
+/* Clock — brass accent, the bar's anchor on the right */
+#clock {
+    background: #FFC332;
+    color: #2A211B;
+    font-weight: 700;
+    padding: 2px 12px;
+    margin: 3px 6px 3px 2px;
+}
+
+/* Tooltips — match the palette so they don't look like default GTK */
+tooltip {
+    background: #2A211B;
+    border: 1px solid #FFC332;
+    border-radius: 6px;
+}
+
+tooltip label {
+    color: #EFE3CE;
+    padding: 4px 8px;
+}
