@@ -5,6 +5,13 @@ ghci (cabal)
 g++
 gcc
 make
+build-essential
+python3-pip
+pipx
+git-lfs
+gh
+awscli
+certbot
 
 FONTS:
 ============
@@ -14,10 +21,20 @@ ttf-unifont
 OTHER:
 =============
 firefox
+google-chrome-stable
 thunderbird
 filezilla
 hugo
 mumble
+signal-desktop
+slack-desktop
+celluloid
+gnuplot
+qrencode
+ngspice
+wireshark
+handbrake
+obs-studio
 gnome-tweaks (if using GNOME)
 
 TEXT EDITORS:
@@ -26,7 +43,8 @@ groff (of course)
 vim
 neovim
 texlive-full
-VSCode (not on apt!)
+VSCode (`code` package, via Microsoft apt repo)
+cursor
 
 UTILITIES:
 =============
@@ -52,6 +70,28 @@ ansiweather
 zerotier
 manpages
 lm-sensors
+mc
+ncdu
+ranger
+valgrind
+screen
+plocate
+highlight
+stress-ng
+zip
+unzip
+unrar
+nmap
+net-tools
+iftop
+iotop
+glances
+speedtest-cli
+speedometer
+sshpass
+clamav
+nfs-kernel-server
+samba
 
 MODERN CLI:
 =============
@@ -82,3 +122,43 @@ CAD PACKAGES:
 =============
 kicad
 freecad
+
+WINDOW MANAGEMENT:
+=============
+i3
+i3status
+sway
+swaybg
+swayidle
+swaylock
+hyprland
+rofi
+wofi
+flameshot
+grim
+slurp
+wl-clipboard
+xdg-desktop-portal-wlr
+picom
+feh
+dunst
+
+TERMINAL EMULATORS:
+=============
+kitty
+alacritty
+
+HARDWARE / DRIVERS:
+=============
+acpi-call-dkms
+openrgb
+ite8291r3-ctl (pipx)
+mesa-utils
+vulkan-tools
+glmark2-x11
+
+INPUT METHODS:
+=============
+ibus-table-cangjie3
+ibus-table-cangjie5
+ibus-table-cangjie-big
