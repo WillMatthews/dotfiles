@@ -13,6 +13,7 @@
 
 # ── Editor / locale ──
 export EDITOR='nvim'
+export TERMINAL='kitty'
 export LANG=en_GB.UTF-8
 
 # ── ripgrep ──
