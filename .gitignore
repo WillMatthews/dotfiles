@@ -1,44 +1,22 @@
-*
-!README.md
-!FUTURE.md
-!.zshenv
-!.vimrc
-!.zshrc
-!.zsh_plugins.txt
-!.ghci
-!.bashrc
-!.profile
-!.gitignore
-!.gitmodules
-!.stow-local-ignore
-!.tmux.conf
-!.installed
-!.ripgreprc
+# Stow-managed dotfiles. New files are tracked by default — list only what
+# should NOT make it into git. Stow's "tracked but don't symlink" list is in
+# .stow-local-ignore, which is separate.
 
-!.claude/
-.claude/*
-!.claude/settings.json
-!.scripts/
-!.scripts/*
+# Editor / OS cruft
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Secrets / auth — never commit
+.tokens
+.config/gh/hosts.yml
+.claude/settings.local.json
+
+# Script-local runtime data (not for the repo)
 .scripts/vnc-home
 .scripts/tellData
-.scripts/stats.log
 
-!.config/
-.config/*
-!.config/redshift.conf
-!.config/nvim
-!.config/i3/
-!.config/i3/*
-!.config/sway/
-!.config/sway/*
-!.config/kitty/
-!.config/kitty/*
-!.config/rofi/
-!.config/rofi/*
-!.config/dunst/
-!.config/dunst/*
-!.config/btop/
-!.config/btop/btop.conf
-!.config/gh/
-!.config/gh/config.yml
+# App-generated dirs that'd land here if you copied a whole config in
+.config/btop/themes/
