@@ -35,7 +35,6 @@ ngspice
 wireshark
 handbrake
 obs-studio
-gnome-tweaks (if using GNOME)
 
 TEXT EDITORS:
 =============
@@ -49,14 +48,11 @@ cursor
 UTILITIES:
 =============
 ffmpeg
-vlc
 btop
 htop
 sysstat
-nethogs
-yt-dlp
 whois
-neofetch
+fastfetch
 pandoc
 jq
 tty-clock
@@ -66,7 +62,6 @@ rsync
 autossh
 openssh-client
 openssh-server
-ansiweather
 tailscale
 manpages
 lm-sensors
@@ -88,7 +83,6 @@ iotop
 glances
 speedtest-cli
 speedometer
-sshpass
 clamav
 nfs-kernel-server
 samba
@@ -146,7 +140,6 @@ dunst
 TERMINAL EMULATORS:
 =============
 kitty
-alacritty
 
 HARDWARE / DRIVERS:
 =============
@@ -156,9 +149,3 @@ ite8291r3-ctl (pipx)
 mesa-utils
 vulkan-tools
 glmark2-x11
-
-INPUT METHODS:
-=============
-ibus-table-cangjie3
-ibus-table-cangjie5
-ibus-table-cangjie-big
