@@ -99,6 +99,12 @@ case $installType in
         ;;
 esac
 
+# Add the user to the video group so brightnessctl can write
+# /sys/class/backlight/*/brightness without sudo. Required for the
+# sway/i3 brightness keybindings to do anything. Takes effect on next login.
+print_green "Adding ${USER} to the video group..."
+sudo usermod -aG video "${USER}"
+
 # Bind `flameshot gui` to print screen key (Non-Server and Games & Other)
 if [ "$installType" = "2" ] || [ "$installType" = "3" ]; then
     gsettings set org.gnome.settings-daemon.plugins.media-keys screenshot '[]'

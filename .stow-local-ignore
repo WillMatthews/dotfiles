@@ -12,3 +12,5 @@ LICENSE
 \.scripts/bootstrap-readme
 # Machine-local Claude permissions — never stowed.
 \.claude/settings\.local\.json
+# Per-host docs (symlinked manually into ~/Documents/, not into $HOME root).
+^machines
