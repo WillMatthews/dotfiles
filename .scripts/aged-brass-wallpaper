@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Regenerate the Aged Brass vignette wallpaper referenced by ~/.config/sway/config.
+# Palette per ~/Documents/THEMES.md: bg_alt #3A2E25 centre, deeper brown at edges.
+set -euo pipefail
+
+OUT="${HOME}/Pictures/wallpapers/aged-brass-vignette.png"
+SIZE="${1:-2560x1600}"
+
+mkdir -p "$(dirname "$OUT")"
+magick -size "$SIZE" radial-gradient:'#3A2E25-#1F1813' "$OUT"
+echo "wrote $OUT ($SIZE)"

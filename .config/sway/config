@@ -10,12 +10,20 @@ font pango:monospace 8
 default_border pixel 3
 default_floating_border pixel 3
 
-# Focused window gets a bright white border; everything else fades out.
-# Order: border  background  text  indicator  child_border
-client.focused          #ffffff #285577 #ffffff #2e9ef4 #ffffff
-client.unfocused        #333333 #222222 #888888 #292d2e #222222
-client.focused_inactive #5f676a #222222 #888888 #292d2e #5f676a
-client.urgent           #900000 #900000 #ffffff #900000 #900000
+# Gaps — sway-only; smart_gaps drops them when only one window is on a workspace.
+gaps inner 8
+gaps outer 4
+smart_gaps on
+
+# Aged Brass theme (see ~/Documents/THEMES.md). Order: border bg text indicator child_border
+client.focused          #FFC332 #3A2E25 #EFE3CE #FFC332 #FFC332
+client.focused_inactive #4E3F32 #2A211B #A89880 #4E3F32 #4E3F32
+client.unfocused        #4E3F32 #2A211B #A89880 #4E3F32 #4E3F32
+client.urgent           #D26653 #D26653 #EFE3CE #D26653 #D26653
+client.placeholder      #4E3F32 #2A211B #A89880 #4E3F32 #4E3F32
+
+# Vignette wallpaper — bg_alt (#3A2E25) centre fading to a deeper brown at the edges.
+output * bg ~/Pictures/wallpapers/aged-brass-vignette.png fill
 
 # Make sure portals and GUI apps see the Wayland environment
 exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
@@ -191,6 +199,17 @@ bindsym $mod+r mode "resize"
 bar {
     status_command i3status
     tray_output *
+    separator_symbol "│"
+    colors {
+        background       #2A211B
+        statusline       #EFE3CE
+        separator        #4E3F32
+        focused_workspace  #FFC332 #3A2E25 #EFE3CE
+        active_workspace   #4E3F32 #2A211B #EFE3CE
+        inactive_workspace #4E3F32 #2A211B #A89880
+        urgent_workspace   #D26653 #D26653 #EFE3CE
+        binding_mode       #FFC332 #3A2E25 #EFE3CE
+    }
 }
 
 # Include drop-ins (per-host overrides, future tweaks)
