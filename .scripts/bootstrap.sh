@@ -4,6 +4,15 @@
 
 ## TODO
 # hostname setup? user setup?
+#
+# DECISION PENDING: i3 vs sway as the daily-driver WM. Currently this script
+# is GNOME-oriented (installs gnome-tweaks, wires Print Screen via gsettings).
+# Once the WM choice is locked in, add the relevant package group to
+# nonServePackages and either:
+#   - i3 path:  i3 i3status rofi flameshot picom feh dunst
+#   - sway path: sway swaybg swayidle swaylock wofi grim slurp wl-clipboard
+#                xdg-desktop-portal-wlr feh dunst
+# ...and gate / replace the gsettings Print Screen block accordingly.
 
 # Color and formatting variables
 RED='\033[0;31m'
@@ -43,7 +52,7 @@ fi
 
 # Package lists
 regolithPackages="regolith-desktop regolith-session-flashback regolith-look-lascaille"
-nonServePackages="manpages groff tty-clock ghci cabal-install make firefox thunderbird filezilla vlc ansiweather flameshot freecad kicad gnuplot handbrake texlive-full ngspice nginx obs-studio qrencode gimp inkscape suckless-tools valgrind units wireshark glances iotop iftop ufw fail2ban mc ncdu ranger python3-pip build-essential git-lfs xfce4-notifyd gnome-tweaks"
+nonServePackages="manpages groff tty-clock ghci cabal-install make firefox thunderbird filezilla vlc ansiweather flameshot freecad kicad gnuplot handbrake texlive-full ngspice nginx obs-studio qrencode gimp inkscape suckless-tools valgrind units wireshark glances iotop iftop mc ncdu ranger python3-pip build-essential git-lfs xfce4-notifyd gnome-tweaks"
 servePackages="git stow net-tools neofetch htop btop lm-sensors plocate samba docker.io neovim vim zsh ffmpeg whois pandoc autossh rsync sysstat nethogs jq gnupg openssh-client openssh-server tmux gzip nmap screen speedometer speedtest-cli zip unzip unrar wget curl highlight certbot ripgrep fd-find fzf bat eza zoxide vivid"
 gamesAndOtherPackages="openttd steam mumble transmission"
 cabalPackages="hakyll" # TODO make cabal work
