@@ -5,7 +5,7 @@ set $mod Mod4
 set $term kitty
 set $menu rofi -show drun
 
-font pango:monospace 8
+font pango:JetBrainsMono Nerd Font Mono 10
 
 default_border pixel 3
 default_floating_border pixel 3
