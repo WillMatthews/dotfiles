@@ -1,6 +1,4 @@
 {
-  "theme": "dark",
-  "skipDangerousModePermissionPrompt": true,
   "hooks": {
     "Notification": [
       {
@@ -13,5 +11,10 @@
         ]
       }
     ]
+  },
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "dark",
+  "enabledPlugins": {
+    "gopls-lsp@claude-plugins-official": true
   }
 }
