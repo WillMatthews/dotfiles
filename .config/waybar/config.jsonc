@@ -1,13 +1,18 @@
 // Waybar config — bottom bar, Aged Brass palette (see ~/Documents/THEMES.md)
 // Pairs with style.css in this directory.
 //
-// Icon glyphs use \uXXXX escapes (BMP only) so the codepoints survive editing
-// across tools that strip Private-Use-Area characters. All glyphs picked from
-// the Font Awesome 4 range — present in every Nerd Font patch.
+// All Nerd Font icons are written as JSON \uXXXX escapes (BMP only) so they
+// survive editor / tool round-trips that strip Private Use Area characters.
+// Two Pango spans per module string:
+//   <span size='x-large'>...</span>   — enlarges the glyph (~1.5x).
+//   <span rise='2000'>...</span>      — raises the small text by ~2pt so its
+//                                       centre aligns with the icon's centre.
+//                                       Pango "rise" is in 1024ths of a point.
+// Bump `rise` if text reads low, lower it if it floats high.
 {
     "layer": "top",
     "position": "bottom",
-    "height": 30,
+    "height": 40,
     "spacing": 6,
     "margin-top": 0,
     "margin-bottom": 0,
@@ -39,50 +44,46 @@
     },
 
     "sway/mode": {
-        "format": "  {}",
+        "format": "<span size='x-large'></span>  <span rise='2000'>{}</span>",
         "tooltip": false
     },
 
     "sway/window": {
         "format": "{title}",
         "max-length": 80,
-        "tooltip": false,
-        "rewrite": {
-            "(.*) — Mozilla Firefox": "  $1",
-            "(.*) - kitty": "  $1"
-        }
+        "tooltip": false
     },
 
     "tray": {
-        "icon-size": 16,
+        "icon-size": 18,
         "spacing": 8
     },
 
     "idle_inhibitor": {
-        "format": "{icon}",
+        "format": "<span size='x-large'>{icon}</span>",
         "format-icons": {
-            "activated": "",
+            "activated":   "",
             "deactivated": ""
         },
-        "tooltip-format-activated": "Caffeine on — idle inhibited",
+        "tooltip-format-activated":   "Caffeine on — idle inhibited",
         "tooltip-format-deactivated": "Caffeine off"
     },
 
     "network": {
-        "format-wifi": "  {essid}",
-        "format-ethernet": "  {ifname}",
-        "format-linked": "  {ifname}",
-        "format-disconnected": "  offline",
-        "tooltip-format-wifi": "{essid} ({signalStrength}%)\n{ipaddr}/{cidr}",
+        "format-wifi":         "<span size='x-large'></span>  <span rise='2000'>{essid}</span>",
+        "format-ethernet":     "<span size='x-large'></span>  <span rise='2000'>{ifname}</span>",
+        "format-linked":       "<span size='x-large'></span>  <span rise='2000'>{ifname}</span>",
+        "format-disconnected": "<span size='x-large'></span>  <span rise='2000'>offline</span>",
+        "tooltip-format-wifi":     "{essid} ({signalStrength}%)\n{ipaddr}/{cidr}",
         "tooltip-format-ethernet": "{ifname}\n{ipaddr}/{cidr}",
         "on-click": "kitty -e nmtui"
     },
 
     "bluetooth": {
-        "format": "",
-        "format-disabled": "",
-        "format-off": "",
-        "format-connected": "  {num_connections}",
+        "format":           "<span size='x-large'></span>",
+        "format-disabled":  "<span size='x-large'></span>",
+        "format-off":       "<span size='x-large'></span>",
+        "format-connected": "<span size='x-large'></span>  <span rise='2000'>{num_connections}</span>",
         "tooltip-format": "{controller_alias}\n{status}",
         "tooltip-format-connected": "{controller_alias}\n{num_connections} connected\n\n{device_enumerate}",
         "tooltip-format-enumerate-connected": "{device_alias}",
@@ -90,13 +91,13 @@
     },
 
     "pulseaudio": {
-        "format": "{icon}  {volume}%",
-        "format-muted": "  muted",
-        "format-bluetooth": "{icon}  {volume}% ",
+        "format":           "<span size='x-large'>{icon}</span>  <span rise='2000'>{volume}%</span>",
+        "format-muted":     "<span size='x-large'></span>  <span rise='2000'>muted</span>",
+        "format-bluetooth": "<span size='x-large'>{icon}</span>  <span rise='2000'>{volume}% </span>",
         "format-icons": {
             "headphone": "",
-            "headset": "",
-            "default": ["", "", ""]
+            "headset":   "",
+            "default":   ["", "", ""]
         },
         "scroll-step": 5,
         "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
@@ -105,9 +106,9 @@
 
     "backlight": {
         "device": "intel_backlight",
-        "format": "{icon}  {percent}%",
+        "format": "<span size='x-large'>{icon}</span>  <span rise='2000'>{percent}%</span>",
         "format-icons": ["", ""],
-        "on-scroll-up": "brightnessctl -d intel_backlight set +5%",
+        "on-scroll-up":   "brightnessctl -d intel_backlight set +5%",
         "on-scroll-down": "brightnessctl -d intel_backlight set 5%-"
     },
 
@@ -118,16 +119,16 @@
             "warning": 30,
             "critical": 15
         },
-        "format": "{icon}  {capacity}%",
-        "format-charging": "  {capacity}%",
-        "format-plugged": "  {capacity}%",
-        "format-icons": ["", "", "", "", ""],
-        "tooltip-format": "{timeTo}\n{power} W"
+        "format":          "<span size='x-large'>{icon}</span>  <span rise='2000'>{capacity}%</span>",
+        "format-charging": "<span size='x-large'></span>  <span rise='2000'>{capacity}%</span>",
+        "format-plugged":  "<span size='x-large'></span>  <span rise='2000'>{capacity}%</span>",
+        "format-icons":    ["", "", "", "", ""],
+        "tooltip-format":  "{timeTo}\n{power} W"
     },
 
     "clock": {
-        "format": "  {:%a %d %b   %H:%M}",
-        "format-alt": "  {:%Y-%m-%d  %H:%M:%S}",
+        "format":     "<span size='x-large'></span>  <span rise='2000'>{:%a %d %b   %H:%M}</span>",
+        "format-alt": "<span size='x-large'></span>  <span rise='2000'>{:%Y-%m-%d  %H:%M:%S}</span>",
         "tooltip-format": "<tt><small>{calendar}</small></tt>",
         "calendar": {
             "mode": "month",

@@ -12,7 +12,7 @@
 * {
     /* Use the `font:` shorthand — most reliable way to get Pango to pick the
      * Nerd Font for icon glyphs. The "Mono" variant gives uniform glyph width. */
-    font: 12px "JetBrainsMono Nerd Font Mono", "JetBrainsMono Nerd Font", sans-serif;
+    font: 14px "JetBrainsMono Nerd Font Mono", "JetBrainsMono Nerd Font", sans-serif;
     font-weight: 500;
     min-height: 0;
 }
