@@ -5,14 +5,17 @@ Nothing here is urgent — the current setup works fine. Pick off as appetite
 allows.
 
 The repo was modernised in May 2026 (oh-my-zsh → antidote, ls colours via
-vivid, cleaner `.zshenv` / `.zshrc` split). What's below is the next round.
+vivid, cleaner `.zshenv` / `.zshrc` split, kitty installed as the terminal
+emulator with a Nerd Font). What's below is the next round.
 
 ---
 
-## Tier 1 — already installed, just need wiring
+## Tier 1 — installed, awaiting wiring
 
-`bootstrap.sh` installs these but `.zshrc` doesn't activate any of them. One
-line each. The README's "Modern CLI tools" table has the snippets.
+`bootstrap.sh` already installs `bat`, `eza`, `zoxide`, `vivid` (via apt)
+and `atuin` (via upstream curl script). What's missing is the one-line
+activation in `.zshrc` for each. The README's "Modern CLI tools" table has
+the snippets.
 
 - **zoxide** — frecency-based `cd`. `eval "$(zoxide init zsh)"`. Then `z foo`
   jumps to the most-used dir matching "foo". Pairs with `zi` for interactive
@@ -21,7 +24,7 @@ line each. The README's "Modern CLI tools" table has the snippets.
   Rebinds Ctrl-R to a TUI that searches across hosts. Optional sync server.
 - **eza** — `ls` replacement. Drop-in for the existing aliases:
   `alias l='eza -lah --git'`, `alias ll='eza -lh --git'`. Adds tree mode
-  (`eza -T`), git status column, icons (needs Nerd Font).
+  (`eza -T`), git status column, icons (Nerd Font already in place via kitty).
 - **bat** — `cat` with syntax highlighting + paging. Could replace the
   existing `ccat` alias entirely: `alias ccat='bat -p'`. Leave plain `cat`
   alone — too many scripts depend on its behaviour.
@@ -37,10 +40,8 @@ language-aware prompt. Shows git status, language version (auto-detected per
 project), command duration, exit code. Configured in
 `~/.config/starship.toml`.
 
-Prerequisites:
-1. A Nerd Font in the terminal (e.g. JetBrainsMono Nerd Font — already noted
-   in the README). The default starship glyphs assume one.
-2. `starship` binary installed (cargo install or download).
+Prerequisite: `starship` binary installed (cargo install or download). The
+Nerd Font is already set in kitty.
 
 Migration:
 - `eval "$(starship init zsh)"` in `.zshrc`
@@ -114,65 +115,7 @@ Bigger lifts. Mention here so we don't forget.
   splitting into `.config/zsh/{aliases,plugins,prompt}.zsh` sourced from
   `.zshrc`. Not needed yet.
 
-## Terminal emulator — what to run your shell in
-
-Currently: `gnome-terminal`. Works, CPU-rendered, somewhat sluggish on
-long output, no fancy features. Every option below would be an upgrade.
-
-The defining feature of the modern crop is **GPU rendering** — smooth
-scrolling, no lag when something dumps a million lines, ligature support,
-much better font rendering. Once you've used one, going back to
-gnome-terminal feels like SSH over dial-up.
-
-The serious contenders, ordered by my recommendation strength:
-
-**kitty.** Mature, fast, very featureful. Tabs, splits, layouts all built
-in. Plain-text config (no DSL), scriptable in Python via "kittens"
-(extensions you can write yourself). Has its own graphics protocol so
-tools like `kitty +kitten icat` show images inline. Battle-tested, large
-user base, opinionated but reasonable defaults. **My default pick** for
-someone leaving gnome-terminal: best feature-to-maturity ratio, no
-surprises.
-
-**wezterm.** Batteries-included. Includes a tmux-like multiplexer built
-in (so you can drop tmux if you only used it for splits/tabs), supports
-both iTerm2 and sixel image protocols, cross-platform (Linux/macOS/Win).
-Lua config, which is either delightful or annoying depending on taste.
-Pick this if you want one tool that does terminal + multiplexer.
-
-**alacritty.** Minimalist. Just renders text fast — no tabs, no splits,
-no multiplexer. Designed to compose with tmux or zellij. TOML config.
-Smallest binary, simplest mental model. Pick if you already live in
-tmux/zellij and want the terminal to just be a fast rectangle.
-
-**ghostty.** Newer (Mitchell Hashimoto, 1.0 in early 2025). Native
-platform UI rather than custom-drawn chrome, Zig-built, fast,
-deliberately simple config. The "where things are going" bet. Less
-mature than kitty/wezterm but moving quickly. Worth trying if you like
-being on the frontier.
-
-**Honourable mentions:**
-- **foot** — Wayland-native, very lightweight. Pick if you run pure
-  Wayland and want minimal deps.
-- **rio** — Rust, image support, animations. Less mature.
-- **warp** — opinionated "modern" terminal with AI command blocks.
-  Cloud-tied account model, philosophy-heavy. I'd skip — vendor risk
-  and the UX is divisive.
-
-### Recommendation
-
-Install **kitty** and see if you like it. It's the lowest-regret move:
-mature, well-documented, easy to revert from. If you're already a tmux
-user and want to consolidate, try **wezterm** instead. If you want to
-bet on the future and don't mind some rough edges, try **ghostty**.
-
-When you do install one, you'll set the Nerd Font there (terminal-level
-setting, not shell-level). That's the same Nerd Font prerequisite as
-Starship. Two birds, one config.
-
-### Related: terminal multiplexers
-
-Worth noting in this section since it overlaps:
+## Terminal multiplexers
 
 - **tmux** (current) — POSIX, on every server, scriptable, mature.
   `bootstrap.sh` installs it. Keep using it.
@@ -245,6 +188,7 @@ These came up in conversation and got punted on purpose:
   to take over `cd`).
 - Whether to alias `cat → bat` globally (risks confusing script behaviour;
   recommended scope was just `ccat`).
-- Which vivid theme to pick if the prompt changes — molokai was chosen to
-  harmonise with gianu specifically; a Starship preset might call for a
-  different LS_COLORS theme (gruvbox-dark, nord, etc.).
+- Which vivid theme to pick now that kitty runs the **Aged Brass** palette
+  while `.zshenv` still generates `LS_COLORS` from **molokai** (chosen to
+  match the old gianu prompt). Worth re-picking once the prompt question
+  (gianu vs Starship) is settled, so all three move together.
