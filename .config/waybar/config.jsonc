@@ -18,6 +18,8 @@
     "margin-bottom": 0,
     "margin-left": 10,
     "margin-right": 10,
+    "expand-center": true,
+
 
     "modules-left": [
         "sway/workspaces",
@@ -51,7 +53,9 @@
     "sway/window": {
         "format": "{title}",
         "max-length": 80,
-        "tooltip": false
+        "tooltip": false,
+        "on-scroll-up":   "swaymsg workspace prev_on_output",
+        "on-scroll-down": "swaymsg workspace next_on_output"
     },
 
     "tray": {
@@ -109,7 +113,8 @@
         "format": "<span size='x-large'>{icon}</span>  <span rise='2000'>{percent}%</span>",
         "format-icons": ["", ""],
         "on-scroll-up":   "brightnessctl -d intel_backlight set +5%",
-        "on-scroll-down": "brightnessctl -d intel_backlight set 5%-"
+        "on-scroll-down": "brightnessctl -d intel_backlight set 5%-",
+        "tooltip-format": "Brightness: {percent}%"
     },
 
     "battery": {
