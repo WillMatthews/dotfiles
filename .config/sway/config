@@ -216,7 +216,7 @@ bindsym $mod+r mode "resize"
 # Bar — waybar (GTK, themed in ~/.config/waybar/). No swaybar `bar {}` block is
 # defined, so sway leaves the screen edge free and waybar owns the bottom.
 # exec_always re-launches waybar on `swaymsg reload`.
-exec_always pkill -x waybar; waybar
+exec_always "pkill -x waybar; waybar"
 
 # Include drop-ins (per-host overrides, future tweaks)
 include /etc/sway/config.d/*
