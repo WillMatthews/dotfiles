@@ -21,5 +21,7 @@ Thumbs.db
 .scripts/vnc-home
 .scripts/tellData
 
-# App-generated dirs that'd land here if you copied a whole config in
-.config/btop/themes/
+# App-generated dirs that'd land here if you copied a whole config in.
+# Use /* + negation so hand-written themes can still be tracked individually.
+.config/btop/themes/*
+!.config/btop/themes/aged-brass.theme
