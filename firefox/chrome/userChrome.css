@@ -1,0 +1,288 @@
+/* userChrome.css — "Aged Brass" theme for Firefox UI (toolbar, tabs, urlbar, menus).
+ * Palette source: ~/Documents/THEMES.md, theme #4 (Aged Brass).
+ * Requires: toolkit.legacyUserProfileCustomizations.stylesheets = true
+ *
+ * If something looks "off" after a Firefox version bump, the most common
+ * cause is a renamed internal selector or CSS variable. Inspect with the
+ * Browser Toolbox: about:config → devtools.chrome.enabled = true,
+ * then Ctrl+Alt+Shift+I.
+ */
+
+/* ============================================================
+ * Palette (kept in CSS vars so the rest of the file is readable)
+ * ============================================================ */
+:root {
+  --ab-bg:        #2A211B;
+  --ab-bg-alt:   #3A2E25;
+  --ab-fg:       #EFE3CE;
+  --ab-fg-dim:   #A89880;
+  --ab-accent:   #FFC332;
+  --ab-accent-dim:#D6A12A;
+  --ab-success: #8FA672;
+  --ab-warning: #E9994A;
+  --ab-error:   #D26653;
+  --ab-border:  #4E3F32;
+}
+
+/* ============================================================
+ * Firefox's own theme variables — overriding these gets the
+ * most coverage with the least selector wrangling.
+ * ============================================================ */
+:root,
+:root:-moz-lwtheme {
+  /* Toolbar surface (nav bar, bookmarks bar) */
+  --toolbar-bgcolor: var(--ab-bg) !important;
+  --toolbar-color: var(--ab-fg) !important;
+  --toolbar-bgimage: none !important;
+  --toolbarbutton-icon-fill: var(--ab-fg) !important;
+  --toolbarbutton-icon-fill-attention: var(--ab-accent) !important;
+  --toolbarbutton-hover-background: var(--ab-bg-alt) !important;
+  --toolbarbutton-active-background: var(--ab-border) !important;
+
+  /* Tab strip */
+  --tab-selected-bgcolor: var(--ab-bg-alt) !important;
+  --tab-selected-textcolor: var(--ab-fg) !important;
+  --tab-line-color: var(--ab-accent) !important;
+  --tabs-border-color: transparent !important;
+  --lwt-tabs-border-color: transparent !important;
+
+  /* Address bar */
+  --urlbar-box-bgcolor: var(--ab-bg-alt) !important;
+  --urlbar-box-focus-bgcolor: var(--ab-bg-alt) !important;
+  --urlbar-box-hover-bgcolor: var(--ab-border) !important;
+  --urlbar-box-text-color: var(--ab-fg) !important;
+  --lwt-toolbar-field-background-color: var(--ab-bg-alt) !important;
+  --lwt-toolbar-field-color: var(--ab-fg) !important;
+  --lwt-toolbar-field-focus: var(--ab-bg-alt) !important;
+  --lwt-toolbar-field-focus-color: var(--ab-fg) !important;
+  --lwt-toolbar-field-border-color: var(--ab-border) !important;
+
+  /* Lightweight theme accent / text — the "outer chrome" surface */
+  --lwt-accent-color: var(--ab-bg) !important;
+  --lwt-text-color: var(--ab-fg) !important;
+  --lwt-tab-text: var(--ab-fg) !important;
+  --lwt-selected-tab-background-color: var(--ab-bg-alt) !important;
+
+  /* Sidebars, panels, popups */
+  --arrowpanel-background: var(--ab-bg-alt) !important;
+  --arrowpanel-color: var(--ab-fg) !important;
+  --arrowpanel-border-color: var(--ab-border) !important;
+  --panel-background: var(--ab-bg-alt) !important;
+  --panel-color: var(--ab-fg) !important;
+  --panel-border-color: var(--ab-border) !important;
+  --panel-item-hover-bgcolor: rgba(255,195,50,0.12) !important;
+  --panel-item-active-bgcolor: rgba(255,195,50,0.20) !important;
+
+  /* Findbar / status */
+  --focus-outline-color: var(--ab-accent) !important;
+  --identity-icon-color: var(--ab-fg-dim) !important;
+}
+
+/* ============================================================
+ * Window background — covers the strip behind tabs when the
+ * window is detached from the manager.
+ * ============================================================ */
+#main-window,
+#navigator-toolbox,
+#TabsToolbar,
+#nav-bar,
+#PersonalToolbar {
+  background-color: var(--ab-bg) !important;
+  color: var(--ab-fg) !important;
+  border-color: var(--ab-border) !important;
+  box-shadow: none !important;
+}
+
+/* Hairline divider under the chrome */
+#navigator-toolbox {
+  border-bottom: 1px solid var(--ab-border) !important;
+}
+
+/* ============================================================
+ * Tabs — high-contrast active-tab treatment.
+ *
+ * The active tab should be unmistakable. We give it:
+ *   1. A 3px gold top stripe (most reliable "selected" affordance in tabbed UIs).
+ *   2. A clearly lighter background than the tab strip itself.
+ *   3. Full-cream bold label vs. dimmed text on inactive tabs.
+ *   4. A subtle bottom edge that visually "merges" the tab into the toolbar
+ *      below it, so the eye reads tab + toolbar + page as one connected
+ *      surface (this is the cue that browsers used pre-Proton and that
+ *      Firefox quietly dropped — it works).
+ * ============================================================ */
+
+/* Tab strip itself — slightly darker than the toolbar so the active tab
+ * (which sits at toolbar-brightness) reads as raised. */
+#TabsToolbar {
+  background-color: #1F1814 !important;  /* one shade below --ab-bg */
+}
+
+.tabbrowser-tab .tab-background {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 6px 6px 0 0 !important;
+  margin-top: 2px !important;
+}
+
+/* ---- Inactive tabs ---- */
+.tabbrowser-tab:not([selected="true"]) .tab-label {
+  color: var(--ab-fg-dim) !important;
+  font-weight: 400 !important;
+}
+.tabbrowser-tab:not([selected="true"]) .tab-icon-image {
+  opacity: 0.75 !important;
+}
+.tabbrowser-tab:not([selected="true"]):hover .tab-background {
+  background: rgba(255,195,50,0.07) !important;
+}
+.tabbrowser-tab:not([selected="true"]):hover .tab-label {
+  color: var(--ab-fg) !important;
+}
+
+/* ---- Active tab ---- */
+.tabbrowser-tab[selected="true"] .tab-background {
+  background: var(--ab-bg) !important;            /* matches toolbar so they fuse */
+  box-shadow:
+    inset 0 3px 0 0 var(--ab-accent),              /* gold top stripe */
+    inset 1px 0 0 0 var(--ab-border),              /* left hairline */
+    inset -1px 0 0 0 var(--ab-border),             /* right hairline */
+    0 1px 0 0 var(--ab-bg) !important;             /* erase the strip's bottom edge under us */
+}
+
+.tabbrowser-tab[selected="true"] .tab-label {
+  color: var(--ab-fg) !important;
+  font-weight: 600 !important;
+  text-shadow: 0 0 0.5px var(--ab-fg);             /* fake a touch more weight without re-rendering */
+}
+
+.tabbrowser-tab[selected="true"] .tab-icon-image {
+  opacity: 1 !important;
+}
+
+/* Hide the default tab-line element — we replaced it with the inset box-shadow above */
+.tab-line {
+  display: none !important;
+}
+
+/* Pinned tabs: still give them the stripe when active, just narrower */
+.tabbrowser-tab[pinned][selected="true"] .tab-background {
+  box-shadow:
+    inset 0 3px 0 0 var(--ab-accent),
+    inset 1px 0 0 0 var(--ab-border),
+    inset -1px 0 0 0 var(--ab-border) !important;
+}
+
+/* New-tab button */
+#tabs-newtab-button .toolbarbutton-icon,
+#new-tab-button .toolbarbutton-icon {
+  fill: var(--ab-fg-dim) !important;
+}
+#tabs-newtab-button:hover .toolbarbutton-icon,
+#new-tab-button:hover .toolbarbutton-icon {
+  fill: var(--ab-accent) !important;
+}
+
+/* ============================================================
+ * URL bar
+ * ============================================================ */
+#urlbar,
+#urlbar-background,
+#searchbar {
+  background-color: var(--ab-bg-alt) !important;
+  color: var(--ab-fg) !important;
+  border: 1px solid var(--ab-border) !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+}
+
+#urlbar[focused="true"] > #urlbar-background,
+#urlbar[focused="true"] {
+  border-color: var(--ab-accent) !important;
+  box-shadow: 0 0 0 1px var(--ab-accent) !important;
+}
+
+#urlbar .urlbarView {
+  background-color: var(--ab-bg-alt) !important;
+  color: var(--ab-fg) !important;
+  border: 1px solid var(--ab-border) !important;
+}
+
+.urlbarView-row:hover,
+.urlbarView-row[selected] {
+  background-color: rgba(255,195,50,0.10) !important;
+  color: var(--ab-fg) !important;
+}
+
+.urlbarView-title {
+  color: var(--ab-fg) !important;
+}
+.urlbarView-url,
+.urlbarView-secondary,
+.urlbarView-title-separator {
+  color: var(--ab-fg-dim) !important;
+}
+
+/* The little engine-suggestion / quick-action chips */
+.urlbarView-action {
+  color: var(--ab-accent-dim) !important;
+}
+
+/* ============================================================
+ * Menus / popups
+ * ============================================================ */
+menupopup,
+panel {
+  --panel-background: var(--ab-bg-alt) !important;
+  --panel-color: var(--ab-fg) !important;
+}
+
+menuitem,
+menu {
+  color: var(--ab-fg) !important;
+}
+
+menuitem[_moz-menuactive="true"],
+menu[_moz-menuactive="true"] {
+  background-color: rgba(255,195,50,0.15) !important;
+  color: var(--ab-fg) !important;
+}
+
+menuseparator {
+  border-color: var(--ab-border) !important;
+}
+
+/* ============================================================
+ * Bookmarks toolbar items
+ * ============================================================ */
+#PersonalToolbar .toolbarbutton-text,
+.bookmark-item > .toolbarbutton-text {
+  color: var(--ab-fg) !important;
+}
+.bookmark-item:hover {
+  background-color: rgba(255,195,50,0.10) !important;
+}
+
+/* ============================================================
+ * Findbar
+ * ============================================================ */
+.browserContainer > findbar {
+  background-color: var(--ab-bg-alt) !important;
+  color: var(--ab-fg) !important;
+  border-top: 1px solid var(--ab-border) !important;
+}
+.findbar-textbox {
+  background-color: var(--ab-bg) !important;
+  color: var(--ab-fg) !important;
+  border: 1px solid var(--ab-border) !important;
+}
+.findbar-textbox:focus {
+  border-color: var(--ab-accent) !important;
+}
+
+/* ============================================================
+ * Scrollbars in the chrome (Wayland/GTK can ignore this; harmless)
+ * ============================================================ */
+* {
+  scrollbar-color: var(--ab-border) var(--ab-bg) !important;
+}

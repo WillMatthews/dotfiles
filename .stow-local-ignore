@@ -14,3 +14,6 @@ LICENSE
 \.claude/settings\.local\.json
 # Per-host docs (symlinked manually into ~/Documents/, not into $HOME root).
 ^machines
+# Firefox profile config — lives under ~/snap/firefox/.../<profile-id>/,
+# path has a random suffix per profile so symlinks are set up manually.
+^firefox

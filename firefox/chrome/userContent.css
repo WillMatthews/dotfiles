@@ -1,0 +1,107 @@
+/* userContent.css — "Aged Brass" theme for Firefox internal pages.
+ * Palette source: ~/Documents/THEMES.md, theme #4 (Aged Brass).
+ *
+ * userContent.css applies to page content, not the surrounding chrome.
+ * Anything we restyle here only affects about:* pages and view-source:,
+ * not regular web pages (so no risk of breaking site CSS).
+ */
+
+:root {
+  --ab-bg:        #2A211B;
+  --ab-bg-alt:   #3A2E25;
+  --ab-fg:       #EFE3CE;
+  --ab-fg-dim:   #A89880;
+  --ab-accent:   #FFC332;
+  --ab-accent-dim:#D6A12A;
+  --ab-border:  #4E3F32;
+}
+
+/* ============================================================
+ * about:blank — the simplest case, just paint the void.
+ * ============================================================ */
+@-moz-document url("about:blank") {
+  html, body {
+    background-color: var(--ab-bg) !important;
+    color: var(--ab-fg) !important;
+  }
+}
+
+/* ============================================================
+ * about:home and about:newtab
+ * These pages use a lot of CSS custom properties internally;
+ * setting them on :root cascades into most of the surfaces.
+ * ============================================================ */
+@-moz-document url-prefix("about:home"), url-prefix("about:newtab"), url-prefix("about:welcome") {
+  :root {
+    --newtab-background-color: var(--ab-bg) !important;
+    --newtab-background-color-secondary: var(--ab-bg-alt) !important;
+    --newtab-text-primary-color: var(--ab-fg) !important;
+    --newtab-text-secondary-color: var(--ab-fg-dim) !important;
+    --newtab-primary-action-background: var(--ab-accent) !important;
+    --newtab-element-hover-color: rgba(255,195,50,0.10) !important;
+    --newtab-element-active-color: rgba(255,195,50,0.18) !important;
+    --newtab-border-color: var(--ab-border) !important;
+    --newtab-link-primary-color: var(--ab-accent) !important;
+    background-color: var(--ab-bg) !important;
+    color: var(--ab-fg) !important;
+  }
+
+  body {
+    background-color: var(--ab-bg) !important;
+    color: var(--ab-fg) !important;
+  }
+
+  /* Search box */
+  .search-wrapper .search-handoff-button,
+  .search-wrapper input {
+    background-color: var(--ab-bg-alt) !important;
+    color: var(--ab-fg) !important;
+    border: 1px solid var(--ab-border) !important;
+    border-radius: 6px !important;
+  }
+  .search-wrapper .search-handoff-button:focus,
+  .search-wrapper input:focus {
+    border-color: var(--ab-accent) !important;
+    box-shadow: 0 0 0 1px var(--ab-accent) !important;
+  }
+
+  /* Top-sites tiles */
+  .top-site-outer .tile,
+  .top-site-outer .icon-wrapper {
+    background-color: var(--ab-bg-alt) !important;
+    border: 1px solid var(--ab-border) !important;
+  }
+  .top-site-outer .title {
+    color: var(--ab-fg-dim) !important;
+  }
+  .top-site-outer:hover .title {
+    color: var(--ab-fg) !important;
+  }
+
+  /* Section headings */
+  .section-title,
+  .click-target {
+    color: var(--ab-fg) !important;
+  }
+
+  /* Buttons / links */
+  a, button.primary {
+    color: var(--ab-accent) !important;
+  }
+  button.primary {
+    background-color: var(--ab-accent) !important;
+    color: var(--ab-bg) !important;
+    border: none !important;
+  }
+}
+
+/* ============================================================
+ * about:preferences and other settings-shaped pages
+ * ============================================================ */
+@-moz-document url-prefix("about:preferences"), url-prefix("about:addons"), url-prefix("about:config") {
+  :root,
+  body {
+    background-color: var(--ab-bg) !important;
+    color: var(--ab-fg) !important;
+  }
+}
