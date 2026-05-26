@@ -9,10 +9,13 @@ theme[main_bg]="#2A211B"
 # Main text — cream
 theme[main_fg]="#EFE3CE"
 
-# Title color for boxes — gold accent
-theme[title]="#FFC332"
+# Title color for boxes & toggle-button labels — softer brass.
+# Deliberately dimmer than hi_fg so the highlighted shortcut letter
+# (drawn in hi_fg) pops out of its label, e.g. the "c" in per-[c]ore.
+theme[title]="#C99A3A"
 
-# Keyboard-shortcut highlight — gold accent
+# Keyboard-shortcut highlight — bright signature gold.
+# Must stay brighter/more saturated than `title` to be legible.
 theme[hi_fg]="#FFC332"
 
 # Background of selected items — bg_alt
