@@ -52,7 +52,7 @@ fi
 # Package lists
 regolithPackages="regolith-desktop regolith-session-flashback regolith-look-lascaille"
 nonServePackages="manpages groff tty-clock ghci cabal-install make firefox thunderbird filezilla flameshot freecad kicad gnuplot handbrake texlive-full ngspice nginx obs-studio qrencode gimp inkscape suckless-tools valgrind units wireshark glances iotop iftop mc ncdu ranger python3-pip build-essential git-lfs xfce4-notifyd brightnessctl"
-servePackages="git stow net-tools fastfetch htop btop lm-sensors plocate samba docker.io neovim vim zsh ffmpeg whois pandoc autossh rsync sysstat jq gnupg openssh-client openssh-server tmux gzip nmap screen speedometer speedtest-cli zip unzip unrar wget curl highlight certbot ripgrep fd-find fzf bat eza zoxide vivid"
+servePackages="git stow net-tools fastfetch htop btop ncal lm-sensors plocate samba docker.io neovim vim zsh ffmpeg whois pandoc autossh rsync sysstat jq gnupg openssh-client openssh-server tmux gzip nmap screen speedometer speedtest-cli zip unzip unrar wget curl highlight certbot ripgrep fd-find fzf bat eza zoxide vivid"
 gamesAndOtherPackages="openttd steam mumble transmission"
 cabalPackages="hakyll" # TODO make cabal work
 removePackages="regolith-rofication"
