@@ -25,10 +25,15 @@ client.placeholder      #4E3F32 #2A211B #A89880 #4E3F32 #4E3F32
 # Vignette wallpaper — bg_alt (#3A2E25) centre fading to a deeper brown at the edges.
 output * bg ~/Pictures/wallpapers/aged-brass-vignette.png fill
 
-# Display layout — captured from wdisplays. Re-run `swaymsg -t get_outputs` and update if changed.
-# HDMI monitor identified by make/model/serial so the rule survives a cable/port swap.
-output eDP-2 mode 2560x1600@300Hz position 3150 107 scale 1.3
-output "Microstep MAG 274QRFW CC2HM54A00885" mode 2560x1440@144Hz position 5120 0 scale 1.0
+# Display layout is now managed by kanshi (per-arrangement profiles), so it
+# can switch between docked/undocked without editing this file. The dock
+# monitor needs eDP-2 dropped to 240Hz (iGPU bandwidth limit) — kanshi
+# handles that conditionally. See ~/.config/kanshi/config and
+# ~/Documents/SCREEN.md ("Display persistence (kanshi)").
+# Previous static rules, kept for reference / emergency fallback:
+#   output eDP-2 mode 2560x1600@300Hz position 3150 107 scale 1.3
+#   output "Microstep MAG 274QRFW CC2HM54A00885" mode 2560x1440@144Hz position 5120 0 scale 1.0
+exec kanshi
 
 # Keyboard — sway ignores /etc/default/keyboard, so set the UK layout explicitly.
 input "type:keyboard" {

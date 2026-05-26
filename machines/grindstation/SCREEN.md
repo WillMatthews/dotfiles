@@ -233,7 +233,74 @@ rendering. File and forget unless thermals look wrong.
 By design — wdisplays only calls `swaymsg output ...` for the current
 session. Any output config we want to survive logins has to go in
 `~/.config/sway/config` directly, or be managed by **kanshi**
-(per-output-arrangement daemon). Not yet set up.
+(per-output-arrangement daemon). **Now set up (2026-05-26)** — see
+"Display persistence (kanshi)" below.
+
+## Display persistence (kanshi) + the USB-C dock monitor — 2026-05-26
+
+Added a **third** display: a second MSI MAG 274QRFW (serial
+`CC2HM54A00621`) on an HDMI cable into the USB-C dock. Two things to know.
+
+### The dock monitor shows up as DisplayPort, on the Intel iGPU
+
+USB-C docks carry video as **DisplayPort Alt Mode**, so the monitor
+enumerates as **`DP-2`**, *not* HDMI — and `DP-2` is an **i915 (card2)**
+connector, i.e. the same iGPU that drives `eDP-2`. (`HDMI-A-1` stays on
+NVIDIA/card1.) Two red herrings to ignore while debugging this:
+
+- Type-C sysfs reports DP Alt Mode `active: no` and `typec_displayport`
+  refcount 0 even while pixels flow — this platform's UCSI/firmware manages
+  the mux without updating the Linux typec class. Cosmetic; link works.
+- `i915 PHY A failed to request refclk` in the journal is **boot-time
+  noise** (fires before the dock partner appears); not the cause of a
+  blank dock monitor.
+
+When the dock monitor first appears it comes up **disabled / 0x0** in sway
+(no auto-enable). Lighting it manually is just:
+`swaymsg output DP-2 enable && swaymsg output DP-2 mode 2560x1440@60Hz`.
+
+### The iGPU can't drive eDP-2@300Hz + a second Intel output
+
+Hard limit found this session: enabling `DP-2` while `eDP-2` is at
+**2560x1600@300Hz** silently drops the laptop panel — the atomic commit
+can't fit both Intel outputs in the display-bandwidth/CDCLK budget, so the
+second modeset loses. **No error at the default kernel log level** (silent
+atomic-check rejection), which is why the panel "just vanishes". sway even
+returns `success` for the enable command.
+
+Tested combinations (DP-2 at 2560x1440@60):
+
+| eDP-2 mode      | + DP-2 enabled | Result               |
+|-----------------|----------------|----------------------|
+| 2560x1600@300Hz | yes            | panel dark (refused) |
+| 2560x1600@240Hz | yes            | both light ✓         |
+| 2560x1600@60Hz  | yes            | both light ✓         |
+
+So **docked ⇒ eDP-2 capped at 240Hz.** Also a mild win for the cursor
+saga (lower refresh = less commit pressure). `HDMI-A-1` is never
+implicated — separate NVIDIA GPU.
+
+### kanshi now owns output layout
+
+Replaced the static `output` lines in `~/.config/sway/config` with
+`exec kanshi`. Config at `~/.config/kanshi/config` (symlinked from the
+dotfiles repo, same convention as the sway config), three profiles:
+
+- **docked-triple** — DP-2 portrait left of the laptop, eDP-2 @240Hz
+  centred, HDMI right. Applies when all three are connected. **Gotcha:**
+  the kanshi config sets DP-2 `transform 270`, but it renders as sway
+  `transform 90` (right-side-up) — kanshi's 90/270 land swapped vs sway's
+  output reporting. So `swaymsg ... transform 90` and kanshi
+  `transform 270` produce the *same* orientation. Don't "correct" the 270
+  in the kanshi config to 90 or it flips upside down.
+- **desk-dual** — eDP-2 @300Hz + HDMI, the prior two-monitor desk.
+- **mobile** — eDP-2 @300Hz only.
+
+kanshi picks the first profile whose outputs are all connected, so the
+240Hz cap applies only while docked; undocked restores 300Hz automatically.
+Install (system package, needs sudo): `sudo apt install kanshi`. Start it
+for the current session with `kanshi &`; it autostarts on login via the
+`exec` line.
 
 ## Open threads (paths not yet explored)
 
@@ -296,9 +363,8 @@ In order of expected payoff, after the 2026-05-22 research dump:
    characterise this**; an upstream issue with comparison data would
    be novel and actionable.
 
-9. **kanshi** for output persistence — independent of the cursor issue
-   but overdue. Lets you encode "when HDMI-A-1 is connected, eDP-2
-   sits at *this* mode and at *this* position" once.
+9. ~~**kanshi** for output persistence~~ — **DONE 2026-05-26.** See
+   "Display persistence (kanshi)" above.
 
 10. **Different compositor as last resort** — Hyprland is wlroots-based
     so will likely hit the same cursor-plane bug (community search
