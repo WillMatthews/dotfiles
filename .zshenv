@@ -46,6 +46,13 @@ if command -v vivid >/dev/null 2>&1; then
   export LS_COLORS="$(vivid generate molokai)"
 fi
 
+# ── fzf — Aged Brass palette (see ~/Documents/THEMES.md) ──
+export FZF_DEFAULT_OPTS="
+  --color=bg:#2A211B,bg+:#3A2E25,fg:#A89880,fg+:#EFE3CE
+  --color=hl:#D6A12A,hl+:#FFC332,gutter:#2A211B
+  --color=prompt:#FFC332,pointer:#FFC332,marker:#E9994A,spinner:#D6A12A
+  --color=info:#8FA672,header:#A89880,border:#4E3F32,label:#A89880"
+
 # ── Linuxbrew (only if installed) ──
 if [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
