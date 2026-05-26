@@ -9,7 +9,18 @@
         "hooks": [
           {
             "type": "command",
-            "command": "printf '\\a'"
+            "command": "printf '\\a' > \"/dev/$(ps -o tty= -p $PPID | tr -d ' ')\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "printf '\\a' > \"/dev/$(ps -o tty= -p $PPID | tr -d ' ')\""
           }
         ]
       }
