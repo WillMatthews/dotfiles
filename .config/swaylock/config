@@ -1,0 +1,44 @@
+# swaylock — Aged Brass (see ~/Documents/THEMES.md)
+# Colours are RRGGBB / RRGGBBAA with NO leading '#'.
+# Read automatically by `swaylock -f` (no -c flag needed).
+
+ignore-empty-password
+show-failed-attempts
+indicator-radius=110
+indicator-thickness=9
+
+# Screen background — warm dark brown (bg)
+color=2A211B
+
+# Indicator ring while idle (border) on bg_alt, cream status text (fg)
+ring-color=4E3F32
+inside-color=3A2E25
+line-color=00000000
+separator-color=00000000
+text-color=EFE3CE
+
+# Typing / verifying — golden (accent)
+ring-ver-color=FFC332
+inside-ver-color=3A2E25
+text-ver-color=FFC332
+
+# Cleared password field — amber (warning)
+ring-clear-color=E9994A
+inside-clear-color=3A2E25
+text-clear-color=E9994A
+
+# Wrong password — terracotta (error)
+ring-wrong-color=D26653
+inside-wrong-color=3A2E25
+text-wrong-color=D26653
+
+# Keypress / backspace highlights
+key-hl-color=FFC332
+bs-hl-color=D26653
+caps-lock-key-hl-color=E9994A
+caps-lock-bs-hl-color=D26653
+
+# Caps-lock / layout chip
+layout-bg-color=3A2E25
+layout-border-color=4E3F32
+layout-text-color=EFE3CE
