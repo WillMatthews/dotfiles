@@ -17,3 +17,6 @@ LICENSE
 # Firefox profile config — lives under ~/snap/firefox/.../<profile-id>/,
 # path has a random suffix per profile so symlinks are set up manually.
 ^firefox
+# Thunderbird profile config — same story: lives under
+# ~/snap/thunderbird/common/.thunderbird/<profile-id>/, symlinked manually.
+^thunderbird

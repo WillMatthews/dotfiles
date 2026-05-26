@@ -120,4 +120,6 @@ Once you pick one, the order to roll it out is usually:
 2. **i3 client colours** — replace the block in `~/.config/i3/config` (currently white-on-grey).
 3. **i3bar** — `bar { colors { ... } }` block in `~/.config/i3/config`.
 4. **rofi** — `~/.config/rofi/config.rasi` plus a `.rasi` theme.
-5. **GTK** — pick or generate a GTK theme that approximates the palette (this affects Firefox's title bar, file dialogs, etc.). The hardest step; the rest is text files.
+5. **Firefox** — `firefox/chrome/userChrome.css` + `firefox/user.js` in the dotfiles repo, symlinked into the snap profile.
+6. **Thunderbird** — `thunderbird/chrome/userChrome.css` + `thunderbird/user.js` in the dotfiles repo, symlinked into `~/snap/thunderbird/common/.thunderbird/<profile>/`. The 140 Supernova UI is token-driven, so the CSS mostly re-points `--layout-*`, `--selected-item-color`, `--tree-view-*`, `--listbox-*`, `--foldertree-*` and `--spaces-*` at the brass palette; `user.js` enables `toolkit.legacyUserProfileCustomizations.stylesheets`. Received-mail bodies keep the sender's styling on purpose. Restart Thunderbird to apply.
+7. **GTK** — pick or generate a GTK theme that approximates the palette (this affects Firefox's title bar, file dialogs, etc.). The hardest step; the rest is text files.
