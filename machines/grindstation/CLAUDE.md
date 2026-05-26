@@ -5,6 +5,7 @@ For information on:
 - The RGB keyboard see Documents/COLOUR.md
 - The light bar see Documents/LIGHT-BAR.md
 - Themes (golden-yellow palette family) see Documents/THEMES.md
+- The eDP cursor-stutter saga (unsolved, open paths listed) see Documents/SCREEN.md
 
 These docs (and this CLAUDE.md itself) live in the dotfiles repo at
 `~/coding/home/dotfiles/machines/grindstation/` and are symlinked into

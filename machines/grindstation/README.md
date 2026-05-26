@@ -16,6 +16,7 @@ symlinked manually.
 | [THEMES.md](THEMES.md) | `~/Documents/THEMES.md` | Golden-yellow palette family (Parchment / Honey & Ink / Sunlit Linen / **Aged Brass** / Midnight Gold) |
 | [COLOUR.md](COLOUR.md) | `~/Documents/COLOUR.md` | RGB keyboard control reference |
 | [LIGHT-BAR.md](LIGHT-BAR.md) | `~/Documents/LIGHT-BAR.md` | Front Beast Light Bar — current status: no Linux driver |
+| [SCREEN.md](SCREEN.md) | `~/Documents/SCREEN.md` | eDP cursor stutter investigation — what was tried, what's left, recovery procedure for the `WLR_DRM_NO_MODIFIERS` black-screen trap |
 
 ## Host-only config
 
