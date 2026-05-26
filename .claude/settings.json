@@ -1,4 +1,7 @@
 {
+  "permissions": {
+    "defaultMode": "auto"
+  },
   "hooks": {
     "Notification": [
       {
@@ -12,12 +15,10 @@
       }
     ]
   },
-  "skipDangerousModePermissionPrompt": true,
-  "permissions": {
-    "defaultMode": "auto"
-  },
-  "theme": "dark",
   "enabledPlugins": {
     "gopls-lsp@claude-plugins-official": true
-  }
+  },
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "dark",
+  "skipAutoPermissionPrompt": true
 }
