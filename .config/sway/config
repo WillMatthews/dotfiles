@@ -83,8 +83,10 @@ bindsym $mod+Tab exec rofi -show window
 bindsym $mod+Shift+d exec rofi -show run
 bindsym $mod+space exec rofi -show drun -show-icons
 
-# Screenshots — region to clipboard, region to file, full screen to file
-bindsym Print            exec flameshot gui
+# Screenshots — region to annotator (swappy), region to file, full screen to file
+# flameshot dropped: it can't handle eDP-2's fractional 1.3 scale on wlroots
+# (grabs whole layout at max scale -> stretches the 1.0-scale HDMI output).
+bindsym Print            exec grim -g "$(slurp)" - | swappy -f -
 bindsym Shift+Print      exec grim -g "$(slurp)" ~/Pictures/screenshot-$(date +%Y%m%d-%H%M%S).png
 bindsym Ctrl+Print       exec grim ~/Pictures/screenshot-$(date +%Y%m%d-%H%M%S).png
 
