@@ -8,17 +8,23 @@
 // "Aged Brass" theme — see ~/Documents/THEMES.md, theme #4.
 // =============================================================
 
-// Load chrome/userChrome.css (and userContent.css if ever added) from this
-// profile. Without this, the brass theme silently does nothing.
+// Load chrome/userChrome.css + chrome/userContent.css from this profile.
+// Without this, the brass theme silently does nothing.
 user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);
 
 // Tell Thunderbird the UI should be dark, so the built-in light-dark() colour
 // pairs we don't explicitly override (native form controls, some icons,
 // scrollbars) resolve to their dark variants and match the brass chrome.
+// NB: on Linux/GTK this is often NOT honoured for the *chrome* prefers-color-
+// scheme (TB follows the GTK theme), which is why userChrome.css pins the grey
+// leaf tokens directly rather than relying on this.
 user_pref("ui.systemUsesDarkTheme", 1);
 
-// Keep the built-in light/dark auto theme out of the way; userChrome.css drives
-// the palette. (TB still respects ui.systemUsesDarkTheme above for widgets.)
+// NB: we deliberately do NOT set layout.css.prefers-color-scheme.content-override
+// here. That would force *every* content document dark, including received email
+// bodies — recolouring plain-text and unstyled mail and breaking sender styling.
+// Instead, userContent.css forces colour-scheme:dark scoped to about:addressbook
+// only, so mail rendering is left exactly as the sender intended.
 
 // =============================================================
 // Telemetry & data collection — off (parity with the Firefox profile).

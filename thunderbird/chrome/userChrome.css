@@ -235,6 +235,202 @@ a:hover {
   color: var(--ab-accent-dim) !important;
 }
 
+/* ============================================================
+ * Calendar (the calendar/tasks space is inline in messenger.xhtml,
+ * so userChrome reaches it). Its grid surface already derives from
+ * --layout-background-0, but the weekend / week-label tints use
+ * light-dark(--color-ink-*), which resolve to *light* greys because
+ * without a lightweight theme the document's prefers-color-scheme
+ * stays light. We can't flip that from a user sheet, so pin the leaf
+ * --view* tokens directly — user-origin !important beats the
+ * light-dark() defaults no matter what colour-scheme resolves to.
+ * Tokens from chrome://calendar/skin/shared/calendar-views.css.
+ * ============================================================ */
+:root {
+  --viewColor: var(--ab-fg-1) !important;
+  --viewBackground: var(--ab-bg-0) !important;
+  --viewBorderColor: var(--ab-border-0) !important;
+  --viewCalendarHeaderBackground: rgba(0, 0, 0, 0.18) !important;
+  --viewTodayBackground: var(--ab-bg-1) !important;
+  --viewTodayOffBackground: var(--ab-bg-1) !important;
+  --viewWeekendBackground: color-mix(in srgb, var(--ab-accent) 5%, var(--ab-bg-0)) !important;
+  --viewMonthOtherBackground: var(--ab-bg-1) !important;
+  --viewMonthWeekLabelBackground: var(--ab-bg-2) !important;
+  --viewTodayWeekendBackground: var(--ab-bg-1) !important;
+  /* Today / selection accents stay gold (already via --selected-item-color). */
+  --viewTodayLabelBackground: var(--ab-accent) !important;
+  --viewTodayLabelColor: var(--ab-bg) !important;
+}
+
+/* --- Calendar sidebar widgets: minimonth, task list, today pane --- */
+/* These are individual widgets whose dark styling is gated behind
+ * prefers-color-scheme: dark / [lwt-tree], so without a lightweight theme
+ * they fall back to light-dark() greys or system colours. Pin them.
+ * Tokens from chrome://calendar/skin/shared/widgets/minimonth.css,
+ * .../calendar-task-tree.css, .../calendar-task-view.css, .../today-pane.css. */
+
+/* Mini-calendar (top-left). Its panel/header/day colours are light-dark()
+ * greys applied via the --mm* tokens on the calendar-minimonth element. */
+calendar-minimonth {
+  --mmMainBackground: var(--ab-bg-2) !important;
+  --mmMainBorderColor: var(--ab-border-0) !important;
+  --mmBoxBackground: var(--ab-bg-3) !important;
+  --mmBoxBorderColor: var(--ab-border-0) !important;
+  --mmBoxItemColor: var(--ab-fg-1) !important;
+  --mmDayColor: var(--ab-fg-1) !important;
+  --mmDayOtherColor: var(--ab-fg-3) !important;
+  --mmDayWeekColor: var(--ab-fg-3) !important;
+  --mmDayTodayColor: var(--ab-fg-0) !important;
+  --mmDayTodayBackground: color-mix(in srgb, var(--ab-accent) 22%, transparent) !important;
+  /* selected day already gold via --selected-item-color */
+}
+
+/* Calendar XUL <tree>s — the Task list (.calendar-task-tree) and the event
+ * list / Unifinder (#unifinder-search-results-tree, the "Title / Start / End /
+ * Category" feed). Both have appearance:none with no background set, so they
+ * fall back to system Field (light grey). Paint the tree, rows, and cell text;
+ * keep gold for the focused-selected row. */
+.calendar-task-tree,
+.calendar-task-tree > treechildren,
+#unifinder-search-results-tree,
+#unifinder-search-results-tree > treechildren {
+  background-color: var(--ab-bg-0) !important;
+  color: var(--ab-fg-1) !important;
+}
+.calendar-task-tree treechildren::-moz-tree-row,
+#unifinder-search-results-tree treechildren::-moz-tree-row {
+  background-color: var(--ab-bg-0) !important;
+}
+.calendar-task-tree treechildren::-moz-tree-cell-text,
+#unifinder-search-results-tree treechildren::-moz-tree-cell-text {
+  color: var(--ab-fg-1) !important;
+}
+.calendar-task-tree treechildren::-moz-tree-row(selected),
+#unifinder-search-results-tree treechildren::-moz-tree-row(selected) {
+  background-color: var(--ab-bg-4) !important;
+}
+.calendar-task-tree treechildren::-moz-tree-row(selected, focus),
+#unifinder-search-results-tree treechildren::-moz-tree-row(selected, focus) {
+  background-color: var(--ab-accent) !important;
+}
+.calendar-task-tree treechildren::-moz-tree-cell-text(selected, focus),
+#unifinder-search-results-tree treechildren::-moz-tree-cell-text(selected, focus) {
+  color: var(--ab-bg) !important;
+}
+
+/* Column-header row of those trees (the "Title / Start / End / Category" bar)
+ * plus the column-visibility button at its end. Both the header cells (treecol)
+ * and the picker button (.tree-columnpicker-button) default to the system
+ * -moz-ColHeader grey in tree.css; the mail thread pane is HTML and themed
+ * separately, which is why only the calendar/task XUL trees showed grey. */
+.calendar-task-tree treecol,
+.calendar-task-tree .tree-columnpicker-button,
+#unifinder-search-results-tree treecol,
+#unifinder-search-results-tree .tree-columnpicker-button {
+  appearance: none !important;
+  background-color: var(--ab-bg-1) !important;
+  color: var(--ab-fg-1) !important;
+  border-color: var(--ab-border-0) !important;
+}
+.calendar-task-tree treecol:hover,
+.calendar-task-tree .tree-columnpicker-button:hover,
+#unifinder-search-results-tree treecol:hover,
+#unifinder-search-results-tree .tree-columnpicker-button:hover {
+  background-color: var(--ab-bg-3) !important;
+}
+
+/* Task details pane: labels use `color: windowtext` (dark) → unreadable on
+ * brass. Recolour to dimmed cream. */
+.task-details-name,
+#calendar-task-details-grid > .item-date-row > .headline {
+  color: var(--ab-fg-2) !important;
+}
+
+/* Today pane "events in the next N days" header image — a flat grey overlay. */
+#mini-day-image {
+  background-color: color-mix(in srgb, var(--ab-accent) 10%, transparent) !important;
+}
+
+/* ============================================================
+ * Chat (also inline in messenger.xhtml). The conversation-list
+ * selection and the "no conversation" placeholder fall back to the
+ * system colours Field / ThreeDLightShadow (their dark variants are
+ * gated behind :root[lwt-tree-brighttext], which only a lightweight
+ * theme sets). Pin them to brass.
+ * Tokens/selectors from chrome://messenger/skin/shared/chat.css.
+ * ============================================================ */
+#chatTabPanel {
+  --imbox-selected-background-color: var(--ab-accent) !important;
+  --imbox-selected-text-color: var(--ab-bg) !important;
+  --imgroup-selected-background-color: var(--ab-bg-4) !important;
+}
+.im-placeholder-screen {
+  background-color: var(--ab-bg-0) !important;
+  color: var(--ab-fg-1) !important;
+}
+#contactlistbox {
+  background-color: var(--ab-bg-2) !important;
+  color: var(--ab-fg-1) !important;
+}
+
+/* Chat status message input ("available" + editable status line). */
+.statusMessageInput[editing],
+#statusMessageInput {
+  color: var(--ab-fg-1) !important;
+}
+
+/* Chat toolbar (add contact / join chat / status). The toolbox (.mail-toolbox)
+ * is brass, but a XUL <toolbar> defaults to background-color: -moz-headerbar
+ * (system grey, from toolkit's toolbar.css) and paints over it — only
+ * [type="menubar"] toolbars are transparent. The mail space dodges this by
+ * using the HTML unified toolbar. Force the classic-space toolbars to brass.
+ * This also covers the calendar/address-book classic toolbars if shown. */
+.mail-toolbox > toolbar,
+.inline-toolbar,
+#chat-toolbar {
+  appearance: none !important;
+  background-color: var(--ab-bg-1) !important;
+  background-image: none !important;
+  color: var(--ab-fg-1) !important;
+}
+
+/* ============================================================
+ * Search / filter fields.
+ * .searchBox / .themeableSearchBox / .gloda-search default to the system
+ * Field colour (light grey); their brass form is gated behind :root[lwt-tree]
+ * / [lwtheme], which a userChrome-only setup never sets. This one rule covers
+ * the calendar event-list (Unifinder) search, the task filter, the chat
+ * toolbar's gloda-im-search, and the address-book people search.
+ * Source: chrome://messenger/skin/shared/searchBox.css.
+ * ============================================================ */
+.searchBox,
+.themeableSearchBox,
+.gloda-search,
+.remote-gloda-search,
+#peopleSearchInput,
+#unifinder-search-field {
+  appearance: none !important;
+  color: var(--ab-fg-1) !important;
+  background-color: var(--ab-bg-0) !important;
+  border: 1px solid var(--ab-border-0) !important;
+}
+:is(.searchBox,
+    .themeableSearchBox,
+    .gloda-search,
+    .remote-gloda-search,
+    #peopleSearchInput,
+    #unifinder-search-field):is(:focus, [focused="true"]) {
+  border-color: var(--ab-accent) !important;
+  outline: 1px solid var(--ab-accent) !important;
+}
+
+/* Calendar event-list (Unifinder) bar: the container hbox + the interval
+ * dropdown ("next 7 days"). The bar is only brass under [lwt-tree]. */
+#unifinder-searchBox {
+  background-color: var(--ab-bg-1) !important;
+  color: var(--ab-fg-1) !important;
+}
+
 /* Chrome scrollbars (GTK/Wayland may override; harmless if so). */
 * {
   scrollbar-color: var(--ab-border-0) var(--ab-bg-0) !important;

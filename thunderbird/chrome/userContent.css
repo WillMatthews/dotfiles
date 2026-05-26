@@ -1,0 +1,75 @@
+/* userContent.css — "Aged Brass" theme for Thunderbird's in-content pages.
+ * Palette source: ~/Documents/THEMES.md, theme #4 (Aged Brass).
+ * Requires: toolkit.legacyUserProfileCustomizations.stylesheets = true
+ *
+ * WHY THIS FILE EXISTS
+ * --------------------
+ * Most of the UI lives in chrome documents that userChrome.css reaches
+ * (messenger.xhtml + about:3pane + about:message). The Address Book, by
+ * contrast, loads as `about:addressbook` inside a *content*-type <browser>,
+ * so userChrome.css does NOT reach it — it needs a content sheet.
+ *
+ * Everything here is scoped with @-moz-document to Thunderbird's own internal
+ * pages. We deliberately do NOT apply a blanket :root rule, because that would
+ * recolour the bodies of received emails (also content documents) and break
+ * sender styling / readability. If you add scopes, keep them to about:/chrome:
+ * TB pages only — never http(s) or mailbox/imap message URLs.
+ *
+ * Tokens verified against 140.10.2esr (chrome://messenger/skin/aboutAddressBook.css).
+ */
+
+@-moz-document url-prefix("about:addressbook") {
+  :root {
+    /* Force dark so the page's own light-dark() pairs resolve dark too. */
+    color-scheme: dark !important;
+
+    /* Same surface ramp as userChrome.css. */
+    --layout-background-0: #2A211B !important;
+    --layout-background-1: #322820 !important;
+    --layout-background-2: #3A2E25 !important;
+    --layout-background-3: #453629 !important;
+    --layout-background-4: #54422F !important;
+
+    --layout-color-0: #FAF0DD !important;
+    --layout-color-1: #EFE3CE !important;
+    --layout-color-2: #C7B89E !important;
+    --layout-color-3: #A89880 !important;
+
+    --layout-border-0: #4E3F32 !important;
+    --layout-border-1: #5E4D3D !important;
+    --layout-border-2: #6E5A46 !important;
+
+    --selected-item-color: #FFC332 !important;
+    --selected-item-text-color: #2A211B !important;
+    --sidebar-highlight-background-color: #FFC332 !important;
+    --sidebar-highlight-text-color: #2A211B !important;
+
+    /* Books pane (left sidebar) + cards list. */
+    --sidebar-background-color: #3A2E25 !important;
+    --sidebar-text-color: #EFE3CE !important;
+    --ab-pane-background: #3A2E25 !important;
+    --ab-cards-list-bg: #2A211B !important;
+    --ab-icons-color: #EFE3CE !important;
+
+    /* Search bar at the top of the cards pane. */
+    --search-bar-background: #2A211B !important;
+    --search-bar-color: #EFE3CE !important;
+    --search-bar-border-color: #4E3F32 !important;
+    --search-bar-focus-background: #2A211B !important;
+  }
+
+  /* The contacts search field defaults to system Field (grey), same as the
+   * calendar/chat search boxes handled in userChrome.css. */
+  .searchBox,
+  .themeableSearchBox,
+  #peopleSearchInput {
+    appearance: none !important;
+    color: #EFE3CE !important;
+    background-color: #2A211B !important;
+    border: 1px solid #4E3F32 !important;
+  }
+  :is(.searchBox, .themeableSearchBox, #peopleSearchInput):is(:focus, [focused="true"]) {
+    border-color: #FFC332 !important;
+    outline: 1px solid #FFC332 !important;
+  }
+}
