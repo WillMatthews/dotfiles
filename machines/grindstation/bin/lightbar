@@ -90,7 +90,7 @@ def main():
     e.add_argument("-s", "--speed", type=int, default=5); e.add_argument("-b", "--brightness", type=int, default=100)
     e.add_argument("-c", "--color", type=int, nargs=3, metavar=("R", "G", "B"), default=None)
     e.add_argument("-d", "--direction", type=int, default=0)
-    rb = sub.add_parser("rainbow"); rb.add_argument("name", nargs="?", choices=["wave", "marquee", "scan", "bounce"], default="wave")
+    rb = sub.add_parser("rainbow"); rb.add_argument("name", nargs="?", choices=["wave", "marquee"], default="wave")  # only wave/marquee cycle the full palette
     rb.add_argument("-s", "--speed", type=int, default=5); rb.add_argument("-b", "--brightness", type=int, default=100)
     sub.add_parser("off")
     sub.add_parser("demo")
@@ -117,8 +117,10 @@ def main():
             print("  brightness ramp (golden-yellow 100 -> 0)")
             for br in (100, 60, 30, 10, 0):
                 lb.color(255, 170, 0, br); time.sleep(0.6)
-            for name in ("breathing", "wave", "marquee", "scan", "bounce"):
-                print(f"  effect {name} (rainbow)"); lb.effect(name); time.sleep(3)
+            # wave/marquee cycle the rainbow palette; breathing/scan/bounce are single-colour (slot 1)
+            for name, col in [("breathing", (255, 170, 0)), ("wave", None), ("marquee", None),
+                              ("scan", (0, 180, 255)), ("bounce", (0, 255, 80))]:
+                print(f"  effect {name} ({'rainbow' if col is None else col})"); lb.effect(name, color=col); time.sleep(3)
             print("  OFF"); lb.off(); time.sleep(1.3)
             print("  final: scrolling rainbow (wave)"); lb.effect("wave")
             print("demo done")
