@@ -57,7 +57,7 @@ exec swayidle -w \
 exec nm-applet --indicator
 
 # Keyboard backlight — golden yellow (daily driver, see ~/Documents/COLOUR.md)
-exec /home/wam/.local/bin/ite8291r3-ctl monocolor --rgb 255,195,50 -b 35
+exec "/home/wam/.local/bin/ite8291r3-ctl monocolor --rgb 255,195,50 -b 35"
 
 # Volume / brightness keys — wpctl is wireplumber's native CLI (installed with pipewire).
 # -l 1.0 caps volume at 100% so we don't accidentally boost into clipping territory.
