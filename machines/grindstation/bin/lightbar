@@ -9,7 +9,9 @@ via control SET_REPORT, exactly like the ITE 8291 keyboard sibling.
       (0x11 flash and >0x06 do nothing on this chassis)
   off sequence:               0x12.. / 0x08 05.. / 0x08 01.. / 0x1A ....01
 Motion modes cycle palette slots 1..7 — paint them a rainbow for a scrolling rainbow.
-Needs root (libusb detaches hid-generic from interface 1, then reattaches).
+Access: needs write access to the 048d:7001 USB node (libusb detaches hid-generic from
+interface 1, then reattaches). Install 99-lightbar.rules (MODE=0666) for rootless use,
+otherwise run with sudo.
 
 Usage:
   sudo lightbar color R G B [-b 0..100]
@@ -82,19 +84,64 @@ class Lightbar:
                 pass
 
 
+EPILOG = """\
+examples:
+  lightbar color 255 95 55              solid warm-ember (Will's favourite bar colour)
+  lightbar color 0 0 255 -b 40          solid blue at brightness 40
+  lightbar rainbow                      scrolling rainbow (wave)
+  lightbar rainbow marquee -s 8         faster rainbow, marquee style
+  lightbar effect breathing -c 255 95 55   breathing ember
+  lightbar effect scan -c 0 180 255     blue single-segment scan
+  lightbar off                          turn the bar off
+  lightbar demo                         showcase every colour and effect
+  lightbar raw "08 22 03 05 32 01 00 00"   send a raw 8-byte feature report
+
+modes (for `effect`): breathing wave bounce marquee scan
+  wave & marquee cycle palette slots 1-7 (rainbow); breathing/scan/bounce are single-colour.
+
+access: needs write access to the 048d:7001 USB node. Install the udev rule
+  99-lightbar.rules (MODE=0666) for rootless use, otherwise run with sudo.
+docs: ~/Documents/LIGHT-BAR.md
+"""
+
+
 def main():
-    ap = argparse.ArgumentParser(prog="lightbar")
-    sub = ap.add_subparsers(dest="cmd", required=True)
-    c = sub.add_parser("color"); c.add_argument("r", type=int); c.add_argument("g", type=int); c.add_argument("b", type=int); c.add_argument("-b", "--brightness", type=int, default=100)
-    e = sub.add_parser("effect"); e.add_argument("name", choices=[m for m in MODES if m != "static"])
-    e.add_argument("-s", "--speed", type=int, default=5); e.add_argument("-b", "--brightness", type=int, default=100)
-    e.add_argument("-c", "--color", type=int, nargs=3, metavar=("R", "G", "B"), default=None)
-    e.add_argument("-d", "--direction", type=int, default=0)
-    rb = sub.add_parser("rainbow"); rb.add_argument("name", nargs="?", choices=["wave", "marquee"], default="wave")  # only wave/marquee cycle the full palette
-    rb.add_argument("-s", "--speed", type=int, default=5); rb.add_argument("-b", "--brightness", type=int, default=100)
-    sub.add_parser("off")
-    sub.add_parser("demo")
-    r = sub.add_parser("raw"); r.add_argument("bytes")
+    ap = argparse.ArgumentParser(
+        prog="lightbar",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description="Control the Medion Erazer Beast 16 X1 front 'Beast' light bar (ITE 8233, 048d:7001).",
+        epilog=EPILOG,
+    )
+    sub = ap.add_subparsers(dest="cmd", required=True, metavar="<command>")
+
+    c = sub.add_parser("color", help="set a solid colour", description="Set the bar to a solid RGB colour.")
+    c.add_argument("r", type=int, help="red 0-255")
+    c.add_argument("g", type=int, help="green 0-255")
+    c.add_argument("b", type=int, help="blue 0-255")
+    c.add_argument("-b", "--brightness", type=int, default=100, metavar="0-100", help="brightness percent (default 100)")
+
+    e = sub.add_parser("effect", help="run an animated effect",
+                       description="Run an animated effect. wave/marquee cycle the rainbow palette; "
+                                   "breathing/scan/bounce are single-colour (slot 1, or --color).")
+    e.add_argument("name", choices=[m for m in MODES if m != "static"], help="breathing | wave | bounce | marquee | scan")
+    e.add_argument("-s", "--speed", type=int, default=5, metavar="1-10", help="animation speed (default 5)")
+    e.add_argument("-b", "--brightness", type=int, default=100, metavar="0-100", help="brightness percent (default 100)")
+    e.add_argument("-c", "--color", type=int, nargs=3, metavar=("R", "G", "B"), default=None,
+                   help="single colour for breathing/scan/bounce (default: rainbow palette)")
+    e.add_argument("-d", "--direction", type=int, default=0, metavar="0|1|2", help="scroll direction (default 0)")
+
+    rb = sub.add_parser("rainbow", help="scrolling rainbow", description="Paint a rainbow across slots 1-7 and scroll it.")
+    rb.add_argument("name", nargs="?", choices=["wave", "marquee"], default="wave", help="scroll style (default wave)")
+    rb.add_argument("-s", "--speed", type=int, default=5, metavar="1-10", help="animation speed (default 5)")
+    rb.add_argument("-b", "--brightness", type=int, default=100, metavar="0-100", help="brightness percent (default 100)")
+
+    sub.add_parser("off", help="turn the bar off", description="Turn the light bar off.")
+    sub.add_parser("demo", help="showcase colours + effects", description="Cycle through colours, a brightness ramp, and every effect.")
+
+    r = sub.add_parser("raw", help="send a raw 8-byte packet",
+                       description="Send an arbitrary 8-byte feature report (space-separated hex) for experiments.")
+    r.add_argument("bytes", metavar='"HH HH ..."', help='8 hex bytes, e.g. "08 22 03 05 32 01 00 00"')
+
     a = ap.parse_args()
 
     lb = Lightbar()

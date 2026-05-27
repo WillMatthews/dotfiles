@@ -56,8 +56,9 @@ exec swayidle -w \
 # Network applet (shows up in the bar's tray)
 exec nm-applet --indicator
 
-# Keyboard backlight — golden yellow (daily driver, see ~/Documents/COLOUR.md)
-exec "/home/wam/.local/bin/ite8291r3-ctl monocolor --rgb 255,195,50 -b 35"
+# Matched "ember" lighting — keyboard (ITE 8291) + front light bar (ITE 8233).
+# Single wrapper avoids the comma-as-separator trap; see ~/Documents/LIGHT-BAR.md.
+exec /home/wam/.local/bin/ember-lights
 
 # Volume / brightness keys — wpctl is wireplumber's native CLI (installed with pipewire).
 # -l 1.0 caps volume at 100% so we don't accidentally boost into clipping territory.

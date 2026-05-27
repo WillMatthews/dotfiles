@@ -1,0 +1,5 @@
+# Front "Beast" light bar — ITE 8233 (048d:7001).
+# MODE=0666 lets `lightbar` run without sudo: libusb needs write access to the USB
+# node to detach/claim interface 1. Same approach as 99-ite8291.rules for the keyboard.
+# Install: sudo cp this file to /etc/udev/rules.d/ then `sudo udevadm control --reload && sudo udevadm trigger`.
+SUBSYSTEM=="usb", ATTRS{idVendor}=="048d", ATTRS{idProduct}=="7001", MODE="0666"
