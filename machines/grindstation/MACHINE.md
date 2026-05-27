@@ -130,9 +130,11 @@ ite8291r3-ctl off                         # turn off
 
 **Keyboard matrix** (empirically mapped, useful for `anim` per-cell scripts): 6 rows × 21 columns. Cols **0–15** are the main keyboard area, cols **16–20** are the numpad block plus the down-arrow. (Confirmed by lighting cols 16–20 green and watching the numpad / down-arrow change.)
 
-### 2. Front "Beast Light Bar" — independent, currently uncontrolled  ❌ no Linux driver
+### 2. Front "Beast Light Bar" — ITE 8233, controllable  ✅ working (since 2026-05-27)
 
-The strip across the front edge runs its own breathing-purple animation and is **not** on the ITE 8291 controller. Setting the keyboard to any color via `monocolor` / `set_key_colors` does not move the strip — verified by setting the keyboard to solid green while the strip stayed purple.
+The front strip is the **ITE 8233** (`048d:7001`, interface 1), driven by 8-byte HID feature reports over a USB control `SET_REPORT` — the same transport as the ITE 8291 keyboard. Control it with **`sudo lightbar color R G B [-b 0..100]`** / `sudo lightbar off`. Full protocol, transport, and the year-long reverse-engineering trail are in **LIGHT-BAR.md** (see the SOLVED section at the top).
+
+It is **not** on the ITE 8291 keyboard controller (setting the keyboard to solid green leaves the strip unchanged), not on any host I²C/SMBus, and the `uniwill-laptop` kernel driver binds but writes to dead EC offsets — see LIGHT-BAR.md for why each of those dead-ended.
 
 What it is *not*:
 - Not a separate USB device — `lsusb` lists nothing else with RGB-capable interfaces.
@@ -170,7 +172,7 @@ Per-key RGB driven by the keyboard's **QMK/VIA firmware** — the laptop only se
 | Lighting | Control today | Notes |
 |---|---|---|
 | Laptop keyboard | `ite8291r3-ctl` (installed, working) | PID patch + udev rule applied |
-| Front Beast Light Bar | **Nothing** | No Linux driver; needs DSDT/USB-traffic RE |
+| Front Beast Light Bar | `sudo lightbar …` (installed, working) | ITE 8233 HID; static colour + brightness + off. See LIGHT-BAR.md |
 | G203 mouse | OpenRGB *or* Piper | Settings stored on mouse |
 | Keychron V6 | VIA / VIAL (browser) | Settings stored on keyboard |
 
@@ -184,6 +186,6 @@ Per-key RGB driven by the keyboard's **QMK/VIA firmware** — the laptop only se
 1. **Memory module detail** is unknown without `sudo`. Re-run `sudo dmidecode -t memory` if module speed / vendor matters.
 2. **lm-sensors not configured** — no temperature readings available. Run `sudo sensors-detect` to enable.
 3. The CPU is parked on the `powersave` governor; for sustained workloads consider `performance` (`sudo cpupower frequency-set -g performance`).
-4. **Front Beast Light Bar has no Linux driver** — see RGB section. To pursue: dump DSDT (`sudo cp /sys/firmware/acpi/tables/DSDT /tmp/dsdt.aml && iasl -d /tmp/dsdt.aml`) and grep the disassembly for light-bar-shaped names, or capture Windows USB traffic and replay against `/dev/hidraw1`.
+4. **Front Beast Light Bar is solved** (2026-05-27) — ITE 8233 HID, `sudo lightbar`. Remaining: hardware effects (rainbow/breathing) and rootless use. See LIGHT-BAR.md "Still open".
 5. **`ite8291r3-ctl` PID patch is fragile** — any `pipx upgrade ite8291r3-ctl` reverts the local edit that added PID `0x600B` and the keyboard will stop responding. Either pin the version or maintain a local fork.
 6. **No CUDA toolkit installed**, only the driver. `nvcc`, CUDA samples, and PyTorch are absent — install `nvidia-cuda-toolkit` or `pip install torch` if you want to actually run compute on the 5090.

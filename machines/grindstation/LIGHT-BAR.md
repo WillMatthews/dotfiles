@@ -1,6 +1,80 @@
 # Front "Beast" light bar — reverse engineering log
 
-The Medion Erazer Beast 16 X1 has a front-edge RGB light strip that runs a breathing-purple animation on boot and is **not yet controllable from Linux**. This file collects everything that's been tried and what remains.
+The Medion Erazer Beast 16 X1 has a front-edge RGB light strip that runs a breathing-purple animation on boot. **As of 2026-05-27 it is controllable from Linux** — see the SOLVED section immediately below. The rest of this file is the reverse-engineering log that led there, kept for reference.
+
+---
+
+## ✅ SOLVED (2026-05-27) — the strip is the ITE 8233, interface 1
+
+The light bar is driven by the **ITE 8233** (`048d:7001`) via **8-byte HID feature reports** sent as USB control `SET_REPORT`s to **interface 1** — the *exact same transport* the working `ite8291r3-ctl` keyboard sibling uses, just with the lightbar's own command bytes.
+
+### Transport
+
+```
+bmRequestType = 0x21   (OUT | CLASS | RECIPIENT_INTERFACE)
+bRequest      = 0x09   (HID SET_REPORT)
+wValue        = 0x0300 (report type = Feature, report-id = 0)
+wIndex        = 1      (interface 1)
+data          = 8 bytes (zero-padded)
+```
+
+Interface 1 is held by `hid-generic` (it's `/dev/hidraw1`, the hotkey/Fn channel), so libusb must **detach the kernel driver from interface 1** before sending and **reattach** afterwards. That needs root, and it briefly suspends Fn-hotkey input while the tool runs — harmless, restored on reattach. (Interface 0's declared 16-byte `0x5A` feature report is a *separate, inert* channel on this chassis — writes there do nothing. The live channel is interface 1, report-id 0, 8 bytes.)
+
+### Confirmed commands
+
+| Action | 8-byte payload |
+|---|---|
+| Set palette slot N (N=1..7) → RGB | `14 00 NN RR GG BB 00 00` |
+| Apply mode @ brightness | `08 22 MM SS BB 01 DD 00` |
+| Off (4-packet sequence) | `12 00 03 …` / `08 05 …` / `08 01 00 …` / `1A 00 00 00 00 00 00 01` |
+
+In the apply packet: `MM` = mode, `SS` = speed (≈1–10), `BB` = brightness `0x00`..`0x64` (0–100, dims smoothly), `DD` = direction (`0`/`1`/`2`). The 6th byte `01` is the apply/commit byte (`08` also works identically). **All confirmed working modes** (2026-05-27):
+
+| `MM` | mode | notes |
+|---|---|---|
+| `0x01` | static | uses slot 1 |
+| `0x02` | breathing | pulses; single colour if all slots equal |
+| `0x03` | wave | scrolls — **the Windows scrolling rainbow** when slots 1–7 are a rainbow |
+| `0x04` | bounce | back-and-forth |
+| `0x05` | marquee | scrolls |
+| `0x06` | scan | scrolls |
+| `0x11` | flash | **does nothing** on this chassis |
+| `0x07`–`0x10` | — | nothing |
+
+So: a **solid colour** = set slot 1, apply mode `0x01`. A **scrolling rainbow** = paint slots 1–7 a rainbow, apply mode `0x03`/`0x05`/`0x06`. A **breathing colour** = set all slots to one colour, apply mode `0x02`. Motion modes cycle the palette slots, so the palette is your colour set. All verified end-to-end.
+
+### Tool
+
+`~/.local/bin/lightbar` → `bin/lightbar` in this repo. Run with **sudo** (kernel-driver detach needs root):
+
+```
+sudo lightbar color 255 170 0              # solid golden-yellow, full brightness
+sudo lightbar color 0 0 255 -b 40          # dim blue
+sudo lightbar rainbow                      # scrolling rainbow (wave); also: rainbow marquee|scan|bounce
+sudo lightbar effect breathing -c 255 170 0 -b 80   # breathing golden-yellow
+sudo lightbar effect wave -s 8             # faster scrolling rainbow
+sudo lightbar off
+sudo lightbar demo                          # full showcase: colours, brightness ramp, every effect
+sudo lightbar raw "08 22 03 05 32 01 00 00" # send an arbitrary 8-byte packet (experiments)
+```
+
+### Why everything in the log below failed (now explained)
+
+- **`uniwill-laptop` (kernel 7.0):** binds with `force=1`, creates `/sys/class/leds/uniwill:multicolor:status` + `rainbow_animation`, and *accepts and retains* all writes — but they land on the standard Uniwill EC offsets `0x0748–0x074B`, which are **dead scratchpad on this chassis**. Proven with a write-and-read-back test: values stick in sysfs, strip never moves. Right family, wrong transport.
+- **Not on any host bus:** full I²C/SMBus scan (i2c-0..10) shows only sensors, DDR5 SPD, and the touchpad. No RGB controller. The strip hangs off the EC, commanded over the ITE 8233 USB HID.
+- **EC RAM** (earlier log): only mirrors the colour, no writable control register.
+
+### Credit
+
+Command IDs came from the **keyRGB** project's `ite8233` backend (`github.com/Rainexn0b/keyRGB`, `src/core/backends/ite8233/`) — note its backend is a *scaffold* that (a) sent the command byte as a report-id via `HIDIOCSFEATURE` and (b) targeted the wrong interface, so the tool itself doesn't work as-is; only its command-byte table was right. The working transport was lifted from `ite8291r3-ctl`.
+
+### Still open
+
+- **Non-root use:** currently needs sudo for the libusb detach. A udev rule granting the USB node + a persistent unbind of `hid-generic` from interface 1 could allow rootless use, but interface 1 also carries Fn hotkeys, so don't unbind it permanently. A cleaner route is a tiny setuid helper or a systemd-run oneshot.
+- **Persistence across reboot:** the EC resets to breathing-purple on boot. To keep a chosen look, run `lightbar` from a login hook (sway `exec`, a systemd user service, or `@reboot`). The 6th apply byte has an alternate value `0x08` that might be "save to EC" — untested; worth checking if you want it to survive a reboot without a hook.
+- **Effect speed/direction semantics:** `SS` (speed) and `DD` (direction) bytes accepted across 1–10 / 0–2 but the exact mapping (faster vs slower, scroll direction) wasn't characterised — tweak and see.
+
+---
 
 ## What we know
 
