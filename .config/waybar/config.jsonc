@@ -132,9 +132,10 @@
     },
 
     "clock": {
+        "interval": 1,
         "format":     "<span size='x-large'></span>  <span rise='2000'>{:%a %d %b   %H:%M}</span>",
         "format-alt": "<span size='x-large'></span>  <span rise='2000'>{:%Y-%m-%d  %H:%M:%S}</span>",
-        "tooltip-format": "<tt><small>{calendar}</small></tt>",
+        "tooltip-format": "<tt><span size='large'>{calendar}</span></tt>",
         "calendar": {
             "mode": "month",
             "mode-mon-col": 3,
