@@ -34,6 +34,26 @@ setopt PROMPT_SUBST
 source $HOME/.antidote/antidote.zsh
 antidote load
 
+# ── Keybindings ──
+# Force emacs-style line editing. Without this, zsh auto-selects vi mode
+# because $EDITOR is "nvim" (contains "vi") — see `man zshzle`. Set after
+# antidote so it wins over any plugin keymap.
+bindkey -e
+
+# Prefix history search: type the start of a command, press Up, and cycle
+# through previous commands that begin with what you typed (Down to go back).
+# Bind both terminfo codes and the literal escape sequences so it works
+# whether kitty is in normal or application cursor-key mode.
+autoload -U up-line-or-beginning-search down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+[[ -n "$terminfo[kcuu1]" ]] && bindkey "$terminfo[kcuu1]" up-line-or-beginning-search
+[[ -n "$terminfo[kcud1]" ]] && bindkey "$terminfo[kcud1]" down-line-or-beginning-search
+bindkey '^[[A' up-line-or-beginning-search
+bindkey '^[OA' up-line-or-beginning-search
+bindkey '^[[B' down-line-or-beginning-search
+bindkey '^[OB' down-line-or-beginning-search
+
 # ── Aliases ──
 # colourise ls output (from OMZ's lib/theme-and-appearance.zsh)
 alias ls='ls --color=tty'
@@ -123,3 +143,6 @@ fi
 
 # Work-only helpers (Antare) — file is gitignored and only present on work machines.
 [ -f "$HOME/.config/antare/shell.sh" ] && . "$HOME/.config/antare/shell.sh"
+
+# bun completions
+[ -s "/home/wam/.bun/_bun" ] && source "/home/wam/.bun/_bun"
