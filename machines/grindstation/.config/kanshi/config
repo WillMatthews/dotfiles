@@ -4,19 +4,23 @@
 # kanshi applies the first profile whose listed outputs are all connected,
 # so profiles are ordered most-specific (most outputs) first.
 #
-# Monitors are matched by make/model/serial so the rules survive a
-# cable/port swap. The two MSI panels are the same model and differ only
-# by serial:
-#   CC2HM54A00885 = main desk monitor (NVIDIA HDMI-A-1)
-#   CC2HM54A00621 = dock monitor (DisplayPort over USB-C, Intel)
+# Monitors are matched by CONNECTOR (DP-2 / HDMI-A-1), not serial. The two
+# MSI panels are the same model and differ only by serial, and serial-based
+# matching backfired: a 2026-06-01 office move swapped the panels between the
+# DP and HDMI ports, so the serial rules rotated/placed the wrong physical
+# screen. Connector matching encodes the actual intent — "whatever's plugged
+# into the DP port goes left-rotated" — and is stable for a fixed desk dock.
+#   - DP-2     = Intel iGPU, DisplayPort over USB-C (left, portrait)
+#   - HDMI-A-1 = NVIDIA HDMI (right)
+# (Panel serials seen 2026-06-01: DP-2=CC2HM54A00885, HDMI-A-1=CC2HM54A00621.)
 #
 # Coordinate notes for the docked profile:
 #   - DP-2 is portrait (logical 1440x2560), placed LEFT of the laptop
-#     panel, occupying x[1710..3150]. NOTE: the directive below says
+#     panel, occupying x[0..1440]. NOTE: the directive below says
 #     `transform 270`, NOT a typo — kanshi's 90/270 land swapped vs sway's
 #     reporting, so config `270` produces sway on-screen `transform 90`,
 #     which is the right-side-up orientation. (Verified 2026-05-26.)
-#   - eDP-2 (scale 1.3 -> logical 1969x1230) and HDMI (1.0 -> 2560x1440)
+#   - eDP-2 (scale 1.3 -> logical 1969x1231) and HDMI (1.0 -> 2560x1440)
 #     are vertically centred against DP-2's 2560px height.
 #   - eDP-2 is capped at 240Hz when docked. 300Hz + a second Intel output
 #     exceeds the iGPU's display-bandwidth/CDCLK budget, and the panel's
@@ -24,14 +28,14 @@
 #     Undocked profiles restore the full 300Hz.
 
 profile docked-triple {
-    output "Microstep MAG 274QRFW CC2HM54A00621" enable mode 2560x1440@60Hz transform 270 scale 1 position 1710,0
-    output eDP-2 enable mode 2560x1600@240Hz scale 1.3 position 3150,665
-    output "Microstep MAG 274QRFW CC2HM54A00885" enable mode 2560x1440@144Hz scale 1 position 5119,560
+    output DP-2 enable mode 2560x1440@60Hz transform 270 scale 1 position 0,0
+    output eDP-2 enable mode 2560x1600@240Hz scale 1.3 position 1440,665
+    output HDMI-A-1 enable mode 2560x1440@144Hz scale 1 position 3409,560
 }
 
 profile desk-dual {
-    output eDP-2 enable mode 2560x1600@300Hz scale 1.3 position 3150,107
-    output "Microstep MAG 274QRFW CC2HM54A00885" enable mode 2560x1440@144Hz scale 1 position 5120,0
+    output eDP-2 enable mode 2560x1600@300Hz scale 1.3 position 0,107
+    output HDMI-A-1 enable mode 2560x1440@144Hz scale 1 position 1969,0
 }
 
 profile mobile {
