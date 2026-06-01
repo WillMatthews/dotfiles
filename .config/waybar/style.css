@@ -1,5 +1,5 @@
 /* Waybar — Aged Brass palette (see ~/Documents/THEMES.md).
- * Floating, rounded pill segments. Pairs with config.jsonc.
+ * Floating, square-cornered segments. Pairs with config.jsonc.
  *
  * Palette:
  *   bg          #2A211B   bg_alt      #3A2E25
@@ -23,7 +23,7 @@ window#waybar {
     background: rgba(42, 33, 27, 0.92);  /* bg @ ~92% */
     color: #EFE3CE;
     border-top: 1px solid rgba(255, 195, 50, 0.18);
-    border-radius: 10px;
+    border-radius: 0;
     transition: background 200ms ease;
 }
 
@@ -43,7 +43,7 @@ window#waybar.hidden { opacity: 0.2; }
 #clock {
     padding: 2px 10px;
     margin: 3px 2px;
-    border-radius: 6px;
+    border-radius: 0;
     background: #3A2E25;        /* bg_alt */
     color: #EFE3CE;
     transition: background 150ms ease, color 150ms ease;
@@ -59,7 +59,7 @@ window#waybar.hidden { opacity: 0.2; }
 #workspaces button {
     padding: 2px 9px;
     margin: 0 2px;
-    border-radius: 6px;
+    border-radius: 0;
     background: #3A2E25;
     color: #A89880;             /* fg_dim — inactive */
     border: 1px solid transparent;
@@ -189,7 +189,7 @@ window#waybar.empty #window {
 tooltip {
     background: #2A211B;
     border: 1px solid #FFC332;
-    border-radius: 6px;
+    border-radius: 0;
 }
 
 tooltip label {
