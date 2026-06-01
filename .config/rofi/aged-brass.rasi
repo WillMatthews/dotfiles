@@ -22,7 +22,7 @@ window {
     background-color:  @bg;
     border:            1px;
     border-color:      @accent;
-    border-radius:     8px;
+    border-radius:     0;
     padding:           14px;
 }
 
@@ -35,7 +35,7 @@ inputbar {
     background-color:  @bg-alt;
     text-color:        @fg;
     padding:           8px 12px;
-    border-radius:     6px;
+    border-radius:     0;
     children:          [ prompt, entry ];
 }
 
@@ -52,7 +52,7 @@ entry {
 message {
     background-color:  @bg-alt;
     padding:           6px 10px;
-    border-radius:     6px;
+    border-radius:     0;
 }
 
 listview {
@@ -65,7 +65,7 @@ listview {
 
 element {
     padding:           6px 10px;
-    border-radius:     4px;
+    border-radius:     0;
 }
 
 element selected {
@@ -90,7 +90,7 @@ button {
     padding:           6px 10px;
     background-color:  @bg-alt;
     text-color:        @fg-dim;
-    border-radius:     4px;
+    border-radius:     0;
 }
 
 button selected {
