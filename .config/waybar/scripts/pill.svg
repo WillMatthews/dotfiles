@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- capsule "pill" = amphetamine state. One clean capsule silhouette
+       (x16..84, y34..66, r16) split in the middle: left half filled, right half
+       outlined. The outline rect is inset by half its stroke width (3) so its
+       OUTER edge lands exactly on the silhouette — both halves end up the same
+       size. Square canvas for waybar's square image scaling. -->
+  <g transform="rotate(-40 50 50)">
+    <!-- full outline (inset so stroke's outer edge = silhouette) -->
+    <rect x="19" y="37" width="62" height="26" rx="13" fill="none"
+          stroke="#FFC332" stroke-width="6"/>
+    <!-- solid left half, drawn at the true silhouette, covering the left outline -->
+    <path d="M50,34 H32 a16,16 0 0 0 0,32 H50 Z" fill="#FFC332"/>
+    <!-- centred seam -->
+    <line x1="50" y1="34" x2="50" y2="66" stroke="#FFC332" stroke-width="6"
+          stroke-linecap="round"/>
+  </g>
+</svg>

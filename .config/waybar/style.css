@@ -34,12 +34,13 @@ window#waybar.hidden { opacity: 0.2; }
 #mode,
 #window,
 #tray,
-#idle_inhibitor,
 #network,
 #bluetooth,
 #pulseaudio,
 #backlight,
 #battery,
+#custom-claude,
+#image.caffeine,
 #clock {
     padding: 2px 10px;
     margin: 3px 2px;
@@ -122,11 +123,9 @@ window#waybar.empty #window {
     background: #D26653;
 }
 
-/* Idle inhibitor — coffee on/off */
-#idle_inhibitor.activated {
-    background: #FFC332;
-    color: #2A211B;
-}
+/* Caffeine — single 3-state image button (moon / padlock / amphetamine
+ * molecule). The icon itself signals the state; standard pill from the group
+ * above keeps it consistent with its neighbours. */
 
 /* Network */
 #network.disconnected {
@@ -175,6 +174,17 @@ window#waybar.empty #window {
     color: #D26653;             /* error */
     animation: blink 1s linear infinite alternate;
 }
+
+/* Claude usage — bars + session timer. Colour ramps with severity
+ * (max of session% and weekly% against the est. Max 20x caps). */
+#custom-claude.ok       { color: #8FA672; }   /* success */
+#custom-claude.warning  { color: #E9994A; }   /* warning */
+#custom-claude.critical {
+    background: #3A2E25;
+    color: #D26653;             /* error */
+    animation: blink 1s linear infinite alternate;
+}
+#custom-claude.idle     { color: #A89880; }   /* fg_dim */
 
 /* Clock — brass accent, the bar's anchor on the right */
 #clock {

@@ -30,7 +30,8 @@
     ],
     "modules-right": [
         "tray",
-        "idle_inhibitor",
+        "custom/claude",
+        "image#caffeine",
         "network",
         "bluetooth",
         "pulseaudio",
@@ -63,14 +64,28 @@
         "spacing": 8
     },
 
-    "idle_inhibitor": {
-        "format": "<span size='x-large'>{icon}</span>",
-        "format-icons": {
-            "activated":   "",
-            "deactivated": ""
-        },
-        "tooltip-format-activated":   "Caffeine on — idle inhibited",
-        "tooltip-format-deactivated": "Caffeine off"
+    // Claude usage — two stacked bars driven by ccusage (see
+    // scripts/claude-usage.sh). No icon glyph; "S"/"W" row labels identify it.
+    // Not clickable by design — hover for the full breakdown tooltip.
+    "custom/claude": {
+        "exec": "~/.config/waybar/scripts/claude-usage.sh",
+        "return-type": "json",
+        "interval": 60,
+        "format": "{}"
+    },
+
+    // Caffeine — one button, three states (image module; icons in scripts/).
+    //   moon  -> off (screen idles, lid suspends)
+    //   lock  -> caffeine (screen kept awake: swayidle paused)
+    //   C9H13N molecule -> amphetamine (awake AND lid-close won't suspend)
+    // Left-click cycles; right-click forces off. Refresh via SIGRTMIN+8.
+    "image#caffeine": {
+        "exec": "~/.config/waybar/scripts/caffeine.sh icon",
+        "size": 22,
+        "interval": 3600,
+        "signal": 8,
+        "on-click": "~/.config/waybar/scripts/caffeine.sh cycle",
+        "on-click-right": "~/.config/waybar/scripts/caffeine.sh off"
     },
 
     "network": {
