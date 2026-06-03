@@ -1,101 +1,114 @@
 #!/usr/bin/env bash
 # Claude usage box for waybar.
 #
-# Data source: ccusage (https://github.com/ryoppippi/ccusage), which parses the
-# local Claude Code transcripts under ~/.claude/projects. ONE `ccusage blocks`
-# call gives us both:
-#   * the current 5h billing "session" (the active block), and
-#   * a rolling-7-day "week" (sum of recent non-gap blocks).
+# Data source: the SAME endpoint Claude Code's `/usage` view uses —
+#   GET https://api.anthropic.com/api/oauth/usage
+# authenticated with the OAuth access token Claude Code stores in
+# ~/.claude/.credentials.json (key: claudeAiOauth.accessToken). This returns
+# your plan's REAL utilisation percentages, not an estimate:
+#   .five_hour.utilization   -> current 5h "session" %   (+ .resets_at)
+#   .seven_day.utilization   -> rolling 7-day "all models" %
+#   .seven_day_opus / _sonnet.utilization -> per-model 7-day % (nullable)
 #
-# IMPORTANT: ccusage knows cost & tokens, but NOT your plan's real ceiling
-# (the official /usage percentages need an authenticated Anthropic API call).
-# So the bars are driven off cost against the ESTIMATED Max 20x caps below.
-# These are rough — tune them to taste once you've watched real usage.
+# This replaces the old ccusage approach, which divided ESTIMATED cost by
+# guessed caps and so never matched the official numbers. (Old version saved
+# as claude-usage.sh.ccusage.bak.)
 #
-# RENDERING: a waybar module is a single Pango-markup label — we can't draw
-# real graphics, but we fake two horizontal bars by painting runs of spaces
-# with a background colour (filled) vs a track colour (empty), stacked on two
-# lines with a "\n". No icon glyph — the "S"/"W" row labels identify it,
-# which also sidesteps the editor's habit of stripping Private-Use-Area bytes.
-SESSION_LIMIT_USD=150      # approx cost ceiling for one 5h session block
-WEEKLY_LIMIT_USD=1500      # approx cost ceiling for a rolling 7-day window
+# Claude Code keeps the access token fresh whenever you use it; this script
+# only reads the file, never refreshes. If the token is missing/expired we
+# fall back to the last good reading (cached in $CACHE), then to an "auth"
+# placeholder.
+#
+# RENDERING: a waybar module is a single Pango-markup label — we fake two
+# horizontal bars by painting runs of spaces with a background colour (filled)
+# vs a track colour (empty), stacked on two lines. The "S"/"W" row labels
+# identify it (no PUA glyphs, which the editor strips).
 BAR_WIDTH=12               # bar length in character cells
-
-export PATH="$HOME/.local/bin:$PATH"
-
-JSON="$(npx --yes ccusage blocks --json --offline 2>/dev/null)"
-if [ -z "$JSON" ]; then
-  jq -nc '{text:"<span size=\"8192\" color=\"#A89880\"> ccusage n/a</span>", tooltip:"ccusage unavailable", class:"idle"}'
-  exit 0
-fi
+CREDS="$HOME/.claude/.credentials.json"
+CACHE="/tmp/waybar-claude-usage.cache.json"
 
 now="$(date +%s)"
 
-printf '%s' "$JSON" | jq -c \
-  --argjson now "$now" \
-  --argjson slim "$SESSION_LIMIT_USD" \
-  --argjson wlim "$WEEKLY_LIMIT_USD" \
-  --argjson w "$BAR_WIDTH" '
+render() {
+  # $1 = raw usage JSON from the API (or cache)
+  printf '%s' "$1" | jq -c \
+    --argjson now "$now" \
+    --argjson w "$BAR_WIDTH" '
 
-  def clamp(r): if r < 0 then 0 elif r > 1 then 1 else r end;
-  def rep(n): (if n <= 0 then "" else ([range(0;n)] | map(" ") | join("")) end);
-  def fillcol(r): if r >= 0.9 then "#D26653" elif r >= 0.7 then "#E9994A" else "#8FA672" end;
-  # one horizontal bar: filled run + track run, both coloured spaces
-  def hbar(r):
-      (clamp(r) * $w | round) as $f
-      | "<span bgcolor=\"\(fillcol(r))\" color=\"\(fillcol(r))\">\(rep($f))</span>"
-      + "<span bgcolor=\"#4E3F32\" color=\"#4E3F32\">\(rep($w - $f))</span>";
-  def money: (. * 100 | round) / 100;
-  def hum:
-      if   . >= 1000000000 then ((. / 100000000 | round) / 10 | tostring) + "B"
-      elif . >= 1000000    then ((. / 100000    | round) / 10 | tostring) + "M"
-      elif . >= 1000       then ((. / 1000       | round)      | tostring) + "k"
-      else (. | floor | tostring) end;
-  def ep(t): (t | sub("\\.[0-9]+Z$"; "Z") | fromdateiso8601);
+    def clamp(r): if r < 0 then 0 elif r > 1 then 1 else r end;
+    def rep(n): (if n <= 0 then "" else ([range(0;n)] | map(" ") | join("")) end);
+    def fillcol(r): if r >= 0.9 then "#D26653" elif r >= 0.7 then "#E9994A" else "#8FA672" end;
+    def hbar(r):
+        (clamp(r) * $w | round) as $f
+        | "<span bgcolor=\"\(fillcol(r))\" color=\"\(fillcol(r))\">\(rep($f))</span>"
+        + "<span bgcolor=\"#4E3F32\" color=\"#4E3F32\">\(rep($w - $f))</span>";
+    # ISO8601 (UTC, microseconds) -> epoch seconds
+    def ep(t): (t | sub("\\.[0-9]+";"") | sub("\\+00:00$";"Z") | fromdateiso8601);
+    def hm(mins):
+        (if mins < 0 then 0 else mins end) as $m
+        | "\(($m / 60) | floor)h\($m % 60)m";
 
-  # --- session = active block (nullable) ---
-  ([.blocks[] | select(.isActive == true)][0] // null) as $a
-  # --- week = non-gap blocks started within the last 7 days ---
-  | [.blocks[] | select((.isGap | not) and (ep(.startTime) >= ($now - 604800)))] as $wk
+    (.five_hour.utilization // 0) as $su
+    | (.seven_day.utilization // 0) as $wu
+    | ($su / 100) as $sr
+    | ($wu / 100) as $wr
+    | ([$sr, $wr] | max) as $sev
 
-  | ($a.costUSD // 0)      as $scost
-  | ($a.totalTokens // 0)  as $stok
-  | (($wk | map(.costUSD)     | add) // 0) as $wcost
-  | (($wk | map(.totalTokens) | add) // 0) as $wtok
-  | (if $a then (((ep($a.endTime) - $now) / 60) | floor) else 0 end) as $rawleft
-  | (if $rawleft < 0 then 0 else $rawleft end) as $minleft
+    | (.five_hour.resets_at  // null) as $srt
+    | (.seven_day.resets_at  // null) as $wrt
+    | (if $srt then (((ep($srt) - $now) / 60) | floor) else null end) as $smin
+    | (if $smin == null then "idle" else hm($smin) end) as $tleft
 
-  | ($scost / $slim) as $sr
-  | ($wcost / $wlim) as $wr
-  | ([$sr, $wr] | max) as $sev
+    | (if $sev >= 0.9 then "critical" elif $sev >= 0.7 then "warning" else "ok" end) as $cls
 
-  | (($minleft / 60) | floor) as $hh
-  | ($minleft % 60)           as $mm
-  | (if $a then "\($hh)h\($mm)m" else "idle" end) as $tleft
+    | ("<span size=\"8192\" color=\"#EFE3CE\">"
+        + " S " + hbar($sr) + " \($su|floor)%  \($tleft)\n"
+        + " W " + hbar($wr) + " \($wu|floor)%"
+        + "</span>") as $text
 
-  | (if $sev >= 0.9 then "critical" elif $sev >= 0.7 then "warning" else "ok" end) as $cls
+    | ("<b>Claude usage</b>  <i>(live · /usage endpoint)</i>\n"
+        + "\n"
+        + "<b>Session</b>  (current 5h block)\n"
+        + "  used    \($su|floor)%\n"
+        + (if $srt then "  resets  in \($tleft)  (\((ep($srt))|strflocaltime("%a %H:%M")))\n" else "" end)
+        + "\n"
+        + "<b>Week</b>  (rolling 7 days, all models)\n"
+        + "  used    \($wu|floor)%\n"
+        + (if $wrt then "  resets  \((ep($wrt))|strflocaltime("%a %H:%M"))\n" else "" end)
+        + ([ (.seven_day_opus.utilization   | select(. != null) | "  opus    \(.|floor)%"),
+             (.seven_day_sonnet.utilization | select(. != null) | "  sonnet  \(.|floor)%") ]
+           | if length > 0 then "\n" + join("\n") else "" end)
+        + (if (.extra_usage.is_enabled // false) and (.extra_usage.utilization != null)
+           then "\n\n<b>Extra usage</b>  \(.extra_usage.utilization|floor)%" else "" end)
+      ) as $tip
 
-  # two stacked bars; mono font keeps the "S"/"W" labels and bars aligned.
-  # " S " and " W " are both 3 cells wide, so both bars start at the same column.
-  | ("<span size=\"8192\" color=\"#EFE3CE\">"
-      + " S " + hbar($sr) + " \($sr * 100 | floor)%  \($tleft)\n"
-      + " W " + hbar($wr) + " \($wr * 100 | floor)%"
-      + "</span>") as $text
+    | {text: $text, tooltip: $tip, class: $cls, percentage: ($su | floor)}
+  '
+}
 
-  | ("<b>Claude usage</b>  <i>(ccusage · est. Max 20x caps)</i>\n"
-      + "\n"
-      + "<b>Session</b>  (current 5h block)\n"
-      + "  cost    $\($scost|money) / $\($slim)   (\($sr*100|floor)%)\n"
-      + "  tokens  \($stok|hum)\n"
-      + (if $a then
-            "  resets  in \($tleft)\n"
-          + "  burn    $\(($a.burnRate.costPerHour // 0)|money)/h → proj $\(($a.projection.totalCost // 0)|money)\n"
-        else "  (no active session)\n" end)
-      + "\n"
-      + "<b>Week</b>  (rolling 7 days)\n"
-      + "  cost    $\($wcost|money) / $\($wlim)   (\($wr*100|floor)%)\n"
-      + "  tokens  \($wtok|hum)"
-    ) as $tip
+placeholder() {  # $1 = message, $2 = class
+  jq -nc --arg m "$1" --arg c "$2" \
+    '{text:"<span size=\"8192\" color=\"#A89880\"> \($m)</span>", tooltip:$m, class:$c}'
+}
 
-  | {text: $text, tooltip: $tip, class: $cls, percentage: ($sr * 100 | floor)}
-'
+TOKEN="$(jq -r '.claudeAiOauth.accessToken // empty' "$CREDS" 2>/dev/null)"
+if [ -z "$TOKEN" ]; then
+  if [ -s "$CACHE" ]; then render "$(cat "$CACHE")"; else placeholder "no token" "idle"; fi
+  exit 0
+fi
+
+JSON="$(curl -sS --max-time 8 \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "anthropic-beta: oauth-2025-04-20" \
+  "https://api.anthropic.com/api/oauth/usage" 2>/dev/null)"
+
+# Valid responses always carry .five_hour; anything else (401, network blip,
+# error body) falls back to the last good reading so the bar doesn't flicker.
+if printf '%s' "$JSON" | jq -e '.five_hour' >/dev/null 2>&1; then
+  printf '%s' "$JSON" > "$CACHE"
+  render "$JSON"
+elif [ -s "$CACHE" ]; then
+  render "$(cat "$CACHE")"
+else
+  placeholder "usage n/a" "idle"
+fi
