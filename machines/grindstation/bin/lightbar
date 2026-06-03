@@ -7,19 +7,20 @@ via control SET_REPORT, exactly like the ITE 8291 keyboard sibling.
   apply mode:                 [0x08, 0x22, MODE, SPEED, BRIGHT(0..100), 0x01, DIR, 0]
       MODE 0x01=static  0x02=breathing  0x03=wave  0x04=bounce  0x05=marquee  0x06=scan
       (0x11 flash and >0x06 do nothing on this chassis)
+      SPEED is inverted (period, not rate): 1 = fast, 10 = slow.
   off sequence:               0x12.. / 0x08 05.. / 0x08 01.. / 0x1A ....01
 Motion modes cycle palette slots 1..7 — paint them a rainbow for a scrolling rainbow.
 Access: needs write access to the 048d:7001 USB node (libusb detaches hid-generic from
-interface 1, then reattaches). Install 99-lightbar.rules (MODE=0666) for rootless use,
-otherwise run with sudo.
+interface 1, then reattaches). The udev rule 99-lightbar.rules (MODE=0666) is installed
+on grindstation, so this runs as the normal user — no sudo needed.
 
 Usage:
-  sudo lightbar color R G B [-b 0..100]
-  sudo lightbar off
-  sudo lightbar effect {breathing,wave,bounce,marquee,scan} [-s SPEED] [-b BRIGHT] [-c R G B] [-d 0|1|2]
-  sudo lightbar rainbow [{wave,marquee,scan,bounce}] [-s SPEED] [-b BRIGHT]   # default: wave
-  sudo lightbar demo
-  sudo lightbar raw "08 22 03 05 32 01 00 00"
+  lightbar color R G B [-b 0..100]
+  lightbar off
+  lightbar effect {breathing,wave,bounce,marquee,scan} [-s SPEED] [-b BRIGHT] [-c R G B] [-d 0|1|2]
+  lightbar rainbow [{wave,marquee,scan,bounce}] [-s SPEED] [-b BRIGHT]   # default: wave
+  lightbar demo
+  lightbar raw "08 22 03 05 32 01 00 00"
 """
 import sys, time, argparse
 import usb.core, usb.util
@@ -99,8 +100,7 @@ examples:
 modes (for `effect`): breathing wave bounce marquee scan
   wave & marquee cycle palette slots 1-7 (rainbow); breathing/scan/bounce are single-colour.
 
-access: needs write access to the 048d:7001 USB node. Install the udev rule
-  99-lightbar.rules (MODE=0666) for rootless use, otherwise run with sudo.
+access: the 99-lightbar.rules udev rule is installed, so this runs as the normal user.
 docs: ~/Documents/LIGHT-BAR.md
 """
 
@@ -124,7 +124,7 @@ def main():
                        description="Run an animated effect. wave/marquee cycle the rainbow palette; "
                                    "breathing/scan/bounce are single-colour (slot 1, or --color).")
     e.add_argument("name", choices=[m for m in MODES if m != "static"], help="breathing | wave | bounce | marquee | scan")
-    e.add_argument("-s", "--speed", type=int, default=5, metavar="1-10", help="animation speed (default 5)")
+    e.add_argument("-s", "--speed", type=int, default=5, metavar="1-10", help="animation period (inverted: 1=fast, 10=slow; default 5)")
     e.add_argument("-b", "--brightness", type=int, default=100, metavar="0-100", help="brightness percent (default 100)")
     e.add_argument("-c", "--color", type=int, nargs=3, metavar=("R", "G", "B"), default=None,
                    help="single colour for breathing/scan/bounce (default: rainbow palette)")
@@ -132,7 +132,7 @@ def main():
 
     rb = sub.add_parser("rainbow", help="scrolling rainbow", description="Paint a rainbow across slots 1-7 and scroll it.")
     rb.add_argument("name", nargs="?", choices=["wave", "marquee"], default="wave", help="scroll style (default wave)")
-    rb.add_argument("-s", "--speed", type=int, default=5, metavar="1-10", help="animation speed (default 5)")
+    rb.add_argument("-s", "--speed", type=int, default=5, metavar="1-10", help="animation period (inverted: 1=fast, 10=slow; default 5)")
     rb.add_argument("-b", "--brightness", type=int, default=100, metavar="0-100", help="brightness percent (default 100)")
 
     sub.add_parser("off", help="turn the bar off", description="Turn the light bar off.")

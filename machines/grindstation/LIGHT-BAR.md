@@ -38,26 +38,30 @@ In the apply packet: `MM` = mode, `SS` = speed (≈1–10), `BB` = brightness `0
 | `0x04` | bounce | single segment, back-and-forth — reads slot 1 |
 | `0x05` | marquee | scrolls, **cycling palette slots 1–7** |
 | `0x06` | scan | single segment scans across — reads slot 1 |
-| `0x11` | flash | **does nothing** on this chassis |
-| `0x07`–`0x10` | — | nothing |
+| `0x11` | flash | **does nothing** on this chassis — re-confirmed 2026-05-28 with a full sweep (palette: slot1-only / all-7-uniform / rainbow; commit byte `0x01` and `0x08`; speed 1/5/10; direction 0/1/2). Bar stays dark in every combination. |
+| `0x07`–`0x10`, `0x12`–`0x1F` | — | nothing (also re-swept 2026-05-28) |
 
 **Only `wave` and `marquee` cycle the full palette** (→ scrolling rainbow when slots 1–7 are a rainbow). `breathing`, `scan`, and `bounce` are **single-colour** — they read slot 1 only, so set it (or pass the tool's `-c R G B`). A **solid colour** = set slot 1, apply mode `0x01`. All verified end-to-end.
 
+**Flashing from userspace** (since `0x11` is dead): re-issue mode `0x01` with alternating brightness values, e.g. 100 / 10 every ~250 ms. Brightness changes apply instantly between packets so the effect is a hard strobe between bright and dim of the same colour. Verified 2026-05-28 with a red flash at ~2 Hz — looks good. This is the only way to get a flash on this chassis.
+
 ### Tool
 
-`~/.local/bin/lightbar` → `bin/lightbar` in this repo. Run with **sudo** (kernel-driver detach needs root):
+`~/.local/bin/lightbar` → `bin/lightbar` in this repo. Runs as the **normal user** — no sudo required on grindstation (a udev rule grants access to the ITE 8233 + permits the kernel-driver detach on interface 1).
 
 ```
-sudo lightbar color 255 170 0              # solid golden-yellow, full brightness
-sudo lightbar color 0 0 255 -b 40          # dim blue
-sudo lightbar rainbow                      # scrolling rainbow (wave); also: rainbow marquee
-sudo lightbar effect scan -c 0 180 255     # single-colour blue scan (scan/bounce/breathing = 1 colour)
-sudo lightbar effect breathing -c 255 170 0 -b 80   # breathing golden-yellow
-sudo lightbar effect wave -s 8             # faster scrolling rainbow
-sudo lightbar off
-sudo lightbar demo                          # full showcase: colours, brightness ramp, every effect
-sudo lightbar raw "08 22 03 05 32 01 00 00" # send an arbitrary 8-byte packet (experiments)
+lightbar color 255 170 0              # solid golden-yellow, full brightness
+lightbar color 0 0 255 -b 40          # dim blue
+lightbar rainbow                      # scrolling rainbow (wave); also: rainbow marquee
+lightbar effect scan -c 0 180 255     # single-colour blue scan (scan/bounce/breathing = 1 colour)
+lightbar effect breathing -c 255 170 0 -b 80   # breathing golden-yellow
+lightbar effect wave -s 8             # scrolling rainbow (slower — see speed note below)
+lightbar off
+lightbar demo                          # full showcase: colours, brightness ramp, every effect
+lightbar raw "08 22 03 05 32 01 00 00" # send an arbitrary 8-byte packet (experiments)
 ```
+
+**Speed (`-s`) is inverted — the byte is a period, not a rate.** `-s 1` is the **fast** end, `-s 10` is the **slow** end. Verified 2026-05-28 on breathing mode.
 
 ### Credit
 
@@ -65,9 +69,26 @@ Command IDs came from the **keyRGB** project's `ite8233` backend (`github.com/Ra
 
 ### Still open (optional polish, not blocking)
 
-- **Non-root use:** currently needs sudo for the libusb detach. A udev rule granting the USB node + a persistent unbind of `hid-generic` from interface 1 could allow rootless use, but interface 1 also carries Fn hotkeys, so don't unbind it permanently. A cleaner route is a tiny setuid helper or a systemd-run oneshot.
 - **Persistence across reboot:** the EC resets to breathing-purple on boot. To keep a chosen look, run `lightbar` from a login hook (sway `exec`, a systemd user service, or `@reboot`). The 6th apply byte has an alternate value `0x08` that might be "save to EC" — untested; worth checking if you want it to survive a reboot without a hook.
-- **Effect speed/direction semantics:** `SS` (speed) and `DD` (direction) bytes accepted across 1–10 / 0–2 but the exact mapping (faster vs slower, scroll direction) wasn't characterised — tweak and see.
+- **Direction (`-d` / `DD` byte) semantics:** accepted across 0–2 but the exact mapping (scroll direction) wasn't characterised — tweak and see. (Speed is now characterised — `-s 1` fast, `-s 10` slow.)
+
+---
+
+## Rear Medion logo LED — hardwired, not controllable (researched 2026-05-27)
+
+Separate from the front bar: the illuminated **Medion logo on the back of the lid** is a **fixed single-colour blue LED** (blue filter over a white/blue LED), lit whenever the laptop is powered. Testing showed it does **not** follow the LCD backlight (`brightnessctl set 0`) or panel power (DPMS off) — it's on the **system-power rail**, i.e. a dedicated always-on indicator, not the screen-spillover type.
+
+**Conclusion: there is no software/BIOS control for it, on Linux or Windows.** Confirmed by a wide search:
+- The in-tree `uniwill-laptop` driver registers exactly **one** LED (`uniwill:multicolor:status`, the front bar) and no logo/lid device. `tuxedo-drivers` has zero `logo`/`lid`/`badge` matches. The only Linux kernel drivers with a real lid-logo LED are for **Fujitsu** (`logolamp`) and **Lenovo ThinkPad** (`tpacpi::lid_logo_dot`) — not Uniwill/Tongfang.
+- The Medion Beast 16 X1 manual + reviews list only keyboard + front bar as adjustable; the logo is described as a fixed blue badge.
+- No ITE-controller project (ite8291r3-ctl, keyRGB, TongFangRGB, tongfang-control, ITE 8910 RE) has ever found a logo zone.
+- Community consensus: Medion/Tongfang lid logos are hardwired; only physical removal (unplug the LED ribbon in a teardown, or an opaque skin) turns them off.
+
+### Potential future lead (untried, low priority)
+
+The upstream `uniwill-laptop` source (`drivers/platform/x86/uniwill/uniwill-acpi.c`) defines a constant **`#define RGB_LOGO_EFFECT BIT(6)`** in the EC `EC_ADDR_TRIGGER` register map — but it is **defined and never referenced** (dead code). It hints the Uniwill EC firmware *may* have a logo-effect bit nobody has wired up. If we ever want to chase it:
+- Reinstall `acpi-call` (MOK already enrolled), find `EC_ADDR_TRIGGER`'s offset in the uniwill source, and try toggling bit `0x40` there via the `\_SB.AMW0.WMBC` method.
+- Caveats: our earlier EC-RAM poking on this chassis showed that channel doesn't reach the real lightbar control registers (writes landed on dead scratchpad), so this may be inert too; and a wrong EC write can hang the controller. Low payoff (one blue LED) for real risk — only worth it as a curiosity.
 
 ---
 
