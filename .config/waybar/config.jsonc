@@ -70,7 +70,7 @@
     "custom/claude": {
         "exec": "~/.config/waybar/scripts/claude-usage.sh",
         "return-type": "json",
-        "interval": 60,
+        "interval": 300,
         "format": "{}"
     },
 

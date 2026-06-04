@@ -1,6 +1,6 @@
 {
   // Aged Brass (see ~/Documents/THEMES.md) — overlay on a dark base theme.
-  "workbench.colorTheme": "Default Dark Modern",
+  "workbench.colorTheme": "Dark Modern",
   "workbench.colorCustomizations": {
     "foreground": "#EFE3CE",
     "focusBorder": "#FFC332",
