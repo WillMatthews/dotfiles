@@ -24,8 +24,10 @@ theme[selected_bg]="#3A2E25"
 # Foreground of selected items — gold accent
 theme[selected_fg]="#FFC332"
 
-# Inactive/disabled text — dim cream
-theme[inactive_fg]="#A89880"
+# Inactive/disabled text AND the unfilled track of meter bars.
+# Keep this well darker than the gradient fills (sage/amber/cream) or
+# empty bars read as nearly-full light grey and contrast collapses.
+theme[inactive_fg]="#5C4A37"
 
 # Text on top of graphs (uptime, net scaling) — cream
 theme[graph_text]="#EFE3CE"
