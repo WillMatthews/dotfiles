@@ -302,6 +302,66 @@ Install (system package, needs sudo): `sudo apt install kanshi`. Start it
 for the current session with `kanshi &`; it autostarts on login via the
 `exec` line.
 
+## Second dock: HP USB-C Dock G5 — two DP monitors on the iGPU — 2026-06-26
+
+A new dock entered the picture: **HP USB-C Dock G5** (`lsusb`: `03f0:046b`).
+Unlike the old desk dock (one monitor on `DP-2`, the other on NVIDIA
+`HDMI-A-1`), this dock puts **both** external panels on the **Intel iGPU**
+as **`DP-7` + `DP-8`**. It's plain USB-C **DP Alt Mode, not Thunderbolt**
+(`boltctl` shows only the host router, no downstream TB device), but it
+**does drive both DP ports simultaneously** — confirmed both MSI panels lit
+at once alongside eDP-2.
+
+Final working layout (vertical-left | laptop-centre | horizontal-right):
+
+| Output | Panel                       | Orientation        | Mode            |
+|--------|-----------------------------|--------------------|-----------------|
+| DP-7   | MSI MAG 274QRFW `…00885`    | portrait, **flipped** | 2560x1440@60 |
+| eDP-2  | BOE laptop                  | landscape, centre  | 2560x1600@**240** |
+| DP-8   | MSI MAG 274QRFW `…00621`    | landscape, right   | 2560x1440@60    |
+
+### The 240Hz cap still holds — now eDP + TWO externals
+
+Three Intel outputs is one worse than the old dock's two. Same budget rule:
+eDP-2 at **300Hz** + the two externals silently drops the panel
+(`power=False`); **240Hz** is the ceiling and all three light. Probed
+2026-06-26: the panel only has 300/240/60 modes (no 120 — a `120Hz` request
+falls back to 60). A transient **`i915 PHY A failed to request refclk`**
+fires on *each eDP modeset* under the triple and recovers — distinct from
+the boot-time noise noted for the old dock; only a hard fail shows as eDP
+`power=False`.
+
+### The real villain: kanshi's `mobile` profile reasserting eDP@300
+
+Most of the session's "laptop went dark" / "second monitor won't light"
+chaos traced to **kanshi**, not the hardware. With the externals on
+connectors no profile listed (`DP-7`/`DP-8`), kanshi fell through to
+**`mobile`** (eDP-2 @ **300Hz**) and reasserted it on *every hotplug* —
+blowing the budget and killing the panel right after we'd fixed it. Lesson:
+when manually wrangling outputs on this machine, **`pkill -x kanshi` first**
+so it stops fighting. The `hp-dock-triple` profile below fixes the
+fall-through for the docked-with-both case. (Single-external-on-this-dock is
+deliberately *not* handled — user confirmed 2026-06-26 they will only ever
+dock with **both** monitors, so there's no single-external profile to write.)
+
+### kanshi profile `hp-dock-triple` + the rotation derivation
+
+Added to `~/.config/kanshi/config`. The vertical panel (`DP-7`, `…00885`)
+is physically mounted **180°-flipped** vs the old desk panel, so
+right-side-up is sway on-screen `transform 270` (verified via `swaymsg`).
+Per the documented kanshi↔sway **90↔270 swap**, the kanshi config value is
+therefore **`transform 90`** (the *opposite* of the old profile's `270`).
+**Verified 2026-06-26**: restarting kanshi applied `hp-dock-triple` and DP-7
+came up at sway on-screen `transform 270` (upright). If it ever flips,
+change the profile to `transform 270`.
+
+### Verified manual fallback: `~/.local/bin/hp-dock-layout.sh`
+
+One-command recovery using known-good **sway** transform values (no kanshi
+quirk to second-guess). Run it any time the docked layout comes up wrong:
+applies DP-7 portrait-left (sway `transform 270`), eDP-2 @240Hz centre,
+DP-8 landscape-right. Verified working 2026-06-26.
+
 ## Open threads (paths not yet explored)
 
 In order of expected payoff, after the 2026-05-22 research dump:

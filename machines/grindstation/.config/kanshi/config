@@ -4,6 +4,16 @@
 # kanshi applies the first profile whose listed outputs are all connected,
 # so profiles are ordered most-specific (most outputs) first.
 #
+# TWO docks exist (see SCREEN.md "Docks"):
+#   - OLD desk dock: external panels on DP-2 (Intel) + HDMI-A-1 (NVIDIA).
+#   - NEW HP USB-C Dock G5: BOTH external panels land on the Intel iGPU as
+#     DP-7 + DP-8 (plain USB-C DP-alt, NOT Thunderbolt). It drives both DP
+#     ports at once, but eDP + DP-7 + DP-8 = three Intel outputs, so eDP is
+#     capped at 240Hz (300Hz blows the iGPU budget and the panel modeset
+#     silently loses — same failure as the old dock, just one output worse).
+#     A transient "PHY A failed to request refclk" on each eDP modeset is
+#     expected and recovers; a hard fail shows as eDP power=False.
+#
 # Monitors are matched by CONNECTOR (DP-2 / HDMI-A-1), not serial. The two
 # MSI panels are the same model and differ only by serial, and serial-based
 # matching backfired: a 2026-06-01 office move swapped the panels between the
@@ -26,6 +36,22 @@
 #     exceeds the iGPU's display-bandwidth/CDCLK budget, and the panel's
 #     modeset silently loses (sway reports success, kernel refuses).
 #     Undocked profiles restore the full 300Hz.
+
+# NEW HP USB-C Dock G5 triple. Verified working 2026-06-26 via swaymsg.
+#   - DP-7 = portrait panel, LEFT. The physical monitor is mounted FLIPPED
+#     180° from the old desk panel, so right-side-up is sway on-screen
+#     transform 270 (not 90). Per the 90<->270 kanshi/sway swap documented
+#     below, that means kanshi config `transform 90` here. VERIFIED 2026-06-26:
+#     kanshi `transform 90` renders as sway on-screen `transform 270` (upright).
+#     If it ever comes up upside-down, swap to `transform 270`.
+#     Fallback: ~/.local/bin/hp-dock-layout.sh
+#   - DP-8 = landscape panel, RIGHT, no rotation (kanshi normal = sway normal).
+#   - eDP-2 capped at 240Hz (see header).
+profile hp-dock-triple {
+    output DP-7 enable mode 2560x1440@60Hz transform 90 scale 1 position 0,0
+    output eDP-2 enable mode 2560x1600@240Hz scale 1.3 position 1440,665
+    output DP-8 enable mode 2560x1440@60Hz transform normal scale 1 position 3409,560
+}
 
 profile docked-triple {
     output DP-2 enable mode 2560x1440@60Hz transform 270 scale 1 position 0,0
