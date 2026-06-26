@@ -27,6 +27,14 @@ export GOPATH=$HOME/go
 export BUN_INSTALL="$HOME/.bun"
 export HF_HOME="$HOME/coding/ml/.huggingface"
 
+# ── antare local-build cgroup ──
+# Routes antare's test/build containers into the antare.slice cgroup (resource
+# walls — see antare/ci/core-builder-local/README.md). Guarded on the unit file,
+# not the runtime cgroup dir: the dir only exists while the slice is active, but
+# Docker's systemd cgroup driver instantiates the slice (with its limits) on
+# first use, so guarding on the unit keeps this safe to sync yet always armed.
+[ -f /etc/systemd/system/antare.slice ] && export ANTARE_CGROUP=antare.slice
+
 # ── PATH ──
 # `typeset -U` dedupes entries automatically (zsh keeps `path` and
 # `PATH` in sync, so we manipulate the array form).

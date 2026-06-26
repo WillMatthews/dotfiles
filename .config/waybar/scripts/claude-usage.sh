@@ -59,11 +59,15 @@ render() {
     | (if $srt then (((ep($srt) - $now) / 60) | floor) else null end) as $smin
     | (if $smin == null then "idle" else hm($smin) end) as $tleft
 
+    # whole days left until the rolling 7-day window resets (rounded up, min 1)
+    | (if $wrt then ((ep($wrt) - $now) / 86400 | if . < 0 then 0 else . end | ceil) else null end) as $dleft
+    | (if $dleft == null then "" else "  \($dleft)d left" end) as $wleft
+
     | (if $sev >= 0.9 then "critical" elif $sev >= 0.7 then "warning" else "ok" end) as $cls
 
     | ("<span size=\"8192\" color=\"#EFE3CE\">"
         + " S " + hbar($sr) + " \($su|floor)%  \($tleft)\n"
-        + " W " + hbar($wr) + " \($wu|floor)%"
+        + " W " + hbar($wr) + " \($wu|floor)%\($wleft)"
         + "</span>") as $text
 
     | ("<b>Claude usage</b>  <i>(live · /usage endpoint)</i>\n"

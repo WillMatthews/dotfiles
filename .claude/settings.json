@@ -1,7 +1,11 @@
 {
   "permissions": {
+    "allow": [
+      "mcp__linear"
+    ],
     "defaultMode": "auto"
   },
+  "model": "opus[1m]",
   "hooks": {
     "Notification": [
       {
@@ -29,7 +33,14 @@
   "enabledPlugins": {
     "gopls-lsp@claude-plugins-official": true
   },
+  "effortLevel": "high",
+  "voice": {
+    "enabled": true,
+    "mode": "hold"
+  },
   "skipDangerousModePermissionPrompt": true,
+  "skipWorkflowUsageWarning": true,
   "theme": "dark",
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "voiceEnabled": true
 }
