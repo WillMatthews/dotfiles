@@ -13,7 +13,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "printf '\\a' > \"/dev/$(ps -o tty= -p $PPID | tr -d ' ')\""
+            "command": "t=$(ps -o tty= -p $PPID | tr -d ' '); { [ -n \"$t\" ] && [ \"$t\" != '?' ] && printf '\\a' > \"/dev/$t\"; } 2>/dev/null; true"
           }
         ]
       }
@@ -24,7 +24,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "printf '\\a' > \"/dev/$(ps -o tty= -p $PPID | tr -d ' ')\""
+            "command": "t=$(ps -o tty= -p $PPID | tr -d ' '); { [ -n \"$t\" ] && [ \"$t\" != '?' ] && printf '\\a' > \"/dev/$t\"; } 2>/dev/null; true"
           }
         ]
       }
