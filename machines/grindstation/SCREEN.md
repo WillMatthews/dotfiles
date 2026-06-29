@@ -362,6 +362,73 @@ quirk to second-guess). Run it any time the docked layout comes up wrong:
 applies DP-7 portrait-left (sway `transform 270`), eDP-2 @240Hz centre,
 DP-8 landscape-right. Verified working 2026-06-26.
 
+## Idle DPMS must never cycle eDP-2 — 2026-06-29
+
+**Symptom (recurred twice in one day):** after ~15 min idle, all displays
+went dark with the machine still awake; tapping a key woke *everything
+except the laptop panel*. eDP stayed dark.
+
+**Cause:** swayidle ran `swaymsg "output * power off"` / `... power on`, and
+the `*` included eDP-2. The eDP link **bring-up** (DDI BUF A / PHY A) on this
+Meteor Lake iGPU intermittently fails on resume:
+
+```
+i915 [drm] PHY A failed to request refclk
+i915 [drm] *ERROR* Failed to bring PHY A to idle.
+i915 [drm] *ERROR* Timeout waiting for DDI BUF A to get active
+i915 [drm] *ERROR* [CONNECTOR:507:eDP-2] commit wait timed out
+```
+
+The two external DPs re-modeset fine; eDP loses and `power on` does no retry.
+Powering eDP **off** is safe — it's the **bring-up** that's fragile.
+
+**Fix (in place, persists across reboots):** new helper
+`~/.local/bin/idle-displays.sh {off|on}` enumerates outputs and DPMS-toggles
+**only the externals, never eDP** (externals' connector names are unstable
+across hotplugs, so it matches by `name !~ ^eDP`, not hardcoded names). The
+swayidle line in `~/.config/sway/config` now calls it instead of `output *`.
+swaylock at 600s still covers eDP's content; the panel just stays lit. The
+process is still named `swayidle`, so the caffeine SIGSTOP/CONT toggle is
+unaffected. (Gotcha when editing the script: keep `}` out of any `${1:?...}`
+default-message — a literal `}` closes the expansion early and mangles `$1`.)
+
+### Runbook: recover a wedged display engine (one external poisoning all modesets)
+
+i915 batches every output into **one atomic commit**, so a single output
+stuck in flip_done/commit timeouts (seen as repeated
+`[CRTC:386:pipe C] flip_done timed out`) wedges the whole pipeline — *no*
+modeset completes, including eDP's, and `swaymsg` IPC blocks for ~3 s per
+call. A flaky external (here DP-10 / `…00621`, page-flip-failing nonstop from
+a marginal dock cable) is the usual trigger. Do **not** keep issuing power
+commands — each one queues another 10 s-timeout commit onto the backlog and
+makes it worse. Recovery sequence that worked 2026-06-29:
+
+1. **Stop poking.** Wait until the kernel log is quiet (no flip_done/commit
+   errors for ~10 s) and `swaymsg -t get_outputs` returns instantly. The
+   backlog of failed commits drains on its own (~10 s each).
+2. **Disable the wedged external** to remove its pipe from the commit:
+   `swaymsg output DP-10 disable`. Wait for quiet again.
+3. **Bring eDP up solo at the 60Hz relief mode** (disable the *other*
+   external too if needed so nothing competes for the PHY):
+   `swaymsg output eDP-2 power on mode 2560x1600@60.001Hz`. 60Hz is the
+   bandwidth the PHY can lock when contended; 240Hz from a contended/dirty
+   state re-triggers the refclk failure.
+4. **Re-add the externals one at a time**, healthy one first, watching the
+   log between each: `swaymsg output DP-9 enable mode 2560x1440@60Hz`, then
+   `DP-10`. Disabling+re-enabling forces a fresh link-train that clears the
+   stuck external's state. `enable` *retains* each output's saved
+   transform/position, so the portrait rotation + layout come back intact —
+   no need to re-apply kanshi.
+5. **Once everything is up and the log is quiet, bump eDP back to 240Hz:**
+   `swaymsg output eDP-2 mode 2560x1600@240Hz`. From a *clean* state this
+   locks fine (verified) — the earlier 240Hz failures were the cascade, not
+   a hard bandwidth wall.
+
+**Aggravation warning:** running a live `output power off/on` *test* while an
+external is already flip-failing is what tipped a recoverable flaky state into
+a full wedge on 2026-06-29. Don't DPMS-test the displays while the dock is
+misbehaving.
+
 ## Open threads (paths not yet explored)
 
 In order of expected payoff, after the 2026-05-22 research dump:

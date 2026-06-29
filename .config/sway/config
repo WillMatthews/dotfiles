@@ -47,10 +47,15 @@ exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DE
 exec dex --autostart --environment sway
 
 # Idle / lock — replaces xss-lock + i3lock from the i3 config
+# NB: DPMS only the EXTERNAL outputs, never eDP-2. `output * power off/on`
+# cycled the internal panel too, and its bring-up (DDI BUF A / PHY A) on this
+# Meteor Lake iGPU intermittently fails on resume — you'd tap a key and
+# everything woke EXCEPT the laptop screen. idle-displays.sh leaves eDP lit
+# (swaylock already blanks it) and only toggles the externals. See SCREEN.md.
 exec swayidle -w \
     timeout 600  'swaylock -f' \
-    timeout 900  'swaymsg "output * power off"' \
-        resume   'swaymsg "output * power on"' \
+    timeout 900  '/home/wam/.local/bin/idle-displays.sh off' \
+        resume   '/home/wam/.local/bin/idle-displays.sh on' \
     before-sleep 'swaylock -f'
 
 # Network applet (shows up in the bar's tray)
