@@ -37,26 +37,36 @@
 #     modeset silently loses (sway reports success, kernel refuses).
 #     Undocked profiles restore the full 300Hz.
 
-# NEW HP USB-C Dock G5 triple. Verified working 2026-06-26 via swaymsg.
-#   - DP-7 = portrait panel, LEFT. The physical monitor is mounted FLIPPED
-#     180° from the old desk panel, so right-side-up is sway on-screen
-#     transform 270 (not 90). Per the 90<->270 kanshi/sway swap documented
-#     below, that means kanshi config `transform 90` here. VERIFIED 2026-06-26:
-#     kanshi `transform 90` renders as sway on-screen `transform 270` (upright).
-#     If it ever comes up upside-down, swap to `transform 270`.
-#     Fallback: ~/.local/bin/hp-dock-layout.sh
-#   - DP-8 = landscape panel, RIGHT, no rotation (kanshi normal = sway normal).
-#   - eDP-2 capped at 240Hz (see header).
-profile hp-dock-triple {
-    output DP-7 enable mode 2560x1440@60Hz transform 90 scale 1 position 0,0
-    output eDP-2 enable mode 2560x1600@240Hz scale 1.3 position 1440,665
-    output DP-8 enable mode 2560x1440@60Hz transform normal scale 1 position 3409,560
-}
-
+# OLD desk dock triple. Matched by CONNECTOR. This MUST stay listed before
+# hp-dock-triple: that profile matches the two MSI panels by serial regardless
+# of connector and would otherwise also match this dock — but the old desk
+# mount needs a DIFFERENT rotation (sway 90 vs the HP dock's sway 270). The
+# NVIDIA HDMI-A-1 output below is exposed ONLY by the old dock (the HP dock
+# puts both panels on the Intel iGPU), so requiring it here cleanly fences the
+# two docks apart.
 profile docked-triple {
     output DP-2 enable mode 2560x1440@60Hz transform 270 scale 1 position 0,0
     output eDP-2 enable mode 2560x1600@240Hz scale 1.3 position 1440,665
     output HDMI-A-1 enable mode 2560x1440@144Hz scale 1 position 3409,560
+}
+
+# NEW HP USB-C Dock G5 triple. Matched by PANEL SERIAL, not connector: this
+# dock's DP connector numbers are NOT stable — seen as DP-7/DP-8 on 2026-06-26,
+# DP-9/DP-10 on 2026-06-29. Connector-based matching (the old DP-7/DP-8 rule)
+# then matched nothing, kanshi fell through to `mobile` (eDP@300) and BLANKED
+# the laptop panel. `man 5 kanshi` explicitly warns USB-C dock output names are
+# unstable. Serials are stable; left=…885 / right=…621 has held across both docks.
+#   - …885 = portrait panel, LEFT. Mounted FLIPPED 180° vs the old desk dock,
+#     so right-side-up = sway on-screen transform 270 = kanshi config
+#     `transform 90` (the documented 90<->270 swap). VERIFIED 2026-06-26 and
+#     re-verified 2026-06-29. If it ever comes up upside-down, swap to 270.
+#   - …621 = landscape panel, RIGHT, no rotation (kanshi normal = sway normal).
+#   - eDP-2 capped at 240Hz (see header).
+#   - Fallback if this still misfires: ~/.local/bin/hp-dock-layout.sh
+profile hp-dock-triple {
+    output "Microstep MAG 274QRFW CC2HM54A00885" enable mode 2560x1440@60Hz transform 90 scale 1 position 0,0
+    output eDP-2 enable mode 2560x1600@240Hz scale 1.3 position 1440,665
+    output "Microstep MAG 274QRFW CC2HM54A00621" enable mode 2560x1440@60Hz transform normal scale 1 position 3409,560
 }
 
 profile desk-dual {
