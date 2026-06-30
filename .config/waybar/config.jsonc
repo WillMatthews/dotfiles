@@ -32,6 +32,8 @@
         "tray",
         "custom/claude",
         "image#caffeine",
+        "cpu",
+        "memory",
         "network",
         "bluetooth",
         "pulseaudio",
@@ -88,10 +90,31 @@
         "on-click-right": "~/.config/waybar/scripts/caffeine.sh off"
     },
 
+    // CPU load — icon + total usage %. Colour ramps via .warning/.critical
+    // (states below) in style.css. Click opens btop for the full picture.
+    "cpu": {
+        "interval": 2,
+        "format": "<span size='x-large'></span>  <span rise='2000'>{usage}%</span>",
+        "states": { "warning": 70, "critical": 90 },
+        "tooltip": false,
+        "on-click": "kitty -e btop"
+    },
+
+    // Memory — icon + free RAM (GiB). {avail} is what's actually free; the
+    // tooltip spells out used/total. States ramp on % USED, so high pressure
+    // (little free) lights up warning/critical.
+    "memory": {
+        "interval": 2,
+        "format": "<span size='x-large'></span>  <span rise='2000'>{avail:0.1f}G</span>",
+        "states": { "warning": 80, "critical": 92 },
+        "tooltip-format": "{used:0.1f}G used / {total:0.1f}G total\n{avail:0.1f}G free  ({percentage}%)",
+        "on-click": "kitty -e btop"
+    },
+
     "network": {
         "format-wifi":         "<span size='x-large'></span>  <span rise='2000'>{essid}</span>",
-        "format-ethernet":     "<span size='x-large'></span>  <span rise='2000'>{ifname}</span>",
-        "format-linked":       "<span size='x-large'></span>  <span rise='2000'>{ifname}</span>",
+        "format-ethernet":     "<span size='x-large'>󰈀</span>  <span rise='2000'>{ifname}</span>",
+        "format-linked":       "<span size='x-large'>󰈀</span>  <span rise='2000'>{ifname}</span>",
         "format-disconnected": "<span size='x-large'></span>  <span rise='2000'>offline</span>",
         "tooltip-format-wifi":     "{essid} ({signalStrength}%)\n{ipaddr}/{cidr}",
         "tooltip-format-ethernet": "{ifname}\n{ipaddr}/{cidr}",

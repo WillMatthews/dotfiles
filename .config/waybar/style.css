@@ -39,6 +39,8 @@ window#waybar.hidden { opacity: 0.2; }
 #pulseaudio,
 #backlight,
 #battery,
+#cpu,
+#memory,
 #custom-claude,
 #image.caffeine,
 #clock {
@@ -170,6 +172,20 @@ window#waybar.empty #window {
 }
 
 #battery.critical:not(.charging) {
+    background: #3A2E25;
+    color: #D26653;             /* error */
+    animation: blink 1s linear infinite alternate;
+}
+
+/* CPU / Memory — warm idle, ramp to warning/error under load. Memory states
+ * key off % used, so .warning/.critical fire when free RAM gets tight. */
+#cpu.warning,
+#memory.warning {
+    color: #E9994A;             /* warning */
+}
+
+#cpu.critical,
+#memory.critical {
     background: #3A2E25;
     color: #D26653;             /* error */
     animation: blink 1s linear infinite alternate;
