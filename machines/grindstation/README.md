@@ -3,7 +3,7 @@
 Host-specific reference docs **and host-only config** for **grindstation**
 (Medion Erazer 16 X1). Lives outside the stow tree — nothing here is
 symlinked by `stow`. Docs are symlinked manually into `~/Documents/` so the
-references in `~/CLAUDE.md` keep resolving; host-only config files mirror
+references in `~/AGENTS.md` keep resolving; host-only config files mirror
 their real `~/.config/...` path inside `.config/` here and are likewise
 symlinked manually.
 
@@ -11,7 +11,7 @@ symlinked manually.
 
 | File | Symlinked to | What it covers |
 |---|---|---|
-| [CLAUDE.md](CLAUDE.md) | `~/CLAUDE.md` | Top-level instructions Claude reads at session start (doc index, gh auth juggle, per-host conventions) |
+| [AGENTS.md](AGENTS.md) | `~/AGENTS.md`, `~/CLAUDE.md`, `~/.claude/CLAUDE.md`, `~/.codex/AGENTS.md`, `~/.cursor/rules/personal.mdc` | Shared agent instructions, preferences, memory workflow, and host references |
 | [MACHINE.md](MACHINE.md) | `~/Documents/MACHINE.md` | Hardware inventory + per-device quirks (Fn+F2 Win-lock, hybrid backlight, RGB control surfaces) |
 | [THEMES.md](THEMES.md) | `~/Documents/THEMES.md` | Golden-yellow palette family (Parchment / Honey & Ink / Sunlit Linen / **Aged Brass** / Midnight Gold) |
 | [COLOUR.md](COLOUR.md) | `~/Documents/COLOUR.md` | RGB keyboard control reference |
@@ -32,10 +32,12 @@ via the shared stow tree at `dotfiles/.config/`.
 
 ```
 mkdir machines/<hostname>
-mv ~/CLAUDE.md           machines/<hostname>/CLAUDE.md
+mv ~/AGENTS.md           machines/<hostname>/AGENTS.md
 mv ~/Documents/*.md      machines/<hostname>/
-ln -s "$(realpath machines/<hostname>/CLAUDE.md)" "$HOME/CLAUDE.md"
+ln -s "$(realpath machines/<hostname>/AGENTS.md)" "$HOME/AGENTS.md"
+ln -s AGENTS.md "$HOME/CLAUDE.md"
 for f in machines/<hostname>/*.md; do
+    [ "$(basename "$f")" = AGENTS.md ] && continue
     [ "$(basename "$f")" = CLAUDE.md ] && continue
     [ "$(basename "$f")" = README.md ] && continue
     ln -s "$(realpath "$f")" "$HOME/Documents/$(basename "$f")"
@@ -44,3 +46,7 @@ done
 
 Then add `machines/<hostname>/` to this README family if it's worth
 finding from the top level.
+
+The canonical instruction file also has `alwaysApply: true` frontmatter for
+Cursor's `personal.mdc` symlink. Claude and Codex read the same Markdown content.
+Orchid-specific session guidance is injected by Orchid; it is not stored here.
