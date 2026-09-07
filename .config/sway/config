@@ -46,6 +46,10 @@ exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DE
 # XDG autostart
 exec dex --autostart --environment sway
 
+# Drata rewrites its desktop entry with quoting that dex misparses. Start it
+# directly as well so future logins do not depend on that generated file.
+exec /opt/Drata\ Agent/drata-agent
+
 # Idle / lock — replaces xss-lock + i3lock from the i3 config
 # NB: DPMS only the EXTERNAL outputs, never eDP-2. `output * power off/on`
 # cycled the internal panel too, and its bring-up (DDI BUF A / PHY A) on this
@@ -56,7 +60,8 @@ exec swayidle -w \
     timeout 600  'swaylock -f' \
     timeout 900  '/home/wam/.local/bin/idle-displays.sh off' \
         resume   '/home/wam/.local/bin/idle-displays.sh on' \
-    before-sleep 'swaylock -f'
+    before-sleep 'swaylock -f' \
+    after-resume '/home/wam/.local/bin/idle-displays.sh on'
 
 # Network applet (shows up in the bar's tray)
 exec nm-applet --indicator
@@ -93,6 +98,8 @@ bindsym $mod+d exec $menu
 bindsym $mod+Tab exec rofi -show window
 bindsym $mod+Shift+d exec rofi -show run
 bindsym $mod+space exec rofi -show drun -show-icons
+# Searchable keybinding cheatsheet (mod+?) — picking an entry runs it
+bindsym $mod+Shift+slash exec ~/.local/bin/sway-keys
 
 # Screenshots — region to annotator (swappy), region to file, full screen to file
 # flameshot dropped: it can't handle eDP-2's fractional 1.3 scale on wlroots
