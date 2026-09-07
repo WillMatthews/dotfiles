@@ -146,3 +146,5 @@ fi
 
 # bun completions
 [ -s "/home/wam/.bun/_bun" ] && source "/home/wam/.bun/_bun"
+
+export PATH="/home/wam/.pixi/bin:$PATH"
