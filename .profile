@@ -36,3 +36,6 @@ fi
 export EDITOR="nvim"
 export BROWSER="firefox"
 export FILE="ranger"
+. "$HOME/.cargo/env"
+
+export PATH="$HOME/.elan/bin:$PATH"
