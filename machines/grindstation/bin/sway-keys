@@ -1,0 +1,130 @@
+#!/usr/bin/env python3
+"""Searchable sway keybinding menu.
+
+Parses the live sway config (plus its includes), resolves $variables, and
+pipes the bindings through `rofi -dmenu`. Picking one runs it via swaymsg.
+"""
+
+import os
+import re
+import subprocess
+import sys
+
+CONFIG = os.path.expanduser("~/.config/sway/config")
+
+PRETTY = {
+    "Mod4": "Super",
+    "Mod1": "Alt",
+    "Ctrl": "Ctrl",
+    "Shift": "Shift",
+}
+
+# bindsym flags we drop from the displayed key combo
+FLAGS = re.compile(r"^--\S+$")
+
+
+def read_config(path, seen):
+    """Yield (line, mode) for every line, following `include` directives."""
+    path = os.path.realpath(path)
+    if path in seen or not os.path.isfile(path):
+        return
+    seen.add(path)
+    with open(path, errors="replace") as fh:
+        for line in fh:
+            stripped = line.strip()
+            if stripped.startswith("include "):
+                import glob
+
+                pattern = stripped.split(None, 1)[1].strip().strip("\"'")
+                if not os.path.isabs(pattern):
+                    pattern = os.path.join(os.path.dirname(path), pattern)
+                for sub in sorted(glob.glob(pattern)):
+                    yield from read_config(sub, seen)
+            else:
+                yield stripped
+
+
+def parse():
+    variables = {}
+    bindings = []
+    mode = "default"
+    depth = 0
+
+    for line in read_config(CONFIG, set()):
+        if not line or line.startswith("#"):
+            continue
+
+        m = re.match(r'^mode\s+(?:--\S+\s+)*"?([^"{]+)"?\s*\{', line)
+        if m:
+            mode = m.group(1).strip()
+            depth += 1
+            continue
+        if line.startswith("}") and depth:
+            depth -= 1
+            mode = "default"
+            continue
+
+        m = re.match(r"^set\s+(\$\S+)\s+(.*)$", line)
+        if m:
+            variables[m.group(1)] = m.group(2).strip().strip('"')
+            continue
+
+        m = re.match(r"^bind(sym|code)\s+(.*)$", line)
+        if not m:
+            continue
+
+        rest = m.group(2)
+        parts = rest.split()
+        while parts and FLAGS.match(parts[0]):
+            parts.pop(0)
+        if len(parts) < 2:
+            continue
+        combo, command = parts[0], " ".join(parts[1:])
+
+        for var, val in variables.items():
+            combo = combo.replace(var, val)
+            command = command.replace(var, val)
+
+        keys = [PRETTY.get(k, k) for k in combo.split("+")]
+        bindings.append((mode, "+".join(keys), command))
+
+    return bindings
+
+
+def main():
+    bindings = parse()
+    if not bindings:
+        sys.exit("no bindings found in " + CONFIG)
+
+    width = max(len(k) for _, k, _ in bindings)
+    lines, commands = [], []
+    for mode, keys, command in bindings:
+        prefix = "" if mode == "default" else f"[{mode}] "
+        lines.append(f"{prefix}{keys:<{width}}   {command}")
+        commands.append((mode, command))
+
+    try:
+        proc = subprocess.run(
+            ["rofi", "-dmenu", "-i", "-p", "keys", "-format", "i",
+             "-no-custom", "-matching", "fuzzy"],
+            input="\n".join(lines),
+            capture_output=True,
+            text=True,
+        )
+    except FileNotFoundError:
+        sys.exit("rofi not installed")
+
+    choice = proc.stdout.strip()
+    if not choice.isdigit():
+        return
+
+    mode, command = commands[int(choice)]
+    if mode != "default":
+        # Bindings inside a mode block only make sense once that mode is
+        # active; enter it rather than firing the command out of context.
+        command = f'mode "{mode}"'
+    subprocess.run(["swaymsg", "--", command])
+
+
+if __name__ == "__main__":
+    main()
