@@ -11,6 +11,7 @@
 // Bump `rise` if text reads low, lower it if it floats high.
 {
     "layer": "top",
+    "reload_style_on_change": true,
     "position": "bottom",
     "height": 40,
     "spacing": 6,
@@ -31,14 +32,16 @@
     "modules-right": [
         "tray",
         "custom/claude",
-        "image#caffeine",
-        "cpu",
-        "memory",
+        "custom/cpu",
+        "custom/gpu",
+        "custom/memory",
         "network",
         "bluetooth",
         "pulseaudio",
+        "custom/mic",
         "backlight",
         "battery",
+        "image#caffeine",
         "clock"
     ],
 
@@ -90,32 +93,22 @@
         "on-click-right": "~/.config/waybar/scripts/caffeine.sh off"
     },
 
-    // CPU load — icon + total usage %. Colour ramps via .warning/.critical
-    // (states below) in style.css. Click opens btop for the full picture.
-    "cpu": {
-        "interval": 2,
-        "format": "<span size='x-large'></span>  <span rise='2000'>{usage}%</span>",
-        "states": { "warning": 70, "critical": 90 },
-        "tooltip": false,
-        "on-click": "kitty -e btop"
-    },
-
-    // Memory — icon + free RAM (GiB). {avail} is what's actually free; the
-    // tooltip spells out used/total. States ramp on % USED, so high pressure
-    // (little free) lights up warning/critical.
-    "memory": {
-        "interval": 2,
-        "format": "<span size='x-large'></span>  <span rise='2000'>{avail:0.1f}G</span>",
-        "states": { "warning": 80, "critical": 92 },
-        "tooltip-format": "{used:0.1f}G used / {total:0.1f}G total\n{avail:0.1f}G free  ({percentage}%)",
+    // CPU — two stacked rows (usage % over 1-min load). See scripts/cpu.sh.
+    // Values stay plain; the pill ramps (.warning) / blinks (.critical) like the
+    // built-in module it replaces.
+    "custom/cpu": {
+        "exec": "~/.config/waybar/scripts/cpu.sh",
+        "return-type": "json",
+        "interval": 5,
+        "format": "{}",
         "on-click": "kitty -e btop"
     },
 
     "network": {
-        "format-wifi":         "<span size='x-large'></span>  <span rise='2000'>{essid}</span>",
-        "format-ethernet":     "<span size='x-large'>󰈀</span>  <span rise='2000'>{ifname}</span>",
-        "format-linked":       "<span size='x-large'>󰈀</span>  <span rise='2000'>{ifname}</span>",
-        "format-disconnected": "<span size='x-large'></span>  <span rise='2000'>offline</span>",
+        "format-wifi":         "<span size='x-large'></span>",
+        "format-ethernet":     "<span size='x-large'>󰈀</span>",
+        "format-linked":       "<span size='x-large'>󰈀</span>",
+        "format-disconnected": "<span size='x-large'></span>",
         "tooltip-format-wifi":     "{essid} ({signalStrength}%)\n{ipaddr}/{cidr}",
         "tooltip-format-ethernet": "{ifname}\n{ipaddr}/{cidr}",
         "on-click": "kitty -e nmtui"
@@ -133,23 +126,24 @@
     },
 
     "pulseaudio": {
-        "format":           "<span size='x-large'>{icon}</span>  <span rise='2000'>{volume}%</span>",
+        "format":           "<span size='x-large'>{icon}</span>  <span rise='2000'>{volume:>3}%</span>",
         "format-muted":     "<span size='x-large'></span>  <span rise='2000'>muted</span>",
-        "format-bluetooth": "<span size='x-large'>{icon}</span>  <span rise='2000'>{volume}% </span>",
+        "format-bluetooth": "<span size='x-large'>{icon}</span>  <span rise='2000'>{volume:>3}%</span>",
         "format-icons": {
             "headphone": "",
             "headset":   "",
             "default":   ["", "", ""]
         },
         "scroll-step": 5,
+        "max-volume": 100,
         "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
         "on-click-right": "pavucontrol"
     },
 
     "backlight": {
         "device": "intel_backlight",
-        "format": "<span size='x-large'>{icon}</span>  <span rise='2000'>{percent}%</span>",
-        "format-icons": ["", ""],
+        "format": "<span size='x-large'>{icon}</span>  <span rise='2000'>{percent:>3}%</span>",
+        "format-icons": ["", "", ""],
         "on-scroll-up":   "brightnessctl -d intel_backlight set +5%",
         "on-scroll-down": "brightnessctl -d intel_backlight set 5%-",
         "tooltip-format": "Brightness: {percent}%"
@@ -157,16 +151,96 @@
 
     "battery": {
         "bat": "BAT0",
+        "full-at": 95,
+        "on-click": "kitty -e sh -c 'upower -i $(upower -e | grep -m1 BAT); read -rn1'",
         "states": {
             "good": 80,
             "warning": 30,
             "critical": 15
         },
-        "format":          "<span size='x-large'>{icon}</span>  <span rise='2000'>{capacity}%</span>",
-        "format-charging": "<span size='x-large'></span>  <span rise='2000'>{capacity}%</span>",
-        "format-plugged":  "<span size='x-large'></span>  <span rise='2000'>{capacity}%</span>",
+        "format":          "<span size='x-large'>{icon}</span>  <span rise='2000'>{capacity:>3}%</span>",
+        "format-charging": "<span size='x-large'></span>  <span rise='2000'>{capacity:>3}%</span>",
+        "format-plugged":  "<span size='x-large'></span>  <span rise='2000'>{capacity:>3}%</span>",
         "format-icons":    ["", "", "", "", ""],
         "tooltip-format":  "{timeTo}\n{power} W"
+    },
+
+    // GPU (NVIDIA) — stacked bars: utilisation % over VRAM %. See scripts/gpu.sh.
+    "custom/gpu": {
+        "exec": "~/.config/waybar/scripts/gpu.sh",
+        "return-type": "json",
+        "interval": 5,
+        "format": "{}",
+        "on-click": "kitty -e btop"
+    },
+
+    // Temperatures — stacked bars: CPU package °C over GPU °C. scripts/temps.sh.
+    "custom/temps": {
+        "exec": "~/.config/waybar/scripts/temps.sh",
+        "return-type": "json",
+        "interval": 5,
+        "format": "{}",
+        "on-click": "kitty -e btop"
+    },
+
+    // Memory — stacked bars: RAM used % over swap used %. Replaces the built-in
+    // `memory` pill so swap pressure (tight on this 30GB box) stays visible.
+    "custom/memory": {
+        "exec": "~/.config/waybar/scripts/memory.sh",
+        "return-type": "json",
+        "interval": 5,
+        "format": "{}",
+        "on-click": "kitty -e btop"
+    },
+
+    // Tailscale VPN — shield icon coloured by backend state. scripts/vpn.sh.
+    "custom/vpn": {
+        "exec": "~/.config/waybar/scripts/vpn.sh",
+        "return-type": "json",
+        "interval": 10,
+        "format": "{}",
+        "on-click": "kitty -e watch -n2 tailscale status"
+    },
+
+    // APT updates — count via apt-check, cached/shared across bars. scripts/updates.sh.
+    "custom/updates": {
+        "exec": "~/.config/waybar/scripts/updates.sh",
+        "return-type": "json",
+        "interval": 1800,
+        "format": "{}",
+        "on-click": "kitty -e sh -c 'apt list --upgradable 2>/dev/null | less'"
+    },
+
+    // Notifications DND (dunst) — click toggles. scripts/dnd.sh + SIGRTMIN+9.
+    "custom/dnd": {
+        "exec": "~/.config/waybar/scripts/dnd.sh",
+        "return-type": "json",
+        "interval": 30,
+        "signal": 9,
+        "format": "{}",
+        "on-click": "~/.config/waybar/scripts/dnd.sh toggle"
+    },
+
+    // Microphone (default source) — click mutes/unmutes. scripts/mic.sh + SIGRTMIN+10.
+    "custom/mic": {
+        "exec": "~/.config/waybar/scripts/mic.sh",
+        "return-type": "json",
+        "interval": 30,
+        "signal": 10,
+        "format": "{}",
+        "on-click": "~/.config/waybar/scripts/mic.sh toggle"
+    },
+
+    // Power profile — click cycles performance / balanced / power-saver.
+    "power-profiles-daemon": {
+        "format": "<span size='x-large'>{icon}</span>",
+        "tooltip-format": "Power profile: {profile}\nDriver: {driver}",
+        "format-icons": {
+            "default":     "",
+            "performance": "",
+            "balanced":    "",
+            "power-saver": ""
+        }
     },
 
     "clock": {
