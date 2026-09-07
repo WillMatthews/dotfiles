@@ -25,9 +25,22 @@
 # identify it (no PUA glyphs, which the editor strips).
 BAR_WIDTH=12               # bar length in character cells
 CREDS="$HOME/.claude/.credentials.json"
-CACHE="/tmp/waybar-claude-usage.cache.json"
+# Cache lives in the per-user runtime dir (mode 700, cleared on reboot) rather
+# than world-readable /tmp — it holds spend/usage figures (no token, but still
+# private). It is ALSO the shared-state mechanism: every monitor runs its own
+# copy of this script, so without a shared cache + freshness gate the /usage
+# endpoint would be hit once per bar instance. See the gate at the bottom.
+RT="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+CACHE="$RT/waybar-claude-usage.cache.json"
+LOCK="$CACHE.lock"
+MAXAGE=280                 # cache TTL (s); < the module's 300s interval so one
+                           # refresh covers every bar instance.
 
 now="$(date +%s)"
+cache_age() {              # seconds since cache mtime, or huge if absent
+  if [ -s "$CACHE" ]; then echo $(( now - $(stat -c %Y "$CACHE" 2>/dev/null || echo 0) ))
+  else echo 999999; fi
+}
 
 render() {
   # $1 = raw usage JSON from the API (or cache)
@@ -65,9 +78,13 @@ render() {
 
     | (if $sev >= 0.9 then "critical" elif $sev >= 0.7 then "warning" else "ok" end) as $cls
 
+    # Plain text (no bars): each percentage is colour-ramped by severity and
+    # right-padded to 3 cells so the S/W rows line up and the pill stays steady.
+    | ($su | floor | tostring) as $ss
+    | ($wu | floor | tostring) as $ws
     | ("<span size=\"8192\" color=\"#EFE3CE\">"
-        + " S " + hbar($sr) + " \($su|floor)%  \($tleft)\n"
-        + " W " + hbar($wr) + " \($wu|floor)%\($wleft)"
+        + " S <span color=\"\(fillcol($sr))\">\(rep(3 - ($ss|length)))\($ss)%</span>  \($tleft)\n"
+        + " W <span color=\"\(fillcol($wr))\">\(rep(3 - ($ws|length)))\($ws)%</span>\($wleft)"
         + "</span>") as $text
 
     | ("<b>Claude usage</b>  <i>(live · /usage endpoint)</i>\n"
@@ -95,6 +112,21 @@ placeholder() {  # $1 = message, $2 = class
     '{text:"<span size=\"8192\" color=\"#A89880\"> \($m)</span>", tooltip:$m, class:$c}'
 }
 
+# Shared-state gate: if the cache is still fresh, render it and DON'T touch the
+# network — so the /usage endpoint is hit once per interval total, not once per
+# monitor. (This is the fix for the per-output duplicate-API-call problem.)
+if [ "$(cache_age)" -lt "$MAXAGE" ]; then render "$(cat "$CACHE")"; exit 0; fi
+
+# Cache is stale: exactly one instance should refresh. Grab the lock
+# non-blocking; the losers just render the last good copy.
+exec 9>"$LOCK"
+if ! flock -n 9; then
+  if [ -s "$CACHE" ]; then render "$(cat "$CACHE")"; else placeholder "usage…" "idle"; fi
+  exit 0
+fi
+# Re-check after acquiring the lock — a sibling may have refreshed while we waited.
+if [ "$(cache_age)" -lt "$MAXAGE" ]; then render "$(cat "$CACHE")"; exit 0; fi
+
 TOKEN="$(jq -r '.claudeAiOauth.accessToken // empty' "$CREDS" 2>/dev/null)"
 if [ -z "$TOKEN" ]; then
   if [ -s "$CACHE" ]; then render "$(cat "$CACHE")"; else placeholder "no token" "idle"; fi
@@ -108,8 +140,9 @@ JSON="$(curl -sS --max-time 8 \
 
 # Valid responses always carry .five_hour; anything else (401, network blip,
 # error body) falls back to the last good reading so the bar doesn't flicker.
+# Cache write is atomic (tmp + mv) and private (umask 077).
 if printf '%s' "$JSON" | jq -e '.five_hour' >/dev/null 2>&1; then
-  printf '%s' "$JSON" > "$CACHE"
+  ( umask 077; printf '%s' "$JSON" > "$CACHE.tmp" ) && mv -f "$CACHE.tmp" "$CACHE"
   render "$JSON"
 elif [ -s "$CACHE" ]; then
   render "$(cat "$CACHE")"
