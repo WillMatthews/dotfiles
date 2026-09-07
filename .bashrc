@@ -118,3 +118,4 @@ fi
 
 # Work-only helpers (Antare) — file is gitignored and only present on work machines.
 [ -f "$HOME/.config/antare/shell.sh" ] && . "$HOME/.config/antare/shell.sh"
+. "$HOME/.cargo/env"
