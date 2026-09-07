@@ -126,22 +126,22 @@
 }
 
 /* ---- Inactive tabs ---- */
-.tabbrowser-tab:not([selected="true"]) .tab-label {
+.tabbrowser-tab:not(:is([selected], [visuallyselected])) .tab-label {
   color: var(--ab-fg-dim) !important;
   font-weight: 400 !important;
 }
-.tabbrowser-tab:not([selected="true"]) .tab-icon-image {
+.tabbrowser-tab:not(:is([selected], [visuallyselected])) .tab-icon-image {
   opacity: 0.75 !important;
 }
-.tabbrowser-tab:not([selected="true"]):hover .tab-background {
+.tabbrowser-tab:not(:is([selected], [visuallyselected])):hover .tab-background {
   background: rgba(255,195,50,0.07) !important;
 }
-.tabbrowser-tab:not([selected="true"]):hover .tab-label {
+.tabbrowser-tab:not(:is([selected], [visuallyselected])):hover .tab-label {
   color: var(--ab-fg) !important;
 }
 
 /* ---- Active tab ---- */
-.tabbrowser-tab[selected="true"] .tab-background {
+.tabbrowser-tab:is([selected], [visuallyselected]) .tab-background {
   background: var(--ab-bg) !important;            /* matches toolbar so they fuse */
   box-shadow:
     inset 0 3px 0 0 var(--ab-accent),              /* gold top stripe */
@@ -150,13 +150,13 @@
     0 1px 0 0 var(--ab-bg) !important;             /* erase the strip's bottom edge under us */
 }
 
-.tabbrowser-tab[selected="true"] .tab-label {
+.tabbrowser-tab:is([selected], [visuallyselected]) .tab-label {
   color: var(--ab-fg) !important;
   font-weight: 600 !important;
   text-shadow: 0 0 0.5px var(--ab-fg);             /* fake a touch more weight without re-rendering */
 }
 
-.tabbrowser-tab[selected="true"] .tab-icon-image {
+.tabbrowser-tab:is([selected], [visuallyselected]) .tab-icon-image {
   opacity: 1 !important;
 }
 
@@ -166,7 +166,7 @@
 }
 
 /* Pinned tabs: still give them the stripe when active, just narrower */
-.tabbrowser-tab[pinned][selected="true"] .tab-background {
+.tabbrowser-tab[pinned]:is([selected], [visuallyselected]) .tab-background {
   box-shadow:
     inset 0 3px 0 0 var(--ab-accent),
     inset 1px 0 0 0 var(--ab-border),
