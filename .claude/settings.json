@@ -5,7 +5,7 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "opus[1m]",
+  "model": "claude-opus-4-8",
   "hooks": {
     "Notification": [
       {
@@ -14,6 +14,28 @@
           {
             "type": "command",
             "command": "t=$(ps -o tty= -p $PPID | tr -d ' '); { [ -n \"$t\" ] && [ \"$t\" != '?' ] && printf '\\a' > \"/dev/$t\"; } 2>/dev/null; true"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"/home/wam/.antare/memory/scripts/log-retrieval.sh\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/wam/coding/orchid/go/bin/orchid session-context"
           }
         ]
       }
@@ -33,7 +55,7 @@
   "enabledPlugins": {
     "gopls-lsp@claude-plugins-official": true
   },
-  "effortLevel": "high",
+  "effortLevel": "medium",
   "voice": {
     "enabled": true,
     "mode": "hold"
@@ -42,5 +64,6 @@
   "skipWorkflowUsageWarning": true,
   "theme": "dark",
   "skipAutoPermissionPrompt": true,
-  "voiceEnabled": true
+  "voiceEnabled": true,
+  "agentPushNotifEnabled": true
 }
