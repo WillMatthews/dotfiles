@@ -10,8 +10,6 @@
 Thumbs.db
 
 # Secrets / auth — never commit
-.ssh/*
-!.ssh/config
 .tokens
 .config/gh/hosts.yml
 .claude/settings.local.json
