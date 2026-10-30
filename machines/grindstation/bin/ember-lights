@@ -5,5 +5,6 @@
 # The light-bar part needs the 99-lightbar.rules udev rule to work without sudo.
 set -u
 BIN="$HOME/.local/bin"
+"$BIN/ite8291-fix"                                       # heal ite8291r3-ctl after Python/pipx upgrades
 "$BIN/ite8291r3-ctl" monocolor --rgb 255,145,40 -b 50   # keyboard  (ITE 8291)
 "$BIN/lightbar" color 255 95 55                          # light bar (ITE 8233)

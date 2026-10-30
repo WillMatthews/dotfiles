@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Self-heal ite8291r3-ctl (keyboard RGB). Idempotent; cheap when nothing is wrong.
+# 1. A system Python upgrade orphans the pipx venv ("bad interpreter") -> pipx reinstall.
+# 2. Upstream 0.4 doesn't list this keyboard's USB ID (048d:600b) -> patch it in.
+#    Any pipx reinstall/upgrade wipes that patch, hence this script.
+set -u
+VENV="$HOME/.local/share/pipx/venvs/ite8291r3-ctl"
+
+if ! "$VENV/bin/python" -c '' 2>/dev/null; then
+    echo "ite8291-fix: venv interpreter missing, reinstalling" >&2
+    pipx reinstall ite8291r3-ctl >&2 || exit 1
+fi
+
+for f in "$VENV"/lib/python3.*/site-packages/ite8291r3_ctl/ite8291r3.py; do
+    [ -f "$f" ] || continue
+    if ! grep -q '^PRODUCT_IDS = .*0x600B' "$f"; then
+        sed -i 's/^PRODUCT_IDS = \[\(.*\)\]/PRODUCT_IDS = [\1, 0x600B]/' "$f"
+        echo "ite8291-fix: patched 0x600B into $f" >&2
+    fi
+done

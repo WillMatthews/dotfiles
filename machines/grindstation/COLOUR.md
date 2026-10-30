@@ -2,6 +2,21 @@
 
 ## Keyboard backlight
 
+### Job-status signal
+
+`kb-status green|red|ember` (dotfiles `machines/grindstation/bin/`, symlinked into `~/.local/bin/`) sets the whole keyboard **and the front light bar** to green = done, red = failed, or ember = back to normal, at brightness 50. It stops `kb-stat-bars` and any running `anim` loop first so they can't paint over the signal. Meant for long jobs and agents, e.g. `train.py && kb-status green || kb-status red`.
+
+Optional mode after the colour: `--pulse` (hardware breathing; ember uses the nearest preset, orange; no process left running), `--flash` (~1 Hz on/off), `--urgent` (fast colour/white strobe). Flash and urgent run as a detached `ite8291r3-ctl anim` loop until the next `kb-status` call; ~2–3% CPU. The light bar uses only its built-in effects (pulse = breathing, flash = fast breathing, urgent = fast bounce), because a software blink loop would cut out the Fn hotkeys on every blink (see LIGHT-BAR.md).
+
+Target flags: `--kb-only` or `--bar-only` (any order with the mode; default is both). `--bar-only` leaves the keyboard alone entirely, including any running animation.
+
+### If `ite8291r3-ctl` breaks
+
+Run `ite8291-fix` (dotfiles `machines/grindstation/bin/`, symlinked into `~/.local/bin/`; `ember-lights` also runs it at sway startup). It fixes the two known failures:
+
+- **"bad interpreter"**: a system Python upgrade (e.g. 3.13 → 3.14) orphaned the pipx venv. Fix: `pipx reinstall ite8291r3-ctl`.
+- **"no suitable device found"**: upstream 0.4 doesn't list this keyboard's USB ID `048d:600b`. Fix: add `0x600B` to `PRODUCT_IDS` in the venv's `ite8291r3_ctl/ite8291r3.py`. Any pipx reinstall or upgrade wipes this patch.
+
 ### Region scheme
 
 Each key colored by its functional region — letters white, digits yellow, F-keys magenta, punctuation+numpad-operators cyan, modifiers orange, arrows red, space green, specials blue.

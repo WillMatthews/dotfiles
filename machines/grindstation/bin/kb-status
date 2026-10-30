@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+# Signal job status on the keyboard RGB + front light bar. For long-running jobs / agents:
+#   kb-status green            # done
+#   kb-status red              # failed
+#   kb-status ember            # back to normal (daily-driver ember)
+# Modes (optional, after the colour):
+#   --pulse    slow hardware breathing (no process left running)
+#   --flash    keyboard on/off blink ~1 Hz; bar fast breathing
+#   --urgent   keyboard fast colour/white strobe; bar fast bounce
+# Targets (optional, any order with the mode): --kb-only, --bar-only. Default: both.
+# Stops any running animation (kb-stat-bars, show-off loops, a previous flash) first
+# so it can't paint over the signal. Keyboard flash/urgent run detached until the next
+# kb-status call. The bar only ever uses its built-in effects: a userspace loop would
+# re-detach the Fn-hotkey HID interface on every blink (see LIGHT-BAR.md).
+set -u
+BIN="$HOME/.local/bin"
+usage() { echo "usage: kb-status ember|red|green [--pulse|--flash|--urgent] [--kb-only|--bar-only]" >&2; exit 2; }
+
+# preset = nearest hardware-effect colour, for --pulse (ember has no exact preset)
+# bar = light-bar RGB; the bar renders colour differently, so ember needs its own value
+case "${1:-}" in
+    ember) rgb=255,145,40; preset=orange; bar="255 95 55" ;;
+    red)   rgb=255,0,0;    preset=red;    bar="255 0 0" ;;
+    green) rgb=0,255,0;    preset=green;  bar="0 255 0" ;;
+    *) usage ;;
+esac
+shift
+mode=--solid kb=1 lb=1
+for arg in "$@"; do
+    case "$arg" in
+        --pulse|--flash|--urgent) mode=$arg ;;
+        --kb-only)  lb=0 ;;
+        --bar-only) kb=0 ;;
+        *) usage ;;
+    esac
+done
+[ "$kb$lb" = 00 ] && usage
+
+# Light bar (speed is a period: -s 1 fast, -s 10 slow). Failure here mustn't block the keyboard.
+if [ "$lb" = 1 ]; then
+    case "$mode" in
+        --solid)  "$BIN/lightbar" color $bar ;;
+        --pulse)  "$BIN/lightbar" effect breathing -c $bar -s 5 ;;
+        --flash)  "$BIN/lightbar" effect breathing -c $bar -s 1 ;;
+        --urgent) "$BIN/lightbar" effect bounce -c $bar -s 1 ;;
+    esac >/dev/null || echo "kb-status: light bar failed" >&2
+fi
+
+[ "$kb" = 1 ] || exit 0
+
+# Anchored on the python interpreter: a bare `pkill -f 'ite8291r3-ctl anim'` also kills
+# any calling shell whose command line merely mentions that text (e.g. an agent's bash -c).
+pkill -f '^[^ ]*python[^ ]* [^ ]*/kb-stat-bars' 2>/dev/null
+pkill -f '^[^ ]*python[^ ]* [^ ]*/ite8291r3-ctl anim' 2>/dev/null
+sleep 0.3   # let kb-stat-bars' exit-restore land before we set the colour
+
+"$BIN/ite8291-fix"
+
+# Emit "pos" lines setting every matrix cell (6 rows x 21 cols) to $1, then apply.
+fill() {
+    local r c
+    for r in 0 1 2 3 4 5; do for c in $(seq 0 20); do echo "pos $r $c $1"; done; done
+    echo apply
+}
+
+anim="${XDG_RUNTIME_DIR:-/tmp}/kb-status.anim"
+case "$mode" in
+    --solid)
+        exec "$BIN/ite8291r3-ctl" monocolor --rgb "$rgb" -b 50 ;;
+    --pulse)
+        exec "$BIN/ite8291r3-ctl" effect breathing -c "$preset" -b 50 -s 3 ;;
+    --flash)
+        { fill "$rgb"; echo "brightness 50"; echo "wait 0.5"; echo "brightness 0"; echo "wait 0.5"; } > "$anim" ;;
+    --urgent)
+        { echo "brightness 50"; fill "$rgb"; echo "wait 0.15"; fill 255,255,255; echo "wait 0.15"; } > "$anim" ;;
+esac
+
+# Explicit --loop count: bare --loop busy-spins in ite8291r3-ctl 0.4 (see COLOUR.md).
+setsid nohup "$BIN/ite8291r3-ctl" anim --file "$anim" --loop 999999 >/dev/null 2>&1 &
