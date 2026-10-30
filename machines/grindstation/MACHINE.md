@@ -61,6 +61,13 @@ nvme0n1                       1.9T  E31-2TB-PHISON-SSD-BICS8WL
 
 Root filesystem: 1.8 TiB free of 1.9 TiB (1% used).
 
+**`/tmp` is on disk, not RAM.** Ubuntu's stock `tmp.mount` (a tmpfs capped at
+half the RAM, with per-user quotas) is masked (`sudo systemctl mask tmp.mount`),
+so `/tmp` is a plain folder on the root filesystem. Large builds and agent
+scratch files filled the tmpfs quota and broke tools mid-run. systemd still
+deletes files in `/tmp` that have gone unused for 10 days; it no longer empties
+on reboot. Undo: `sudo systemctl unmask tmp.mount` and reboot.
+
 ## Networking
 
 | Interface | Type | State |
