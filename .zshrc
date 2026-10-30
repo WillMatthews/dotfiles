@@ -31,8 +31,10 @@ autoload -U colors && colors
 setopt PROMPT_SUBST
 
 # ── Plugins via antidote ──
-source $HOME/.antidote/antidote.zsh
-antidote load
+if [ -f "$HOME/.antidote/antidote.zsh" ]; then
+  source $HOME/.antidote/antidote.zsh
+  antidote load
+fi
 
 # ── Keybindings ──
 # Force emacs-style line editing. Without this, zsh auto-selects vi mode

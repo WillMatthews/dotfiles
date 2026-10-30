@@ -71,4 +71,4 @@ fi
 
 # ── API tokens etc. ──
 [ -f "$HOME/.tokens" ] && source "$HOME/.tokens"
-. "$HOME/.cargo/env"
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"

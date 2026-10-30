@@ -40,31 +40,48 @@ print_blue "====================="
 print_blue " Ubuntu Setup Script "
 print_blue "====================="
 
-# Clone dotfiles repository (recursive for kickstart.nvim submodule) and stow it
-print_green "Cloning dotfiles repository..."
-if [ ! -d "${HOME}/dotfiles" ]; then
-    git clone --recursive https://github.com/WillMatthews/dotfiles "${HOME}/dotfiles"
+# Locate the dotfiles repo. If this script is being run from inside a clone
+# (e.g. ~/coding/home/dotfiles/.scripts/bootstrap.sh) use that clone; otherwise
+# clone into ~/dotfiles (recursive for kickstart.nvim submodule).
+scriptDir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if git -C "${scriptDir}" rev-parse --show-toplevel >/dev/null 2>&1; then
+    DOTFILES="$(git -C "${scriptDir}" rev-parse --show-toplevel)"
 else
-    git -C "${HOME}/dotfiles" pull
-    git -C "${HOME}/dotfiles" submodule update --init --recursive
+    DOTFILES="${HOME}/dotfiles"
+fi
+print_green "Using dotfiles repository at ${DOTFILES}..."
+if [ ! -d "${DOTFILES}" ]; then
+    git clone --recursive https://github.com/WillMatthews/dotfiles "${DOTFILES}"
+else
+    git -C "${DOTFILES}" pull
+    git -C "${DOTFILES}" submodule update --init --recursive
 fi
 
 # Package lists
 regolithPackages="regolith-desktop regolith-session-flashback regolith-look-lascaille"
-nonServePackages="manpages groff tty-clock ghci cabal-install make firefox thunderbird filezilla flameshot freecad kicad gnuplot handbrake texlive-full ngspice nginx obs-studio qrencode gimp inkscape suckless-tools valgrind units wireshark glances iotop iftop mc ncdu ranger python3-pip build-essential git-lfs xfce4-notifyd brightnessctl"
+nonServePackages="manpages groff tty-clock ghc cabal-install make firefox thunderbird filezilla flameshot kicad gnuplot handbrake texlive-full ngspice nginx obs-studio qrencode gimp inkscape suckless-tools valgrind units wireshark glances iotop iftop mc ncdu ranger python3-pip build-essential git-lfs xfce4-notifyd brightnessctl"
 servePackages="git stow net-tools fastfetch htop btop ncal lm-sensors plocate samba docker.io neovim vim zsh ffmpeg whois pandoc autossh rsync sysstat jq gnupg openssh-client openssh-server tmux gzip nmap screen speedometer speedtest-cli zip unzip unrar wget curl highlight certbot ripgrep fd-find fzf bat eza zoxide vivid"
 gamesAndOtherPackages="openttd steam mumble transmission"
 cabalPackages="hakyll" # TODO make cabal work
 removePackages="regolith-rofication"
 
-# Snap packages for games-and-other setup
+# Snap packages (not available via apt on current Ubuntu)
+nonServeSnap="freecad"
 gamesAndOtherSnap="0ad"
 
 # Function to install packages
 install_packages() {
     sudo apt install -y $1
-    sudo apt remove -y $removePackages
+    sudo apt remove -y $removePackages || true
 }
+
+# Regolith lives in its own apt repo; only install it if that repo is configured.
+if apt-cache show regolith-desktop >/dev/null 2>&1; then
+    desktopExtras="${regolithPackages}"
+else
+    print_red "Regolith apt repo not configured; skipping Regolith packages."
+    desktopExtras=""
+fi
 
 # Update and upgrade the system, then autoremove
 set -e
@@ -77,7 +94,7 @@ print_blue "Select Installation Type:"
 echo -e "${GREEN}1. Server${NC}"
 echo -e "${GREEN}2. Non-Server (desktop, work-suitable)${NC}"
 echo -e "${GREEN}3. Games & Other (Non-Server + games/personal)${NC}"
-read -p "${BLUE}Enter choice [1-3]: ${NC}" installType
+read -p "$(echo -e "${BLUE}Enter choice [1-3]: ${NC}")" installType
 
 case $installType in
     1)
@@ -86,12 +103,13 @@ case $installType in
         ;;
     2)
         print_green "Installing Non-Server Packages..."
-        install_packages "${servePackages} ${nonServePackages} ${regolithPackages}"
+        install_packages "${servePackages} ${nonServePackages} ${desktopExtras}"
+        sudo snap install ${nonServeSnap}
         ;;
     3)
         print_green "Installing Non-Server + Games & Other Packages..."
-        install_packages "${servePackages} ${nonServePackages} ${regolithPackages} ${gamesAndOtherPackages}"
-        snap install ${gamesAndOtherSnap}
+        install_packages "${servePackages} ${nonServePackages} ${desktopExtras} ${gamesAndOtherPackages}"
+        sudo snap install ${nonServeSnap} ${gamesAndOtherSnap}
         ;;
     *)
         print_red "Invalid choice. Exiting."
@@ -116,8 +134,9 @@ fi
 
 # Stow the dotfiles into $HOME
 print_green "Stowing dotfiles into \$HOME..."
-cd "${HOME}"
-stow -t "${HOME}" dotfiles
+# .claude/settings.json is skipped: it's machine-specific (hooks, model pin) and
+# Claude Code will already have written its own copy.
+stow -d "$(dirname "${DOTFILES}")" -t "${HOME}" --ignore='\.claude/settings\.json' "$(basename "${DOTFILES}")"
 
 # Install antidote (zsh plugin manager — replaces oh-my-zsh).
 # Plugins listed in ~/.zsh_plugins.txt are cloned lazily on first shell start.
@@ -132,14 +151,17 @@ if [ ! -d "${HOME}/.tmux/plugins/tpm" ]; then
     git clone https://github.com/tmux-plugins/tpm "${HOME}/.tmux/plugins/tpm"
 fi
 
+# Install Rust via rustup. --no-modify-path: the dotfiles already source ~/.cargo/env.
+print_green "Installing Rust (rustup)..."
+if [ ! -x "${HOME}/.cargo/bin/rustup" ]; then
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
+fi
+. "${HOME}/.cargo/env"
+
 # Install pay-respects (typo corrector, replaces thefuck). Not in apt.
 print_green "Installing pay-respects..."
 if ! command -v pay-respects >/dev/null 2>&1; then
-    if command -v cargo >/dev/null 2>&1; then
-        cargo install pay-respects
-    else
-        print_red "Skipping pay-respects: cargo not found. Install rustup, then 'cargo install pay-respects'."
-    fi
+    cargo install pay-respects || print_red "pay-respects failed to build (needs a C linker: build-essential)."
 fi
 
 # Install atuin (history sync / search)
