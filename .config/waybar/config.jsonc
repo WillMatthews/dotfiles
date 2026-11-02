@@ -48,7 +48,10 @@
     "sway/workspaces": {
         "disable-scroll": false,
         "all-outputs": false,
-        "format": "{name}"
+        "format": "{value}",
+        "disable-markup": true,
+        "disable-auto-back-and-forth": true,
+        "on-double-click": "python3 ~/.config/waybar/scripts/workspace-rename.py"
     },
 
     "sway/mode": {

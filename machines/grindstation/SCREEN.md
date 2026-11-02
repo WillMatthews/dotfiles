@@ -364,6 +364,13 @@ DP-8 landscape-right. Verified working 2026-06-26.
 
 ## Idle DPMS must never cycle eDP-2 — 2026-06-29
 
+**Sway reload gotcha (2026-09-10):** `swaymsg reload` reset the HP dock's
+rotation, positions, and eDP scale even though the output directives were
+unchanged. `exec kanshi` ran only at login, so it did not restore the layout.
+The Sway config now sends kanshi SIGHUP on every reload (or starts it if absent)
+to reapply its profile. After any reload, verify `get_outputs` geometry,
+transform, and scale; checking workspace output names alone misses this reset.
+
 **Symptom (recurred twice in one day):** after ~15 min idle, all displays
 went dark with the machine still awake; tapping a key woke *everything
 except the laptop panel*. eDP stayed dark.
