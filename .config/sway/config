@@ -58,7 +58,7 @@ exec /opt/Drata\ Agent/drata-agent
 # (swaylock already blanks it) and only toggles the externals. See SCREEN.md.
 exec swayidle -w \
     timeout 600  'swaylock -f' \
-    timeout 900  '/home/wam/.local/bin/idle-displays.sh off' \
+    timeout 14400 '/home/wam/.local/bin/idle-displays.sh off' \
         resume   '/home/wam/.local/bin/idle-displays.sh on' \
     before-sleep 'swaylock -f' \
     after-resume '/home/wam/.local/bin/idle-displays.sh on'
