@@ -51,17 +51,23 @@ exec dex --autostart --environment sway
 exec /opt/Drata\ Agent/drata-agent
 
 # Idle / lock — replaces xss-lock + i3lock from the i3 config
+# Clear any inhibitor left over from the previous login.
+exec ~/.config/waybar/scripts/caffeine.sh off
 # NB: DPMS only the EXTERNAL outputs, never eDP-2. `output * power off/on`
 # cycled the internal panel too, and its bring-up (DDI BUF A / PHY A) on this
 # Meteor Lake iGPU intermittently fails on resume — you'd tap a key and
 # everything woke EXCEPT the laptop screen. idle-displays.sh leaves eDP lit
 # (swaylock already blanks it) and only toggles the externals. See SCREEN.md.
-exec swayidle -w \
-    timeout 600  'swaylock -f' \
+# lock.sh powers the externals back on at unlock: `resume` alone is unreliable
+# (swayidle skips it when a logind idle inhibitor, e.g. orchid, appears mid-idle).
+# -d + log: ~/.local/state/swayidle.log
+exec swayidle -w -d \
+    timeout 600  '/home/wam/.local/bin/lock.sh' \
     timeout 14400 '/home/wam/.local/bin/idle-displays.sh off' \
         resume   '/home/wam/.local/bin/idle-displays.sh on' \
-    before-sleep 'swaylock -f' \
-    after-resume '/home/wam/.local/bin/idle-displays.sh on'
+    before-sleep '/home/wam/.local/bin/lock.sh' \
+    after-resume '/home/wam/.local/bin/idle-displays.sh on' \
+    >> /home/wam/.local/state/swayidle.log 2>&1
 
 # Network applet (shows up in the bar's tray)
 exec nm-applet --indicator
@@ -217,7 +223,12 @@ bindsym $mod+Shift+r reload
 bindsym $mod+Shift+e exec swaynag -t warning -m 'Exit sway?' -B 'Yes, exit' 'swaymsg exit'
 
 # Lock / suspend — swayidle's before-sleep handler also locks on suspend
-bindsym $mod+Escape  exec swaylock -f
+bindsym $mod+Escape  exec /home/wam/.local/bin/lock.sh
+# Lock-screen rescue: if swaylock-plugin (pipes screensaver) hangs, swap in plain
+# swaylock. The session stays locked throughout (ext-session-lock), so it's safe.
+bindsym --locked $mod+Shift+Escape exec 'pkill -x swaylock-plugin; sleep 0.5; swaylock'
+# Skip to the next lock screensaver (no-op when unlocked)
+bindsym --locked $mod+n exec /home/wam/coding/screensaver/lock-next.sh
 bindsym $mod+Shift+s exec systemctl suspend
 
 # Resize mode

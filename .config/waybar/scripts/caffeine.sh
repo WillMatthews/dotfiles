@@ -1,45 +1,59 @@
 #!/usr/bin/env bash
 # One-button caffeine control for waybar (an `image` module). Cycles 3 states:
 #   off         -> moon.png   : normal — screen idles/locks, lid suspends
-#   caffeine    -> coffee.png : screen kept awake (swayidle paused)
+#   caffeine    -> coffee.png : screen kept awake (logind idle inhibitor)
 #   amphetamine -> pill.png   : screen awake AND lid-close won't suspend
 # Left-click cycles off -> caffeine -> amphetamine -> off. Right-click forces off.
 #
-# Idle inhibition: there is no Wayland idle-inhibit CLI here, so we pause/resume
-# swayidle with SIGSTOP/SIGCONT — a stopped swayidle never fires its lock/blank
-# timeouts, and resuming restores it. Lid-close suspend is blocked by a transient
-# handle-lid-switch inhibitor unit (logind ignores generic sleep/idle locks for
-# the lid; only handle-lid-switch works). Both need no sudo.
+# swayidle observes logind's idle inhibitor and disables only its idle timers.
+# It stays running to lock before suspend and restore external displays on wake.
+# The separate handle-lid-switch inhibitor preserves the third button state.
 
 DIR="$(dirname "$0")"
 RT="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
-STATEF="$RT/caffeine.state"
+IDLE_UNIT="caffeine-idle.service"
 UNIT="caffeine-lid.service"     # holds the handle-lid-switch inhibitor
 WAYBAR_SIGNAL=8                 # must match "signal" in the image#caffeine module
 
-state() { cat "$STATEF" 2>/dev/null || echo off; }
+state() {
+  if ! systemctl --user is-active --quiet "$IDLE_UNIT"; then
+    echo off
+  elif systemctl --user is-active --quiet "$UNIT"; then
+    echo amphetamine
+  else
+    echo caffeine
+  fi
+}
 
-idle_pause()  { pkill -STOP -x swayidle 2>/dev/null; }
-idle_resume() { pkill -CONT -x swayidle 2>/dev/null; }
+# Type=notify reports success only AFTER systemd-inhibit acquired its lock.
+# Failed acquisition times out rather than showing a misleading active icon.
+inhibit_on() {
+  local unit="$1" what="$2" why="$3"
+  systemctl --user is-active --quiet "$unit" && return 0
+  systemd-run --user --collect --unit="$unit" \
+    --service-type=notify --property=NotifyAccess=all \
+    --property=TimeoutStartSec=5 --description="$why" \
+    sh -c 'exec systemd-inhibit "$@" env NOTIFY_SOCKET="$NOTIFY_SOCKET" sh -c "systemd-notify --ready && exec sleep infinity"' \
+      sh --what="$what" --who=Caffeine --why="$why" --mode=block >/dev/null 2>&1
+}
+inhibit_off() {
+  if systemctl --user is-active --quiet "$1"; then
+    systemctl --user stop "$1"
+  fi
+}
 
 lid_lock_on() {
-  systemctl --user is-active --quiet "$UNIT" && return
-  systemd-run --user --unit="$UNIT" \
-    --description="Amphetamine: keep awake with lid closed" \
-    systemd-inhibit --what=handle-lid-switch \
-      --who="Amphetamine" --why="lid closed but stay awake" --mode=block \
-      sleep infinity >/dev/null 2>&1
+  inhibit_on "$UNIT" handle-lid-switch "Keep awake with lid closed"
 }
 lid_lock_off() {
-  systemctl --user stop "$UNIT" 2>/dev/null
-  systemctl --user reset-failed "$UNIT" 2>/dev/null
+  inhibit_off "$UNIT"
 }
 
 apply() {
   case "$1" in
-    off)         idle_resume; lid_lock_off ;;
-    caffeine)    idle_pause;  lid_lock_off ;;
-    amphetamine) idle_pause;  lid_lock_on  ;;
+    off)         lid_lock_off && inhibit_off "$IDLE_UNIT" ;;
+    caffeine)    inhibit_on "$IDLE_UNIT" idle "Keep screen awake" && lid_lock_off ;;
+    amphetamine) inhibit_on "$IDLE_UNIT" idle "Keep screen awake" && lid_lock_on ;;
   esac
 }
 
@@ -54,7 +68,23 @@ notify() {
   esac
 }
 
-refresh() { pkill -RTMIN+"$WAYBAR_SIGNAL" waybar 2>/dev/null; }
+refresh() { pkill -RTMIN+"$WAYBAR_SIGNAL" waybar 2>/dev/null || true; }
+
+change() {
+  if ! apply "$1"; then
+    notify-send -a caffeine "Caffeine change failed" "Current state: $(state)" >&2
+    refresh
+    return 1
+  fi
+  notify "$1"
+  refresh
+}
+
+# Serialize clicks from different monitor bars; state is read from live units.
+if [[ ${1:-icon} != icon ]]; then
+  exec 9>"$RT/caffeine.lock"
+  flock -x 9
+fi
 
 case "${1:-icon}" in
   cycle)
@@ -63,10 +93,10 @@ case "${1:-icon}" in
       caffeine) next=amphetamine ;;
       *)        next=off ;;
     esac
-    echo "$next" > "$STATEF"; apply "$next"; notify "$next"; refresh
+    change "$next"
     ;;
   off)
-    echo off > "$STATEF"; apply off; notify off; refresh
+    change off
     ;;
   icon)
     case "$(state)" in

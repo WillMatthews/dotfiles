@@ -81,7 +81,7 @@
 
     // Caffeine — one button, three states (image module; icons in scripts/).
     //   moon  -> off (screen idles, lid suspends)
-    //   lock  -> caffeine (screen kept awake: swayidle paused)
+    //   lock  -> caffeine (idle inhibited; suspend locking stays active)
     //   C9H13N molecule -> amphetamine (awake AND lid-close won't suspend)
     // Left-click cycles; right-click forces off. Refresh via SIGRTMIN+8.
     "image#caffeine": {

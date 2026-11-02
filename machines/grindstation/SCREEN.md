@@ -388,8 +388,8 @@ Powering eDP **off** is safe — it's the **bring-up** that's fragile.
 across hotplugs, so it matches by `name !~ ^eDP`, not hardcoded names). The
 swayidle line in `~/.config/sway/config` now calls it instead of `output *`.
 swaylock at 600s still covers eDP's content; the panel just stays lit. The
-process is still named `swayidle`, so the caffeine SIGSTOP/CONT toggle is
-unaffected. (Gotcha when editing the script: keep `}` out of any `${1:?...}`
+process is still named `swayidle`. Caffeine now uses a logind idle inhibitor
+(updated 2026-09-10), leaving sleep/resume hooks running. (Gotcha when editing the script: keep `}` out of any `${1:?...}`
 default-message — a literal `}` closes the expansion early and mangles `$1`.)
 
 ### Externals dark after suspend/resume (the mirror image) — 2026-08-18
@@ -410,8 +410,9 @@ only if a link error shows in the log.
 swayidle invocation in `~/.config/sway/config`. swayidle fires `after-resume` on
 logind's resume-from-sleep signal (distinct from the idle-`resume` event, which
 only fires on activity after an idle *timeout*). Reuses `idle-displays.sh`, which
-touches externals only — safe for eDP. Caveat: while caffeine/amphetamine has
-swayidle SIGSTOP'd, the hook won't fire until swayidle resumes.
+touches externals only — safe for eDP. Since 2026-09-10 caffeine/amphetamine
+uses a logind idle inhibitor instead of SIGSTOP, so this hook and the
+before-sleep lock remain active even while caffeinated.
 
 ### Runbook: recover a wedged display engine (one external poisoning all modesets)
 
